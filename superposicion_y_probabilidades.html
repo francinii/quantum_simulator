@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Superposition & Probabilities - Qiskit Style</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- MathJax para renderizado matemático -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <!-- gifshot para exportar la animación como GIF para diapositivas -->
+  <script src="https://cdn.jsdelivr.net/npm/gifshot@0.3.2/build/gifshot.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fafcff;
+      color: #1e1244;
+    }
+    .font-code {
+      font-family: 'Fira Code', monospace;
+    }
+    /* Destello al medir */
+    @keyframes collapseFlash {
+      0% { transform: scale(0.6); opacity: 0; }
+      40% { transform: scale(1.15); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .collapse-flash {
+      animation: collapseFlash 0.5s ease-out;
+    }
+  </style>
+</head>
+<body class="bg-[#fafcff] min-h-screen flex flex-col justify-between p-3 md:p-6 text-slate-800">
+
+  <!-- Enlace de regreso al índice -->
+  <nav class="w-full max-w-6xl mx-auto mb-2">
+    <a href="index.html" class="inline-flex items-center gap-1 text-xs font-bold text-[#2f80ed] hover:text-[#8b5cf6] transition-colors">← All simulations</a>
+  </nav>
+
+  <!-- Header: Qiskit Fall Fest Style -->
+  <header class="w-full max-w-6xl mx-auto text-center mb-4">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-[#ff6097] bg-[#fdf2f7] border border-[#ff85b3]/40 mb-2">
+      <span class="w-2 h-2 rounded-full bg-[#ff6097] animate-ping"></span>
+      Quantum Pedagogy &bull; Qiskit Fall Fest 2026
+    </div>
+    <h1 class="text-2xl md:text-4xl font-extrabold text-[#1e1244] tracking-tight">
+      Quantum Superposition: <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2f80ed] via-[#8b5cf6] to-[#ff6097]">Amplitudes &amp; Probabilities</span>
+    </h1>
+    <p class="text-xs md:text-sm text-slate-500 max-w-3xl mx-auto mt-1">
+      A qubit can be a blend of $|0\rangle$ and $|1\rangle$ at the same time. Move the state on the Bloch sphere, see how its amplitudes become probabilities, and then measure it many times to watch those probabilities emerge.
+    </p>
+  </header>
+
+  <!-- Selector de Estados (Presets) -->
+  <div class="w-full max-w-6xl mx-auto mb-4">
+    <div class="grid grid-cols-3 md:grid-cols-6 gap-2">
+      <button id="presetBtn0" onclick="applyPreset(0)" class="preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#2f80ed]">Basis</div>
+        <div class="text-sm font-extrabold text-[#1e1244] mt-0.5 font-mono">|0⟩</div>
+        <div class="text-[10px] text-slate-400 font-mono">P(0) = 100%</div>
+      </button>
+      <button id="presetBtn1" onclick="applyPreset(1)" class="preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#ff6097]">Basis</div>
+        <div class="text-sm font-extrabold text-[#1e1244] mt-0.5 font-mono">|1⟩</div>
+        <div class="text-[10px] text-slate-400 font-mono">P(1) = 100%</div>
+      </button>
+      <button id="presetBtn2" onclick="applyPreset(2)" class="preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#8b5cf6]">Superposition</div>
+        <div class="text-sm font-extrabold text-[#1e1244] mt-0.5 font-mono">|+⟩</div>
+        <div class="text-[10px] text-slate-400 font-mono">50% / 50%</div>
+      </button>
+      <button id="presetBtn3" onclick="applyPreset(3)" class="preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#8b5cf6]">Superposition</div>
+        <div class="text-sm font-extrabold text-[#1e1244] mt-0.5 font-mono">|−⟩</div>
+        <div class="text-[10px] text-slate-400 font-mono">50% / 50%</div>
+      </button>
+      <button id="presetBtn4" onclick="applyPreset(4)" class="preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#0284c7]">Complex Phase</div>
+        <div class="text-sm font-extrabold text-[#1e1244] mt-0.5 font-mono">|+i⟩</div>
+        <div class="text-[10px] text-slate-400 font-mono">50% / 50%</div>
+      </button>
+      <button id="presetBtn5" onclick="applyPreset(5)" class="preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Unequal</div>
+        <div class="text-sm font-extrabold text-[#1e1244] mt-0.5 font-mono">θ = 60°</div>
+        <div class="text-[10px] text-slate-400 font-mono">75% / 25%</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenedor Principal -->
+  <main class="w-full max-w-6xl mx-auto flex flex-col gap-4 flex-1">
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+      <!-- 1. Esfera de Bloch (5 Cols) -->
+      <div class="lg:col-span-5 bg-white border border-[#cfe2f7] rounded-3xl p-4 shadow-sm flex flex-col">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#2f80ed]">Bloch Sphere</span>
+          <button id="btnPlayPause" onclick="togglePlay()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#1e1244] text-white hover:bg-slate-800 transition-colors flex items-center gap-1.5 shadow-sm">
+            <svg id="playIcon" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"/></svg>
+            <svg id="pauseIcon" class="w-3.5 h-3.5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"/></svg>
+            <span id="playBtnText">Animate θ</span>
+          </button>
+        </div>
+
+        <div class="relative w-full bg-[#f8fbff] border border-[#e2e8f0] rounded-2xl overflow-hidden">
+          <canvas id="blochCanvas" width="420" height="420" class="w-full h-auto block"></canvas>
+          <!-- Resultado de la medición superpuesto -->
+          <div id="measureOverlay" class="hidden absolute top-3 right-3 px-3 py-1.5 rounded-xl text-sm font-extrabold font-mono shadow-md"></div>
+        </div>
+
+        <div class="space-y-3 text-xs mt-4">
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="font-bold text-[#1e1244]">Polar angle θ <span class="font-normal text-slate-400">(controls the probabilities)</span></span>
+              <span id="thetaDisplay" class="font-mono font-bold text-[#8b5cf6]">90°</span>
+            </div>
+            <input id="thetaRange" type="range" min="0" max="180" step="1" value="90" class="w-full accent-[#8b5cf6] cursor-pointer">
+          </div>
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="font-bold text-[#1e1244]">Relative phase φ <span class="font-normal text-slate-400">(does not change them)</span></span>
+              <span id="phiDisplay" class="font-mono font-bold text-[#ff6097]">0°</span>
+            </div>
+            <input id="phiRange" type="range" min="0" max="360" step="1" value="0" class="w-full accent-[#ff6097] cursor-pointer">
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Estado, Amplitudes y Probabilidades (7 Cols) -->
+      <div class="lg:col-span-7 flex flex-col gap-4">
+
+        <!-- Ecuación del estado -->
+        <div class="bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+            <h2 class="text-sm font-extrabold uppercase tracking-wider text-[#0284c7]">1. The State Vector</h2>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-blue-50 text-[#0284c7] font-bold font-mono">|ψ⟩ = α|0⟩ + β|1⟩</span>
+          </div>
+          <div class="text-center text-xs py-1">
+            $$|\psi\rangle = \cos\tfrac{\theta}{2}\,|0\rangle + e^{i\varphi}\sin\tfrac{\theta}{2}\,|1\rangle$$
+          </div>
+          <div class="mt-2 p-3 rounded-2xl bg-[#f8fbff] border border-blue-100 text-center font-code text-sm md:text-base text-[#1e1244]">
+            |ψ⟩ = <span id="alphaText" class="font-bold text-[#2f80ed]">0.707</span>|0⟩ + <span id="betaText" class="font-bold text-[#ff6097]">0.707</span>|1⟩
+          </div>
+          <p class="text-[11px] text-slate-500 mt-2">
+            $\alpha$ and $\beta$ are <strong>amplitudes</strong>: they can be negative or even complex numbers. They are not probabilities yet.
+          </p>
+        </div>
+
+        <!-- Amplitudes → Probabilidades -->
+        <div class="bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm flex-1">
+          <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+            <h2 class="text-sm font-extrabold uppercase tracking-wider text-[#d946ef]">2. From Amplitudes to Probabilities</h2>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-pink-50 text-pink-600 font-bold font-mono">Born's Rule: P = |amplitude|²</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Resultado 0 -->
+            <div class="p-3 rounded-2xl bg-[#f8fbff] border border-blue-100">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-extrabold text-[#1e1244] font-mono">|0⟩</span>
+                <span class="text-[11px] text-slate-400 font-mono">|α| = <span id="absAlpha">0.707</span></span>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-2">Amplitude size</div>
+              <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                <div id="ampBar0" class="h-full bg-[#2f80ed]/50 transition-all duration-200" style="width: 70.7%;"></div>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-2">Probability = |α|²</div>
+              <div class="h-5 bg-slate-100 rounded-full overflow-hidden">
+                <div id="probBar0" class="h-full bg-[#2f80ed] transition-all duration-200" style="width: 50%;"></div>
+              </div>
+              <div id="probText0" class="text-2xl font-extrabold text-[#2f80ed] mt-2 text-center">50.0%</div>
+            </div>
+
+            <!-- Resultado 1 -->
+            <div class="p-3 rounded-2xl bg-[#fdf2f7] border border-pink-100">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-extrabold text-[#1e1244] font-mono">|1⟩</span>
+                <span class="text-[11px] text-slate-400 font-mono">|β| = <span id="absBeta">0.707</span></span>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-2">Amplitude size</div>
+              <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                <div id="ampBar1" class="h-full bg-[#ff6097]/50 transition-all duration-200" style="width: 70.7%;"></div>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-2">Probability = |β|²</div>
+              <div class="h-5 bg-slate-100 rounded-full overflow-hidden">
+                <div id="probBar1" class="h-full bg-[#ff6097] transition-all duration-200" style="width: 50%;"></div>
+              </div>
+              <div id="probText1" class="text-2xl font-extrabold text-[#ff6097] mt-2 text-center">50.0%</div>
+            </div>
+          </div>
+
+          <div class="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400">
+            <span>Normalization: $|\alpha|^2 + |\beta|^2 = 1$</span>
+            <span id="normText" class="font-bold text-[#8b5cf6] font-mono">0.500 + 0.500 = 1.000 ✓</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 3. Laboratorio de Medición -->
+    <div class="bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-[#8b5cf6]">3. Measurement Lab</span>
+          <h3 class="text-sm font-bold text-[#1e1244]">One measurement is random &mdash; many measurements reveal the probabilities</h3>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="btnMeasure1" onclick="measureOnce()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#1e1244] text-white hover:bg-slate-800 transition-colors shadow-sm">Measure once</button>
+          <button onclick="measureMany(100)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f4f8fe] text-[#2f80ed] hover:bg-[#e6f0fc] transition-colors border border-[#cfe2f7]">× 100 shots</button>
+          <button onclick="measureMany(1000)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#faf5ff] text-[#8b5cf6] hover:bg-purple-100 transition-colors border border-purple-200">× 1000 shots</button>
+          <button onclick="resetShots()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors">Reset</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <!-- Histograma experimental vs teórico -->
+        <div class="md:col-span-7 p-4 rounded-2xl bg-[#f8fbff] border border-blue-100">
+          <div class="flex items-center justify-between text-xs mb-2">
+            <span class="font-bold text-[#1e1244]">Measured Frequencies</span>
+            <span class="font-mono text-slate-500">Total shots: <span id="shotTotal" class="font-bold text-[#1e1244]">0</span></span>
+          </div>
+          <div class="grid grid-cols-2 gap-6 h-44 items-end px-4">
+            <div class="flex flex-col items-center h-full justify-end">
+              <div class="relative w-full h-full bg-white border border-slate-200 rounded-xl overflow-hidden flex items-end">
+                <div id="histBar0" class="w-full bg-[#2f80ed] transition-all duration-300" style="height: 0%;"></div>
+                <div id="theoryLine0" class="absolute left-0 right-0 border-t-2 border-dashed border-[#1e1244] transition-all duration-200" style="bottom: 50%;"></div>
+              </div>
+              <div class="text-xs font-bold font-mono text-[#1e1244] mt-1">|0⟩: <span id="count0">0</span></div>
+              <div class="text-[11px] font-mono text-slate-500"><span id="freq0">—</span> measured</div>
+            </div>
+            <div class="flex flex-col items-center h-full justify-end">
+              <div class="relative w-full h-full bg-white border border-slate-200 rounded-xl overflow-hidden flex items-end">
+                <div id="histBar1" class="w-full bg-[#ff6097] transition-all duration-300" style="height: 0%;"></div>
+                <div id="theoryLine1" class="absolute left-0 right-0 border-t-2 border-dashed border-[#1e1244] transition-all duration-200" style="bottom: 50%;"></div>
+              </div>
+              <div class="text-xs font-bold font-mono text-[#1e1244] mt-1">|1⟩: <span id="count1">0</span></div>
+              <div class="text-[11px] font-mono text-slate-500"><span id="freq1">—</span> measured</div>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-3 text-center">
+            Dashed line = theoretical probability. The more shots you take, the closer the bars get to the line.
+          </p>
+        </div>
+
+        <!-- Registro de disparos -->
+        <div class="md:col-span-5 p-4 rounded-2xl bg-[#faf5ff] border border-purple-100 flex flex-col">
+          <div class="text-xs font-bold text-[#1e1244] mb-2">Last 60 outcomes</div>
+          <div id="shotLog" class="flex flex-wrap gap-1 content-start min-h-[96px]">
+            <span class="text-[11px] text-slate-400">Press “Measure once” to start.</span>
+          </div>
+          <div class="mt-auto pt-3 text-[11px] text-slate-500 space-y-1">
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-[#2f80ed] inline-block"></span> Outcome 0</div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded bg-[#ff6097] inline-block"></span> Outcome 1</div>
+            <div class="pt-1">Each outcome is unpredictable. Only the <strong>pattern</strong> is.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barra de Exportación de Presentación -->
+      <div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+        <p class="text-xs text-slate-500">
+          Want to include this explanation in your class slides? Generate a looping GIF that sweeps the state from $|0\rangle$ to $|1\rangle$.
+        </p>
+        <button id="btnExportGif" onclick="exportPresentationGif()" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#1e1244] text-white hover:bg-slate-800 transition-colors shadow-sm flex items-center gap-2">
+          <svg class="w-4 h-4 text-[#ff85b3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span>Export GIF for Slides (540x540)</span>
+        </button>
+      </div>
+      <div id="exportStatus" class="text-[11px] text-center text-slate-500 mt-2 hidden font-medium"></div>
+    </div>
+
+    <!-- 4. Explicación Didáctica en 3 pasos -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white border border-blue-100 rounded-3xl p-5 shadow-sm">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#2f80ed]">Before measuring</div>
+        <h3 class="text-sm font-extrabold text-[#1e1244] mt-0.5">Both possibilities coexist</h3>
+        <p class="text-[11px] text-slate-500 mt-2">
+          The qubit is not secretly 0 or 1. It is described by two amplitudes at once, like an arrow pointing somewhere between the north and south poles of the sphere.
+        </p>
+      </div>
+      <div class="bg-white border border-pink-100 rounded-3xl p-5 shadow-sm">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#ff6097]">When measuring</div>
+        <h3 class="text-sm font-extrabold text-[#1e1244] mt-0.5">The state collapses</h3>
+        <p class="text-[11px] text-slate-500 mt-2">
+          A measurement always returns a single classical bit: 0 or 1. The arrow jumps to a pole, and the chance of each pole is the squared amplitude, $|\alpha|^2$ or $|\beta|^2$.
+        </p>
+      </div>
+      <div class="bg-white border border-purple-100 rounded-3xl p-5 shadow-sm">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#8b5cf6]">The hidden ingredient</div>
+        <h3 class="text-sm font-extrabold text-[#1e1244] mt-0.5">Phase is invisible… for now</h3>
+        <p class="text-[11px] text-slate-500 mt-2">
+          $|+\rangle$, $|-\rangle$ and $|+i\rangle$ all give 50/50, yet they are different states. The phase $\varphi$ only shows up when states <a href="interferencia_constructiva_y_destructiva.html" class="font-bold text-[#8b5cf6] underline">interfere</a>.
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer con Nota Didáctica -->
+  <footer class="w-full max-w-6xl mx-auto mt-5 p-4 rounded-2xl bg-white border border-slate-200 text-xs text-slate-600 flex flex-col md:flex-row justify-between items-center gap-2 shadow-sm">
+    <div class="flex items-center gap-2">
+      <span class="w-6 h-6 rounded-lg bg-[#1e1244] text-white flex items-center justify-center font-bold text-xs font-mono">ψ</span>
+      <span><strong>Pedagogical Takeaway:</strong> Superposition is described by amplitudes; probabilities only appear when we measure, as their squared magnitudes.</span>
+    </div>
+    <div class="text-[11px] text-slate-400 font-mono">
+      Qiskit Fall Fest 2026 &bull; Mathematical Quantum Physics
+    </div>
+  </footer>
+
+  <!-- Script de Control, Animación y Lógica Cuántica -->
+  <script>
+    // --- Estado Global ---
+    let thetaDeg = 90;
+    let phiDeg = 0;
+    let isPlaying = false;
+    let animDir = 1;
+    let lastFrame = null;
+    let collapsedTo = null; // null, 0 o 1 mientras se muestra el colapso
+    let collapseTimer = null;
+    let counts = [0, 0];
+    let shotHistory = [];
+
+    const presets = [
+      { theta: 0, phi: 0 },
+      { theta: 180, phi: 0 },
+      { theta: 90, phi: 0 },
+      { theta: 90, phi: 180 },
+      { theta: 90, phi: 90 },
+      { theta: 60, phi: 0 }
+    ];
+
+    const blochCanvas = document.getElementById('blochCanvas');
+    const blochCtx = blochCanvas.getContext('2d');
+
+    // --- Lógica cuántica ---
+    function probabilities(thDeg) {
+      const half = thDeg * Math.PI / 360;
+      const p0 = Math.cos(half) ** 2;
+      return [p0, 1 - p0];
+    }
+
+    function formatBeta(thDeg, phDeg) {
+      const mag = Math.sin(thDeg * Math.PI / 360);
+      const ph = ((Math.round(phDeg) % 360) + 360) % 360;
+      if (mag < 0.0005) return '0.000';
+      // Fases especiales con forma real/imaginaria limpia
+      if (ph === 0) return mag.toFixed(3);
+      if (ph === 180) return `(−${mag.toFixed(3)})`;
+      if (ph === 90) return `${mag.toFixed(3)}i`;
+      if (ph === 270) return `(−${mag.toFixed(3)}i)`;
+      return `${mag.toFixed(3)}·e^(i·${ph}°)`;
+    }
+
+    // --- Proyección 3D → 2D de la esfera de Bloch ---
+    const VIEW_AZ = -35 * Math.PI / 180;
+    const VIEW_EL = 18 * Math.PI / 180;
+
+    function project(x, y, z, cx, cy, R) {
+      const xr = x * Math.cos(VIEW_AZ) - y * Math.sin(VIEW_AZ);
+      const yr = x * Math.sin(VIEW_AZ) + y * Math.cos(VIEW_AZ);
+      return {
+        x: cx + R * yr,
+        y: cy - R * (z * Math.cos(VIEW_EL) - xr * Math.sin(VIEW_EL)),
+        depth: xr
+      };
+    }
+
+    function drawBloch(ctx, cx, cy, R, thDeg, phDeg, highlightPole) {
+      const th = thDeg * Math.PI / 180;
+      const ph = phDeg * Math.PI / 180;
+
+      // Esfera
+      const grad = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.3, R * 0.1, cx, cy, R);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(1, '#e6f0fc');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.strokeStyle = '#cfe2f7';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Ecuador (parte trasera punteada)
+      for (let pass = 0; pass < 2; pass++) {
+        ctx.beginPath();
+        ctx.setLineDash(pass === 0 ? [4, 5] : []);
+        let started = false;
+        for (let a = 0; a <= 360; a += 3) {
+          const r = a * Math.PI / 180;
+          const p = project(Math.cos(r), Math.sin(r), 0, cx, cy, R);
+          const front = p.depth >= 0;
+          if ((pass === 1) === front) {
+            if (!started) { ctx.moveTo(p.x, p.y); started = true; } else ctx.lineTo(p.x, p.y);
+          } else started = false;
+        }
+        ctx.strokeStyle = '#a5c8f0';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+
+      // Ejes
+      const axes = [
+        { v: [0, 0, 1], label: '|0⟩', color: '#2f80ed' },
+        { v: [0, 0, -1], label: '|1⟩', color: '#ff6097' },
+        { v: [1, 0, 0], label: '|+⟩', color: '#8b5cf6' },
+        { v: [-1, 0, 0], label: '|−⟩', color: '#8b5cf6' },
+        { v: [0, 1, 0], label: '|+i⟩', color: '#0284c7' }
+      ];
+      const o = project(0, 0, 0, cx, cy, R);
+      axes.forEach(ax => {
+        const p = project(ax.v[0], ax.v[1], ax.v[2], cx, cy, R);
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath();
+        ctx.moveTo(o.x, o.y);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        const lp = project(ax.v[0] * 1.17, ax.v[1] * 1.17, ax.v[2] * 1.17, cx, cy, R);
+        const isHighlighted = (highlightPole === 0 && ax.label === '|0⟩') || (highlightPole === 1 && ax.label === '|1⟩');
+        ctx.fillStyle = ax.color;
+        ctx.font = `bold ${isHighlighted ? 22 : 16}px 'Fira Code', monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(ax.label, lp.x, lp.y);
+      });
+      ctx.textBaseline = 'alphabetic';
+
+      // Vector de estado
+      const sx = Math.sin(th) * Math.cos(ph);
+      const sy = Math.sin(th) * Math.sin(ph);
+      const sz = Math.cos(th);
+      const tip = project(sx, sy, sz, cx, cy, R);
+      const shadow = project(sx, sy, 0, cx, cy, R);
+
+      // Proyección sobre el ecuador (muestra la fase φ)
+      ctx.strokeStyle = 'rgba(255, 96, 151, 0.5)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([2, 3]);
+      ctx.beginPath();
+      ctx.moveTo(o.x, o.y);
+      ctx.lineTo(shadow.x, shadow.y);
+      ctx.lineTo(tip.x, tip.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const vecGrad = ctx.createLinearGradient(o.x, o.y, tip.x, tip.y);
+      vecGrad.addColorStop(0, '#2f80ed');
+      vecGrad.addColorStop(1, '#8b5cf6');
+      ctx.strokeStyle = vecGrad;
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(o.x, o.y);
+      ctx.lineTo(tip.x, tip.y);
+      ctx.stroke();
+      ctx.lineCap = 'butt';
+
+      ctx.fillStyle = '#8b5cf6';
+      ctx.shadowColor = 'rgba(139, 92, 246, 0.6)';
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.arc(tip.x, tip.y, 8, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      ctx.fillStyle = '#1e1244';
+      ctx.beginPath();
+      ctx.arc(o.x, o.y, 3.5, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+
+    // --- Renderizado ---
+    function render() {
+      blochCtx.clearRect(0, 0, blochCanvas.width, blochCanvas.height);
+      const th = collapsedTo === null ? thetaDeg : (collapsedTo === 0 ? 0 : 180);
+      drawBloch(blochCtx, 210, 215, 150, th, phiDeg, collapsedTo);
+    }
+
+    function updateUI() {
+      const [p0, p1] = probabilities(thetaDeg);
+      const a = Math.sqrt(p0);
+      const b = Math.sqrt(p1);
+
+      document.getElementById('thetaDisplay').innerText = `${Math.round(thetaDeg)}°`;
+      document.getElementById('phiDisplay').innerText = `${Math.round(phiDeg)}°`;
+      document.getElementById('alphaText').innerText = a.toFixed(3);
+      document.getElementById('betaText').innerText = formatBeta(thetaDeg, phiDeg);
+      document.getElementById('absAlpha').innerText = a.toFixed(3);
+      document.getElementById('absBeta').innerText = b.toFixed(3);
+      document.getElementById('ampBar0').style.width = `${a * 100}%`;
+      document.getElementById('ampBar1').style.width = `${b * 100}%`;
+      document.getElementById('probBar0').style.width = `${p0 * 100}%`;
+      document.getElementById('probBar1').style.width = `${p1 * 100}%`;
+      document.getElementById('probText0').innerText = `${(p0 * 100).toFixed(1)}%`;
+      document.getElementById('probText1').innerText = `${(p1 * 100).toFixed(1)}%`;
+      document.getElementById('normText').innerText = `${p0.toFixed(3)} + ${p1.toFixed(3)} = ${(p0 + p1).toFixed(3)} ✓`;
+      document.getElementById('theoryLine0').style.bottom = `${p0 * 100}%`;
+      document.getElementById('theoryLine1').style.bottom = `${p1 * 100}%`;
+
+      presets.forEach((p, i) => {
+        const btn = document.getElementById(`presetBtn${i}`);
+        const active = p.theta === Math.round(thetaDeg) && p.phi === Math.round(phiDeg);
+        btn.className = active
+          ? 'preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-[#2f80ed] shadow-md ring-2 ring-[#2f80ed]/20'
+          : 'preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200 hover:border-slate-300 opacity-75';
+      });
+
+      render();
+    }
+
+    // Cambiar el estado invalida las estadísticas anteriores
+    function setState(th, ph) {
+      thetaDeg = th;
+      phiDeg = ph;
+      document.getElementById('thetaRange').value = Math.round(thetaDeg);
+      document.getElementById('phiRange').value = Math.round(phiDeg);
+      clearCollapse();
+      resetShots();
+      updateUI();
+    }
+
+    function applyPreset(i) {
+      if (isPlaying) togglePlay();
+      setState(presets[i].theta, presets[i].phi);
+    }
+
+    // --- Medición ---
+    function sample() {
+      return Math.random() < probabilities(thetaDeg)[0] ? 0 : 1;
+    }
+
+    function recordShot(outcome) {
+      counts[outcome]++;
+      shotHistory.push(outcome);
+      if (shotHistory.length > 60) shotHistory.shift();
+    }
+
+    function measureOnce() {
+      if (isPlaying) togglePlay();
+      const outcome = sample();
+      recordShot(outcome);
+      updateStats();
+
+      // Animación de colapso: el vector salta al polo medido
+      collapsedTo = outcome;
+      const overlay = document.getElementById('measureOverlay');
+      overlay.className = `absolute top-3 right-3 px-3 py-1.5 rounded-xl text-sm font-extrabold font-mono shadow-md collapse-flash ${outcome === 0 ? 'bg-[#2f80ed] text-white' : 'bg-[#ff6097] text-white'}`;
+      overlay.innerText = `Measured: |${outcome}⟩`;
+      render();
+
+      clearTimeout(collapseTimer);
+      collapseTimer = setTimeout(() => {
+        clearCollapse();
+        render();
+      }, 1400);
+    }
+
+    function clearCollapse() {
+      clearTimeout(collapseTimer);
+      collapsedTo = null;
+      document.getElementById('measureOverlay').className = 'hidden';
+    }
+
+    function measureMany(n) {
+      if (isPlaying) togglePlay();
+      clearCollapse();
+      for (let i = 0; i < n; i++) recordShot(sample());
+      updateStats();
+      render();
+    }
+
+    function resetShots() {
+      counts = [0, 0];
+      shotHistory = [];
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = counts[0] + counts[1];
+      document.getElementById('shotTotal').innerText = total;
+      document.getElementById('count0').innerText = counts[0];
+      document.getElementById('count1').innerText = counts[1];
+      document.getElementById('histBar0').style.height = total ? `${counts[0] / total * 100}%` : '0%';
+      document.getElementById('histBar1').style.height = total ? `${counts[1] / total * 100}%` : '0%';
+      document.getElementById('freq0').innerText = total ? `${(counts[0] / total * 100).toFixed(1)}%` : '—';
+      document.getElementById('freq1').innerText = total ? `${(counts[1] / total * 100).toFixed(1)}%` : '—';
+
+      const log = document.getElementById('shotLog');
+      if (!shotHistory.length) {
+        log.innerHTML = '<span class="text-[11px] text-slate-400">Press “Measure once” to start.</span>';
+        return;
+      }
+      log.innerHTML = shotHistory.map(o =>
+        `<span class="w-5 h-5 rounded-md text-[10px] font-bold font-mono flex items-center justify-center text-white ${o === 0 ? 'bg-[#2f80ed]' : 'bg-[#ff6097]'}">${o}</span>`
+      ).join('');
+    }
+
+    // --- Animación de θ (barrido entre |0⟩ y |1⟩) ---
+    function loop(ts) {
+      if (lastFrame === null) lastFrame = ts;
+      const dt = (ts - lastFrame) / 1000;
+      lastFrame = ts;
+      if (isPlaying) {
+        thetaDeg += animDir * dt * 45;
+        if (thetaDeg >= 180) { thetaDeg = 180; animDir = -1; }
+        if (thetaDeg <= 0) { thetaDeg = 0; animDir = 1; }
+        document.getElementById('thetaRange').value = Math.round(thetaDeg);
+        updateUI();
+      }
+      requestAnimationFrame(loop);
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      if (isPlaying) {
+        clearCollapse();
+        resetShots();
+      } else {
+        thetaDeg = Math.round(thetaDeg);
+        updateUI();
+      }
+      document.getElementById('playBtnText').innerText = isPlaying ? 'Pause' : 'Animate θ';
+      document.getElementById('playIcon').classList.toggle('hidden', isPlaying);
+      document.getElementById('pauseIcon').classList.toggle('hidden', !isPlaying);
+    }
+
+    // --- Controles ---
+    document.getElementById('thetaRange').addEventListener('input', e => {
+      if (isPlaying) togglePlay();
+      setState(parseFloat(e.target.value), phiDeg);
+    });
+    document.getElementById('phiRange').addEventListener('input', e => {
+      if (isPlaying) togglePlay();
+      setState(thetaDeg, parseFloat(e.target.value));
+    });
+
+    // --- Exportador a GIF para Presentaciones (540x540) ---
+    function drawProbBar(ctx, x, y, w, label, p, color) {
+      ctx.fillStyle = '#1e1244';
+      ctx.font = "bold 14px 'Fira Code', monospace";
+      ctx.textAlign = 'left';
+      ctx.fillText(label, x, y + 13);
+      ctx.fillStyle = '#e2e8f0';
+      ctx.beginPath();
+      ctx.roundRect(x + 44, y, w - 110, 18, 9);
+      ctx.fill();
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(x + 44, y, Math.max(2, (w - 110) * p), 18, 9);
+      ctx.fill();
+      ctx.fillStyle = color;
+      ctx.font = 'bold 14px Inter, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(`${(p * 100).toFixed(0)}%`, x + w, y + 14);
+    }
+
+    function exportPresentationGif() {
+      if (typeof gifshot === 'undefined') {
+        alert("The gifshot library is still loading. Please try again in a few moments.");
+        return;
+      }
+      if (isPlaying) togglePlay();
+      clearCollapse();
+
+      const btn = document.getElementById('btnExportGif');
+      const status = document.getElementById('exportStatus');
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+      status.classList.remove('hidden');
+      status.innerText = "Capturing superposition sweep frames...";
+
+      const c = document.createElement('canvas');
+      c.width = 540;
+      c.height = 540;
+      const ctx = c.getContext('2d');
+      const frames = [];
+      const steps = 18;
+
+      // Barrido de ida y vuelta: |0⟩ → |1⟩ → |0⟩
+      const thetas = [];
+      for (let i = 0; i <= steps; i++) thetas.push(i * 180 / steps);
+      for (let i = steps - 1; i > 0; i--) thetas.push(i * 180 / steps);
+
+      thetas.forEach(th => {
+        const [p0, p1] = probabilities(th);
+
+        ctx.fillStyle = '#fafcff';
+        ctx.fillRect(0, 0, 540, 540);
+
+        ctx.fillStyle = '#1e1244';
+        ctx.font = 'bold 20px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Quantum Superposition', 270, 34);
+        ctx.font = '13px Inter, sans-serif';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText(`θ = ${Math.round(th)}°   •   |ψ⟩ = ${Math.sqrt(p0).toFixed(2)}|0⟩ + ${Math.sqrt(p1).toFixed(2)}|1⟩`, 270, 56);
+
+        drawBloch(ctx, 270, 225, 135, th, phiDeg, null);
+
+        ctx.fillStyle = '#1e1244';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText("Measurement probabilities  (Born's rule: P = |amplitude|²)", 270, 418);
+        drawProbBar(ctx, 60, 434, 420, '|0⟩', p0, '#2f80ed');
+        drawProbBar(ctx, 60, 466, 420, '|1⟩', p1, '#ff6097');
+
+        ctx.font = '9px monospace';
+        ctx.fillStyle = '#94a3b8';
+        ctx.textAlign = 'center';
+        ctx.fillText('Qiskit Fall Fest 2026', 270, 524);
+
+        frames.push(c.toDataURL('image/png'));
+      });
+
+      status.innerText = "Compiling GIF file with smooth palette...";
+
+      gifshot.createGIF({
+        images: frames,
+        gifWidth: 540,
+        gifHeight: 540,
+        interval: 0.15,
+        numWorkers: 2
+      }, function (obj) {
+        if (!obj.error) {
+          const dl = document.createElement('a');
+          dl.href = obj.image;
+          dl.download = 'quantum_superposition_qff2026.gif';
+          document.body.appendChild(dl);
+          dl.click();
+          document.body.removeChild(dl);
+          status.innerText = "GIF generated and downloaded successfully!";
+        } else {
+          status.innerText = "Error generating GIF. Please try again.";
+        }
+        setTimeout(() => status.classList.add('hidden'), 3000);
+        btn.disabled = false;
+        btn.classList.remove('opacity-50');
+        render();
+      });
+    }
+
+    // Inicializar al cargar
+    window.onload = function () {
+      applyPreset(2);
+      requestAnimationFrame(loop);
+    };
+  </script>
+</body>
+</html>

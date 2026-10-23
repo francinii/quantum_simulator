@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wave Interference: Constructive vs Destructive - Qiskit Style</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- MathJax para renderizado matemático -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <!-- gifshot para exportar la animación como GIF para diapositivas -->
+  <script src="https://cdn.jsdelivr.net/npm/gifshot@0.3.2/build/gifshot.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fafcff;
+      color: #1e1244;
+    }
+    .font-code {
+      font-family: 'Fira Code', monospace;
+    }
+  </style>
+</head>
+<body class="bg-[#fafcff] min-h-screen flex flex-col justify-between p-3 md:p-6 text-slate-800">
+
+  <!-- Enlace de regreso al índice -->
+  <nav class="w-full max-w-6xl mx-auto mb-2">
+    <a href="index.html" class="inline-flex items-center gap-1 text-xs font-bold text-[#2f80ed] hover:text-[#8b5cf6] transition-colors">← All simulations</a>
+  </nav>
+
+  <!-- Header: Qiskit Fall Fest Style -->
+  <header class="w-full max-w-6xl mx-auto text-center mb-4">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-[#ff6097] bg-[#fdf2f7] border border-[#ff85b3]/40 mb-2">
+      <span class="w-2 h-2 rounded-full bg-[#ff6097] animate-ping"></span>
+      Quantum Pedagogy &bull; Qiskit Fall Fest 2026
+    </div>
+    <h1 class="text-2xl md:text-4xl font-extrabold text-[#1e1244] tracking-tight">
+      Wave Interference: <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2f80ed] via-[#8b5cf6] to-[#ff6097]">Constructive vs. Destructive</span>
+    </h1>
+    <p class="text-xs md:text-sm text-slate-500 max-w-3xl mx-auto mt-1">
+      When two waves meet, they add point by point. Change the phase shift between them and watch how they reinforce each other or cancel out &mdash; the same mechanism quantum algorithms use to amplify correct answers.
+    </p>
+  </header>
+
+  <!-- Selector de Escenarios (Presets) -->
+  <div class="w-full max-w-6xl mx-auto mb-4">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+      <button id="presetBtn0" onclick="applyPreset(0)" class="preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Scenario 1</div>
+        <div class="text-xs font-extrabold text-[#1e1244] mt-0.5">Constructive</div>
+        <div class="text-[10px] text-slate-400 font-mono">Δφ = 0°</div>
+      </button>
+      <button id="presetBtn1" onclick="applyPreset(1)" class="preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#2f80ed]">Scenario 2</div>
+        <div class="text-xs font-extrabold text-[#1e1244] mt-0.5">Partial</div>
+        <div class="text-[10px] text-slate-400 font-mono">Δφ = 90°</div>
+      </button>
+      <button id="presetBtn2" onclick="applyPreset(2)" class="preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#ff6097]">Scenario 3</div>
+        <div class="text-xs font-extrabold text-[#1e1244] mt-0.5">Destructive</div>
+        <div class="text-[10px] text-slate-400 font-mono">Δφ = 180°</div>
+      </button>
+      <button id="presetBtn3" onclick="applyPreset(3)" class="preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#8b5cf6]">Scenario 4</div>
+        <div class="text-xs font-extrabold text-[#1e1244] mt-0.5">Unequal Amplitudes</div>
+        <div class="text-[10px] text-slate-400 font-mono">A = 1.0, B = 0.5, Δφ = 180°</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenedor Principal -->
+  <main class="w-full max-w-6xl mx-auto flex flex-col gap-4 flex-1">
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+      <!-- 1. Lienzo de Ondas (8 Cols) -->
+      <div class="lg:col-span-8 bg-white border border-[#cfe2f7] rounded-3xl p-4 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#2f80ed]">Wave Superposition</span>
+            <span id="typeBadge" class="text-xs font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono">
+              Constructive
+            </span>
+          </div>
+
+          <!-- Controles de Reproducción -->
+          <div class="flex items-center gap-2">
+            <button id="btnPlayPause" onclick="togglePlay()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#1e1244] text-white hover:bg-slate-800 transition-colors flex items-center gap-1.5 shadow-sm">
+              <svg id="playIcon" class="w-3.5 h-3.5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"/></svg>
+              <svg id="pauseIcon" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"/></svg>
+              <span id="playBtnText">Pause</span>
+            </button>
+            <div class="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 ml-2 pl-2 border-l border-slate-200">
+              <span>Speed:</span>
+              <input id="speedRange" type="range" min="0.25" max="2.0" step="0.25" value="1.0" class="w-20 accent-[#2f80ed] cursor-pointer">
+              <span id="speedDisplay" class="font-bold text-[#1e1244]">1.0x</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative w-full bg-[#f8fbff] border border-[#e2e8f0] rounded-2xl overflow-hidden">
+          <canvas id="waveCanvas" width="900" height="560" class="w-full h-auto block"></canvas>
+        </div>
+      </div>
+
+      <!-- 2. Panel de Control + Fasores (4 Cols) -->
+      <div class="lg:col-span-4 flex flex-col gap-4">
+
+        <div class="bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+            <h2 class="text-sm font-extrabold uppercase tracking-wider text-[#0284c7]">Controls</h2>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-blue-50 text-[#0284c7] font-bold font-mono">y = A·sin(kx − ωt + φ)</span>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="font-bold text-[#1e1244]">Phase shift Δφ</span>
+                <span id="phaseDisplay" class="font-mono font-bold text-[#8b5cf6]">0°</span>
+              </div>
+              <input id="phaseRange" type="range" min="0" max="360" step="1" value="0" class="w-full accent-[#8b5cf6] cursor-pointer">
+            </div>
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="font-bold text-[#2f80ed]">Amplitude A</span>
+                <span id="ampADisplay" class="font-mono font-bold text-[#2f80ed]">1.00</span>
+              </div>
+              <input id="ampARange" type="range" min="0" max="1" step="0.05" value="1" class="w-full accent-[#2f80ed] cursor-pointer">
+            </div>
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="font-bold text-[#ff6097]">Amplitude B</span>
+                <span id="ampBDisplay" class="font-mono font-bold text-[#ff6097]">1.00</span>
+              </div>
+              <input id="ampBRange" type="range" min="0" max="1" step="0.05" value="1" class="w-full accent-[#ff6097] cursor-pointer">
+            </div>
+          </div>
+        </div>
+
+        <!-- Diagrama de Fasores -->
+        <div class="bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm flex-1">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-sm font-extrabold uppercase tracking-wider text-[#d946ef]">Phasor Diagram</h2>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-pink-50 text-pink-600 font-bold font-mono">A⃗ + B⃗ = R⃗</span>
+          </div>
+          <canvas id="phasorCanvas" width="320" height="240" class="w-full h-auto block bg-[#f8fbff] border border-[#e2e8f0] rounded-2xl"></canvas>
+          <p class="text-[11px] text-slate-500 mt-2">
+            Each wave is an arrow whose angle is its phase. The resulting wave is the arrow sum: aligned arrows add up, opposite arrows cancel.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 3. Medidores de Resultado -->
+    <div class="bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-[#8b5cf6]">Resulting Wave</span>
+          <h3 class="text-sm font-bold text-[#1e1244]">Resultant Amplitude: $R = \sqrt{A^2 + B^2 + 2AB\cos\Delta\varphi}$</h3>
+        </div>
+        <div class="text-xs font-mono text-slate-500">
+          Intensity is proportional to the squared amplitude: $I \propto R^2$
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+        <div class="p-3 rounded-2xl bg-[#f8fbff] border border-blue-100">
+          <div class="text-xs font-bold text-slate-700">Resultant Amplitude R</div>
+          <div id="ampResult" class="text-2xl font-extrabold text-[#1e1244] font-mono mt-1">2.00</div>
+          <div class="text-[11px] text-slate-400 font-mono">max possible: <span id="ampMax">2.00</span></div>
+        </div>
+        <div class="p-3 rounded-2xl bg-[#faf5ff] border border-purple-100">
+          <div class="text-xs font-bold text-slate-700">Relative Intensity R² / (A+B)²</div>
+          <div class="h-4 bg-slate-100 rounded-full my-3 overflow-hidden">
+            <div id="intensityBar" class="h-full bg-gradient-to-r from-[#2f80ed] via-[#8b5cf6] to-[#ff6097] transition-all duration-200" style="width: 100%;"></div>
+          </div>
+          <div id="intensityText" class="text-sm font-extrabold text-[#1e1244]">100%</div>
+        </div>
+        <div class="p-3 rounded-2xl bg-[#fdf2f7] border border-pink-100">
+          <div class="text-xs font-bold text-slate-700">Interference Type</div>
+          <div id="typeText" class="text-lg font-extrabold text-emerald-600 mt-1">Fully Constructive</div>
+          <div id="typeHint" class="text-[11px] text-slate-500 mt-1">Crests meet crests: the waves reinforce each other.</div>
+        </div>
+      </div>
+
+      <!-- Barra de Exportación de Presentación -->
+      <div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+        <p class="text-xs text-slate-500">
+          Want to include this explanation in your class slides? Generate a looping GIF that sweeps the phase from 0° to 360°.
+        </p>
+        <button id="btnExportGif" onclick="exportPresentationGif()" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#1e1244] text-white hover:bg-slate-800 transition-colors shadow-sm flex items-center gap-2">
+          <svg class="w-4 h-4 text-[#ff85b3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span>Export GIF for Slides (540x540)</span>
+        </button>
+      </div>
+      <div id="exportStatus" class="text-[11px] text-center text-slate-500 mt-2 hidden font-medium"></div>
+    </div>
+
+    <!-- 4. Explicación Didáctica -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white border border-emerald-100 rounded-3xl p-5 shadow-sm">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+          <h2 class="text-sm font-extrabold uppercase tracking-wider text-emerald-600">Constructive</h2>
+        </div>
+        <div class="text-center text-xs py-1">$$\Delta\varphi = 0^\circ, 360^\circ, \dots \;\Rightarrow\; R = A + B$$</div>
+        <p class="text-[11px] text-slate-500 mt-1">
+          The waves are <strong>in phase</strong>: crest meets crest and trough meets trough. The amplitude grows and the intensity can reach four times that of a single wave.
+        </p>
+      </div>
+      <div class="bg-white border border-pink-100 rounded-3xl p-5 shadow-sm">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-3 h-3 rounded-full bg-[#ff6097]"></span>
+          <h2 class="text-sm font-extrabold uppercase tracking-wider text-[#ff6097]">Destructive</h2>
+        </div>
+        <div class="text-center text-xs py-1">$$\Delta\varphi = 180^\circ \;\Rightarrow\; R = |A - B|$$</div>
+        <p class="text-[11px] text-slate-500 mt-1">
+          The waves are <strong>out of phase</strong>: crest meets trough. With equal amplitudes they cancel completely and the result is a flat line.
+        </p>
+      </div>
+      <div class="bg-white border border-purple-100 rounded-3xl p-5 shadow-sm">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-3 h-3 rounded-full bg-[#8b5cf6]"></span>
+          <h2 class="text-sm font-extrabold uppercase tracking-wider text-[#8b5cf6]">Quantum Connection</h2>
+        </div>
+        <div class="text-center text-xs py-1">$$P = |\alpha_1 + \alpha_2|^2 \neq |\alpha_1|^2 + |\alpha_2|^2$$</div>
+        <p class="text-[11px] text-slate-500 mt-1">
+          In quantum mechanics, <strong>amplitudes</strong> (not probabilities) are added, so they can interfere. Algorithms like Grover's use constructive interference on the right answer and destructive interference on the wrong ones.
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer con Nota Didáctica -->
+  <footer class="w-full max-w-6xl mx-auto mt-5 p-4 rounded-2xl bg-white border border-slate-200 text-xs text-slate-600 flex flex-col md:flex-row justify-between items-center gap-2 shadow-sm">
+    <div class="flex items-center gap-2">
+      <span class="w-6 h-6 rounded-lg bg-[#1e1244] text-white flex items-center justify-center font-bold text-xs font-mono">∿</span>
+      <span><strong>Pedagogical Takeaway:</strong> Phase decides everything: the same two waves can double each other or disappear completely.</span>
+    </div>
+    <div class="text-[11px] text-slate-400 font-mono">
+      Qiskit Fall Fest 2026 &bull; Mathematical Quantum Physics
+    </div>
+  </footer>
+
+  <!-- Script de Control, Animación y Lógica Física -->
+  <script>
+    // --- Estado Global ---
+    let phaseDeg = 0;
+    let ampA = 1.0;
+    let ampB = 1.0;
+    let isPlaying = true;
+    let speed = 1.0;
+    let time = 0;
+    let lastFrame = null;
+
+    const presets = [
+      { phase: 0, a: 1.0, b: 1.0 },
+      { phase: 90, a: 1.0, b: 1.0 },
+      { phase: 180, a: 1.0, b: 1.0 },
+      { phase: 180, a: 1.0, b: 0.5 }
+    ];
+
+    const COLORS = {
+      a: '#2f80ed', aFill: 'rgba(47, 128, 237, 0.18)',
+      b: '#ff6097', bFill: 'rgba(255, 96, 151, 0.18)',
+      sum: '#1e1244', sumFill: 'rgba(139, 92, 246, 0.14)',
+      axis: '#cbd5e1', label: '#1e1244'
+    };
+
+    const waveCanvas = document.getElementById('waveCanvas');
+    const waveCtx = waveCanvas.getContext('2d');
+    const phasorCanvas = document.getElementById('phasorCanvas');
+    const phasorCtx = phasorCanvas.getContext('2d');
+
+    // --- Física: amplitud resultante ---
+    function resultantAmplitude(a, b, phiDeg) {
+      const phi = phiDeg * Math.PI / 180;
+      return Math.sqrt(Math.max(0, a * a + b * b + 2 * a * b * Math.cos(phi)));
+    }
+
+    function classify(a, b, phiDeg) {
+      const c = Math.cos(phiDeg * Math.PI / 180);
+      if (a === 0 || b === 0) return { text: 'No Interference', color: 'text-slate-500', badge: 'bg-slate-50 text-slate-600 border-slate-200', hint: 'Only one wave is present.' };
+      if (c > 0.97) return { text: 'Fully Constructive', color: 'text-emerald-600', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200', hint: 'Crests meet crests: the waves reinforce each other.' };
+      if (c < -0.97) {
+        const hint = Math.abs(a - b) < 0.01 ? 'Crests meet troughs: the waves cancel completely.' : 'Crests meet troughs, but unequal amplitudes leave a residual wave.';
+        return { text: 'Fully Destructive', color: 'text-[#ff6097]', badge: 'bg-pink-50 text-pink-700 border-pink-200', hint };
+      }
+      if (c > 0) return { text: 'Mostly Constructive', color: 'text-[#2f80ed]', badge: 'bg-blue-50 text-[#2f80ed] border-blue-200', hint: 'Partially aligned: the result is larger than each wave alone.' };
+      return { text: 'Mostly Destructive', color: 'text-[#8b5cf6]', badge: 'bg-purple-50 text-purple-700 border-purple-200', hint: 'Partially opposed: the waves mostly cancel each other.' };
+    }
+
+    // --- Dibujo de las tres ondas (reutilizable para el GIF) ---
+    function drawWaveRow(ctx, x0, y0, w, h, label, fn, stroke, fill) {
+      const mid = y0 + h / 2 + 10;
+      const unit = (h / 2 - 14) / 2; // escala: amplitud 2 llena la fila
+
+      ctx.fillStyle = COLORS.label;
+      ctx.font = 'bold 18px Inter, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(label, x0, y0 + 22);
+
+      ctx.strokeStyle = COLORS.axis;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x0, mid);
+      ctx.lineTo(x0 + w, mid);
+      ctx.stroke();
+
+      // Relleno entre la curva y el eje
+      ctx.beginPath();
+      ctx.moveTo(x0, mid);
+      for (let i = 0; i <= w; i += 2) ctx.lineTo(x0 + i, mid - fn(i / w) * unit);
+      ctx.lineTo(x0 + w, mid);
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+
+      // Curva
+      ctx.beginPath();
+      for (let i = 0; i <= w; i += 2) {
+        const y = mid - fn(i / w) * unit;
+        if (i === 0) ctx.moveTo(x0 + i, y); else ctx.lineTo(x0 + i, y);
+      }
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    function drawWaves(ctx, x0, y0, w, h, a, b, phiDeg, t) {
+      const phi = phiDeg * Math.PI / 180;
+      const k = 2 * Math.PI * 2; // dos longitudes de onda visibles
+      const rowH = h / 3;
+      const waveA = u => a * Math.sin(k * u - t);
+      const waveB = u => b * Math.sin(k * u - t + phi);
+
+      drawWaveRow(ctx, x0, y0, w, rowH, 'Wave A', waveA, COLORS.a, COLORS.aFill);
+      drawWaveRow(ctx, x0, y0 + rowH, w, rowH, `Wave B (shifted by ${Math.round(phiDeg)}°)`, waveB, COLORS.b, COLORS.bFill);
+      drawWaveRow(ctx, x0, y0 + 2 * rowH, w, rowH, 'Sum A + B (superposition)', u => waveA(u) + waveB(u), COLORS.sum, COLORS.sumFill);
+    }
+
+    // --- Diagrama de fasores ---
+    function drawArrow(ctx, x1, y1, x2, y2, color, width) {
+      const len = Math.hypot(x2 - x1, y2 - y1);
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      if (len < 4) return;
+      const ang = Math.atan2(y2 - y1, x2 - x1);
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - 10 * Math.cos(ang - 0.4), y2 - 10 * Math.sin(ang - 0.4));
+      ctx.lineTo(x2 - 10 * Math.cos(ang + 0.4), y2 - 10 * Math.sin(ang + 0.4));
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawPhasors(ctx, cx, cy, scale, a, b, phiDeg, t) {
+      const phi = phiDeg * Math.PI / 180;
+      const base = -t * 0.25; // rotación lenta para mostrar que todo gira junto
+
+      // Círculo de referencia (amplitud máxima)
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, 2 * scale, 0, 2 * Math.PI);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const ax = cx + a * scale * Math.cos(base);
+      const ay = cy - a * scale * Math.sin(base);
+      const bx = ax + b * scale * Math.cos(base + phi);
+      const by = ay - b * scale * Math.sin(base + phi);
+
+      drawArrow(ctx, cx, cy, bx, by, COLORS.sum, 4);
+      drawArrow(ctx, cx, cy, ax, ay, COLORS.a, 3);
+      drawArrow(ctx, ax, ay, bx, by, COLORS.b, 3);
+
+      ctx.fillStyle = COLORS.sum;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 3.5, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+
+    // --- Renderizado principal ---
+    function render() {
+      waveCtx.clearRect(0, 0, waveCanvas.width, waveCanvas.height);
+      drawWaves(waveCtx, 40, 10, waveCanvas.width - 80, waveCanvas.height - 20, ampA, ampB, phaseDeg, time);
+
+      phasorCtx.clearRect(0, 0, phasorCanvas.width, phasorCanvas.height);
+      drawPhasors(phasorCtx, phasorCanvas.width / 2, phasorCanvas.height / 2, 52, ampA, ampB, phaseDeg, time);
+    }
+
+    function updateReadouts() {
+      const r = resultantAmplitude(ampA, ampB, phaseDeg);
+      const max = ampA + ampB;
+      const intensity = max > 0 ? (r * r) / (max * max) * 100 : 0;
+      const info = classify(ampA, ampB, phaseDeg);
+
+      document.getElementById('phaseDisplay').innerText = `${Math.round(phaseDeg)}°`;
+      document.getElementById('ampADisplay').innerText = ampA.toFixed(2);
+      document.getElementById('ampBDisplay').innerText = ampB.toFixed(2);
+      document.getElementById('ampResult').innerText = r.toFixed(2);
+      document.getElementById('ampMax').innerText = max.toFixed(2);
+      document.getElementById('intensityBar').style.width = `${intensity}%`;
+      document.getElementById('intensityText').innerText = `${intensity.toFixed(0)}%`;
+
+      const typeText = document.getElementById('typeText');
+      typeText.className = `text-lg font-extrabold mt-1 ${info.color}`;
+      typeText.innerText = info.text;
+      document.getElementById('typeHint').innerText = info.hint;
+
+      const badge = document.getElementById('typeBadge');
+      badge.className = `text-xs font-semibold px-2 py-0.5 rounded-md border font-mono ${info.badge}`;
+      badge.innerText = info.text;
+
+      // Resaltar el preset activo si coincide
+      presets.forEach((p, i) => {
+        const btn = document.getElementById(`presetBtn${i}`);
+        const active = p.phase === Math.round(phaseDeg) && p.a === ampA && p.b === ampB;
+        btn.className = active
+          ? 'preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-[#2f80ed] shadow-md ring-2 ring-[#2f80ed]/20'
+          : 'preset-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200 hover:border-slate-300 opacity-75';
+      });
+
+      if (!isPlaying) render();
+    }
+
+    function applyPreset(i) {
+      const p = presets[i];
+      phaseDeg = p.phase;
+      ampA = p.a;
+      ampB = p.b;
+      document.getElementById('phaseRange').value = phaseDeg;
+      document.getElementById('ampARange').value = ampA;
+      document.getElementById('ampBRange').value = ampB;
+      updateReadouts();
+    }
+
+    // --- Bucle de animación ---
+    function loop(ts) {
+      if (lastFrame === null) lastFrame = ts;
+      const dt = (ts - lastFrame) / 1000;
+      lastFrame = ts;
+      if (isPlaying) {
+        time += dt * 2.2 * speed;
+        render();
+      }
+      requestAnimationFrame(loop);
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      document.getElementById('playBtnText').innerText = isPlaying ? 'Pause' : 'Resume';
+      document.getElementById('playIcon').classList.toggle('hidden', isPlaying);
+      document.getElementById('pauseIcon').classList.toggle('hidden', !isPlaying);
+    }
+
+    // --- Controles ---
+    document.getElementById('phaseRange').addEventListener('input', e => { phaseDeg = parseFloat(e.target.value); updateReadouts(); });
+    document.getElementById('ampARange').addEventListener('input', e => { ampA = parseFloat(e.target.value); updateReadouts(); });
+    document.getElementById('ampBRange').addEventListener('input', e => { ampB = parseFloat(e.target.value); updateReadouts(); });
+    document.getElementById('speedRange').addEventListener('input', e => {
+      speed = parseFloat(e.target.value);
+      document.getElementById('speedDisplay').innerText = `${speed.toFixed(1)}x`;
+    });
+
+    // --- Exportador a GIF para Presentaciones (540x540) ---
+    function exportPresentationGif() {
+      if (typeof gifshot === 'undefined') {
+        alert("The gifshot library is still loading. Please try again in a few moments.");
+        return;
+      }
+
+      const btn = document.getElementById('btnExportGif');
+      const status = document.getElementById('exportStatus');
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+      status.classList.remove('hidden');
+      status.innerText = "Capturing phase sweep frames...";
+
+      const c = document.createElement('canvas');
+      c.width = 540;
+      c.height = 540;
+      const ctx = c.getContext('2d');
+      const frames = [];
+      const totalFrames = 36;
+
+      for (let f = 0; f < totalFrames; f++) {
+        const phi = (f / totalFrames) * 360;
+        const r = resultantAmplitude(ampA, ampB, phi);
+        const info = classify(ampA, ampB, phi);
+
+        ctx.fillStyle = '#fafcff';
+        ctx.fillRect(0, 0, 540, 540);
+
+        ctx.fillStyle = '#1e1244';
+        ctx.font = 'bold 20px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Wave Interference', 270, 34);
+        ctx.font = '13px Inter, sans-serif';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText(`Phase shift: ${Math.round(phi)}°  •  ${info.text}`, 270, 56);
+
+        drawWaves(ctx, 30, 66, 480, 420, ampA, ampB, phi, 0);
+
+        // Barra de amplitud resultante
+        const max = ampA + ampB || 1;
+        ctx.fillStyle = '#e2e8f0';
+        ctx.beginPath();
+        ctx.roundRect(30, 496, 480, 10, 5);
+        ctx.fill();
+        const grad = ctx.createLinearGradient(30, 0, 510, 0);
+        grad.addColorStop(0, '#2f80ed');
+        grad.addColorStop(0.5, '#8b5cf6');
+        grad.addColorStop(1, '#ff6097');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.roundRect(30, 496, Math.max(1, 480 * r / max), 10, 5);
+        ctx.fill();
+
+        ctx.font = '9px monospace';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(`R = ${r.toFixed(2)}  •  Qiskit Fall Fest 2026`, 270, 526);
+
+        frames.push(c.toDataURL('image/png'));
+      }
+
+      status.innerText = "Compiling GIF file with smooth palette...";
+
+      gifshot.createGIF({
+        images: frames,
+        gifWidth: 540,
+        gifHeight: 540,
+        interval: 0.15,
+        numWorkers: 2
+      }, function (obj) {
+        if (!obj.error) {
+          const dl = document.createElement('a');
+          dl.href = obj.image;
+          dl.download = 'wave_interference_qff2026.gif';
+          document.body.appendChild(dl);
+          dl.click();
+          document.body.removeChild(dl);
+          status.innerText = "GIF generated and downloaded successfully!";
+        } else {
+          status.innerText = "Error generating GIF. Please try again.";
+        }
+        setTimeout(() => status.classList.add('hidden'), 3000);
+        btn.disabled = false;
+        btn.classList.remove('opacity-50');
+      });
+    }
+
+    // Inicializar al cargar
+    window.onload = function () {
+      applyPreset(0);
+      requestAnimationFrame(loop);
+    };
+  </script>
+</body>
+</html>

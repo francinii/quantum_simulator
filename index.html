@@ -172,6 +172,67 @@
         </div>
       </a>
 
+      <!-- Card 4: Wave Interference -->
+      <a href="interferencia_constructiva_y_destructiva.html" class="sim-card group bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm flex flex-col">
+        <div class="bg-[#f8fbff] border border-[#e2e8f0] rounded-2xl p-3 mb-4 overflow-hidden">
+          <svg viewBox="0 0 300 120" class="w-full h-auto">
+            <!-- Onda A, onda B y su suma -->
+            <path d="M 10 30 Q 45 10 80 30 T 150 30 T 220 30 T 290 30" fill="none" stroke="#2f80ed" stroke-width="2.5"/>
+            <path d="M 10 62 Q 45 42 80 62 T 150 62 T 220 62 T 290 62" fill="none" stroke="#ff6097" stroke-width="2.5"/>
+            <path d="M 10 98 Q 45 64 80 98 T 150 98 T 220 98 T 290 98" fill="rgba(139, 92, 246, 0.10)" stroke="#1e1244" stroke-width="3"/>
+            <text x="292" y="22" text-anchor="end" font-size="10" font-weight="bold" fill="#2f80ed" font-family="'Fira Code', monospace">A</text>
+            <text x="292" y="54" text-anchor="end" font-size="10" font-weight="bold" fill="#ff6097" font-family="'Fira Code', monospace">B</text>
+            <text x="292" y="118" text-anchor="end" font-size="10" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">A + B</text>
+          </svg>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Simulation 04</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold font-code">Δφ</span>
+        </div>
+        <h2 class="text-lg font-extrabold text-[#1e1244] leading-snug">Wave Interference: Constructive vs. Destructive</h2>
+        <p class="text-xs text-slate-500 mt-2 flex-1">
+          Shift the phase between two waves and watch them reinforce or cancel each other, with a live phasor diagram and resultant amplitude.
+        </p>
+        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+          <span class="text-slate-400 font-code">Interference</span>
+          <span class="font-bold text-emerald-600 group-hover:translate-x-1 transition-transform">Open simulation →</span>
+        </div>
+      </a>
+
+      <!-- Card 5: Superposition & Probabilities -->
+      <a href="superposicion_y_probabilidades.html" class="sim-card group bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm flex flex-col">
+        <div class="bg-[#f8fbff] border border-[#e2e8f0] rounded-2xl p-3 mb-4 overflow-hidden">
+          <svg viewBox="0 0 300 120" class="w-full h-auto">
+            <!-- Mini esfera de Bloch -->
+            <circle cx="80" cy="60" r="45" fill="#eef5fd" stroke="#cfe2f7" stroke-width="2"/>
+            <ellipse cx="80" cy="60" rx="45" ry="12" fill="none" stroke="#a5c8f0" stroke-width="1.2" stroke-dasharray="4,4"/>
+            <line x1="80" y1="60" x2="118" y2="40" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="118" cy="40" r="5" fill="#8b5cf6"/>
+            <text x="80" y="11" text-anchor="middle" font-size="10" font-weight="bold" fill="#2f80ed" font-family="'Fira Code', monospace">|0⟩</text>
+            <text x="80" y="117" text-anchor="middle" font-size="10" font-weight="bold" fill="#ff6097" font-family="'Fira Code', monospace">|1⟩</text>
+            <!-- Barras de probabilidad -->
+            <rect x="170" y="30" width="110" height="14" rx="7" fill="#e2e8f0"/>
+            <rect x="170" y="30" width="82" height="14" rx="7" fill="#2f80ed"/>
+            <rect x="170" y="70" width="110" height="14" rx="7" fill="#e2e8f0"/>
+            <rect x="170" y="70" width="28" height="14" rx="7" fill="#ff6097"/>
+            <text x="170" y="24" font-size="10" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">P(0) = 75%</text>
+            <text x="170" y="64" font-size="10" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">P(1) = 25%</text>
+          </svg>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#0284c7]">Simulation 05</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-blue-50 text-[#0284c7] font-bold font-code">α|0⟩ + β|1⟩</span>
+        </div>
+        <h2 class="text-lg font-extrabold text-[#1e1244] leading-snug">Quantum Superposition &amp; Probabilities</h2>
+        <p class="text-xs text-slate-500 mt-2 flex-1">
+          Move a qubit on the Bloch sphere, see how amplitudes become probabilities, and measure it hundreds of times to watch the statistics emerge.
+        </p>
+        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+          <span class="text-slate-400 font-code">Born's Rule</span>
+          <span class="font-bold text-[#0284c7] group-hover:translate-x-1 transition-transform">Open simulation →</span>
+        </div>
+      </a>
+
     </div>
   </main>
 
