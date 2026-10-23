@@ -173,10 +173,6 @@
               <stop offset="0%" stop-color="#ffd5e5"/>
               <stop offset="100%" stop-color="#ff85b3"/>
             </linearGradient>
-            <linearGradient id="xGateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#bae6fd"/>
-              <stop offset="100%" stop-color="#38bdf8"/>
-            </linearGradient>
             <filter id="laserGlow" x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="3.5" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over"/>
@@ -211,12 +207,6 @@
           <!-- Conector vertical punteado para H (x) H -->
           <line x1="285" y1="80" x2="285" y2="100" stroke="#ff85b3" stroke-width="2" stroke-dasharray="3,3"/>
           <text x="320" y="94" font-size="12" font-weight="bold" fill="#ff6097" font-family="'Fira Code', monospace">H ⊗ H</text>
-
-          <!-- Compuerta Pauli-X en q0 (como en la diapositiva para el siguiente paso) -->
-          <g transform="translate(420, 30)">
-            <rect id="rectX0" width="50" height="50" rx="10" fill="url(#xGateGrad)" stroke="#0284c7" stroke-width="1.8"/>
-            <text x="25" y="32" text-anchor="middle" font-size="22" font-weight="800" fill="#0369a1" font-family="'Inter', sans-serif">X</text>
-          </g>
 
           <!-- Llave final de salida -->
           <path d="M 570 40 Q 585 40 585 87.5 Q 585 90 595 90 Q 585 90 585 92.5 Q 585 140 570 140" 
