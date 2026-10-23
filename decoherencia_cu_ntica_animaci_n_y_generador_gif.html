@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Decoherence Simulation - Qiskit Style</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Three.js CDN para la Esfera de Bloch en 3D -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- CCapture.js para exportar el GIF directamente -->
+  <script src="https://cdn.jsdelivr.net/npm/gifshot@0.3.2/build/gifshot.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #ffffff;
+      color: #1e1244;
+    }
+    canvas {
+      outline: none;
+    }
+  </style>
+</head>
+<body class="bg-white min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+
+  <!-- Header -->
+  <header class="w-full max-w-5xl text-center mb-6">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-[#ff6097] bg-[#fdf2f7] border border-[#ff85b3]/40 mb-3">
+      Quantum Physics &bull; Qiskit Fall Fest Style
+    </div>
+    <h1 class="text-3xl md:text-4xl font-extrabold text-[#1e1244] tracking-tight">
+      Visual Simulation of <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2f80ed] via-[#8b5cf6] to-[#ff6097]">Quantum Decoherence</span>
+    </h1>
+    <p class="text-sm md:text-base text-slate-500 max-w-2xl mx-auto mt-2">
+      Observe how interaction with the environment destroys quantum superposition, shrinking the pure state vector into a classical statistical mixture.
+    </p>
+  </header>
+
+  <!-- Interactive Simulation Canvas Grid -->
+  <main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+    
+    <!-- 3D Bloch Sphere Container -->
+    <div class="lg:col-span-7 bg-[#f8fbff] border border-[#cfe2f7] rounded-2xl p-4 shadow-sm flex flex-col justify-between relative overflow-hidden">
+      <div class="flex items-center justify-between mb-2 z-10">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-[#2f80ed]">3D Visualization</span>
+          <h2 class="text-base font-bold text-[#1e1244]">Bloch Sphere: Vector Collapse</h2>
+        </div>
+        <span id="purityBadge" class="text-xs px-2.5 py-1 rounded-md font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">
+          Pure State: 100%
+        </span>
+      </div>
+
+      <!-- 3D Canvas Container -->
+      <div id="threeContainer" class="w-full h-72 sm:h-80 md:h-96 rounded-xl relative cursor-grab active:cursor-grabbing bg-white/70 border border-[#e2e8f0]/60">
+        <div class="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-md text-[11px] text-slate-600 shadow-sm border border-slate-200 pointer-events-none">
+          Drag with mouse to rotate camera
+        </div>
+      </div>
+
+      <!-- Live state values indicator -->
+      <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-[#cfe2f7]/60 text-center">
+        <div class="p-2 rounded-xl bg-white border border-[#cfe2f7]/40">
+          <div class="text-[11px] text-slate-400 font-medium">|⟨X⟩| Coherence</div>
+          <div id="valX" class="text-sm font-bold text-[#2f80ed]">0.85</div>
+        </div>
+        <div class="p-2 rounded-xl bg-white border border-[#cfe2f7]/40">
+          <div class="text-[11px] text-slate-400 font-medium">|⟨Y⟩| Phase</div>
+          <div id="valY" class="text-sm font-bold text-[#8b5cf6]">0.52</div>
+        </div>
+        <div class="p-2 rounded-xl bg-white border border-[#cfe2f7]/40">
+          <div class="text-[11px] text-slate-400 font-medium">⟨Z⟩ Population</div>
+          <div id="valZ" class="text-sm font-bold text-[#ff6097]">0.05</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Wavepacket Decay Plot & Controls -->
+    <div class="lg:col-span-5 flex flex-col gap-4">
+      
+      <!-- 2D Canvas: Density Matrix & Wavepacket Decay -->
+      <div class="bg-[#fdf9fb] border border-[#fbd4e2] rounded-2xl p-4 shadow-sm flex flex-col">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-[#ff6097]">Time Evolution</span>
+            <h3 class="text-sm font-bold text-[#1e1244]">Loss of Quantum Interference</h3>
+          </div>
+        </div>
+        <div class="w-full bg-white rounded-xl border border-[#fbd4e2]/60 p-2">
+          <canvas id="waveCanvas" width="400" height="150" class="w-full h-32 block"></canvas>
+        </div>
+        <div class="flex justify-between items-center text-[11px] text-slate-500 mt-2 px-1">
+          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#2f80ed]"></span> Quantum Wave</span>
+          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#ff85b3]"></span> Envelope $e^{-t/T_2}$</span>
+          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-400"></span> Classical</span>
+        </div>
+      </div>
+
+      <!-- Controls Panel -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex-1 flex flex-col justify-between">
+        
+        <div class="space-y-4">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Simulation Controls</h3>
+
+          <!-- Model select: T2 (Dephasing) vs T1 (Relaxation) -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Noise Mechanism:</label>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="btnDephase" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#2f80ed] text-white transition-all shadow-sm">
+                Dephasing ($T_2$)
+              </button>
+              <button id="btnRelax" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all">
+                Relaxation ($T_1$)
+              </button>
+            </div>
+          </div>
+
+          <!-- Noise Rate Slider -->
+          <div>
+            <div class="flex justify-between items-center text-xs font-semibold text-slate-700 mb-1">
+              <span>Decoherence Rate ($\gamma$)</span>
+              <span id="rateLabel" class="text-[#2f80ed] font-bold">1.2x</span>
+            </div>
+            <input id="noiseRate" type="range" min="0.2" max="3.0" step="0.1" value="1.2"
+              class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#2f80ed]">
+          </div>
+
+          <!-- Buttons: Play/Pause/Reset -->
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button id="btnPlayPause" class="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-slate-900 text-white hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
+              <svg id="playIcon" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"/></svg>
+              <svg id="pauseIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"/></svg>
+              <span id="playText">Pause</span>
+            </button>
+            <button id="btnReset" class="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-[#f4f8fe] text-[#2f80ed] hover:bg-[#e6f0fc] transition-colors border border-[#cfe2f7]">
+              Reset Cycle
+            </button>
+          </div>
+        </div>
+
+        <!-- GIF Export Tool -->
+        <div class="pt-4 border-t border-slate-100 mt-3">
+          <button id="btnExportGif" class="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-gradient-to-r from-[#ff85b3] via-[#8b5cf6] to-[#2f80ed] text-white hover:opacity-95 transition-opacity shadow-md flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span id="exportText">Generate and Download GIF</span>
+          </button>
+          <div id="exportStatus" class="text-[11px] text-center text-slate-400 mt-1.5 hidden">
+            Capturing frames... 0%
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Formula & Educational Footer -->
+  <footer class="w-full max-w-5xl mt-6 p-4 rounded-2xl bg-[#f8fafc] border border-slate-200 text-xs text-slate-600 flex flex-col md:flex-row justify-between items-center gap-3">
+    <div class="flex items-center gap-3">
+      <div class="w-7 h-7 rounded-xl bg-[#231555] text-white flex items-center justify-center font-bold text-sm">
+        Ψ
+      </div>
+      <div>
+        <strong class="text-[#1e1244]">Phase Damping Model:</strong> $\rho(t) = \frac{1}{2}\begin{bmatrix} 1 & e^{-t/T_2} \\ e^{-t/T_2} & 1 \end{bmatrix}$ &bull; The vector shrinks toward the classical center.
+      </div>
+    </div>
+    <div class="text-[11px] text-slate-400">
+      Qiskit Fall Fest 2026 Edition
+    </div>
+  </footer>
+
+  <!-- Simulation Logic & GIF Exporter -->
+  <script>
+    // --- Global Parameters ---
+    let isPlaying = true;
+    let time = 0;
+    let decayMode = 'dephasing'; // 'dephasing' or 'relaxation'
+    let noiseMultiplier = 1.2;
+    const CYCLE_DURATION = 5.0; // Seconds for a full decoherence cycle
+
+    // Three.js instances
+    let scene, camera, renderer, sphereMesh, equatorLine, vectorArrow, vectorTip, originDot;
+    let isDragging = false;
+    let prevMousePos = { x: 0, y: 0 };
+    let sphericalCoords = { radius: 3.5, theta: Math.PI / 4, phi: Math.PI / 4 };
+
+    const threeContainer = document.getElementById('threeContainer');
+    const waveCanvas = document.getElementById('waveCanvas');
+    const waveCtx = waveCanvas.getContext('2d');
+
+    // --- 1. Initialize Three.js Bloch Sphere ---
+    function initThree() {
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xffffff);
+
+      const width = threeContainer.clientWidth;
+      const height = threeContainer.clientHeight;
+      camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+      updateCameraPosition();
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      threeContainer.appendChild(renderer.domElement);
+
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+      scene.add(ambientLight);
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+      dirLight.position.set(5, 10, 7);
+      scene.add(dirLight);
+
+      // Translucent Pastel Bloch Sphere
+      const sphereGeo = new THREE.SphereGeometry(1.2, 40, 40);
+      const sphereMat = new THREE.MeshPhongMaterial({
+        color: 0x93c5fd, // Pastel Sky Blue
+        transparent: true,
+        opacity: 0.22,
+        roughness: 0.1,
+        shininess: 90,
+        depthWrite: false
+      });
+      sphereMesh = new THREE.Mesh(sphereGeo, sphereMat);
+      scene.add(sphereMesh);
+
+      // Wireframe guide
+      const wireMat = new THREE.MeshBasicMaterial({
+        color: 0x2f80ed,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.08
+      });
+      const wireMesh = new THREE.Mesh(sphereGeo, wireMat);
+      scene.add(wireMesh);
+
+      // Equator Ring (Lavender)
+      const equatorGeo = new THREE.RingGeometry(1.19, 1.21, 64);
+      const equatorMat = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, side: THREE.DoubleSide, transparent: true, opacity: 0.45 });
+      equatorLine = new THREE.Mesh(equatorGeo, equatorMat);
+      equatorLine.rotation.x = Math.PI / 2;
+      scene.add(equatorLine);
+
+      // Coordinate Axes
+      const axisMat = new THREE.LineBasicMaterial({ color: 0xcfd8dc, transparent: true, opacity: 0.8 });
+      function makeAxis(p1, p2) {
+        const geo = new THREE.BufferGeometry().setFromPoints([p1, p2]);
+        return new THREE.Line(geo, axisMat);
+      }
+      scene.add(makeAxis(new THREE.Vector3(-1.4, 0, 0), new THREE.Vector3(1.4, 0, 0))); // X
+      scene.add(makeAxis(new THREE.Vector3(0, -1.4, 0), new THREE.Vector3(0, 1.4, 0))); // Z
+      scene.add(makeAxis(new THREE.Vector3(0, 0, -1.4), new THREE.Vector3(0, 0, 1.4))); // Y
+
+      // Text Sprites for |0> and |1>
+      function createTextSprite(text, colorHex) {
+        const c = document.createElement('canvas');
+        c.width = 128;
+        c.height = 128;
+        const ctx = c.getContext('2d');
+        ctx.font = 'bold 54px Inter, sans-serif';
+        ctx.fillStyle = colorHex;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, 64, 64);
+        const texture = new THREE.CanvasTexture(c);
+        const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+        const sprite = new THREE.Sprite(spriteMat);
+        sprite.scale.set(0.4, 0.4, 1);
+        return sprite;
+      }
+      const s0 = createTextSprite('|0⟩', '#231555');
+      s0.position.set(0, 1.55, 0);
+      scene.add(s0);
+
+      const s1 = createTextSprite('|1⟩', '#231555');
+      s1.position.set(0, -1.55, 0);
+      scene.add(s1);
+
+      const sPlus = createTextSprite('|+⟩', '#2f80ed');
+      sPlus.position.set(1.5, 0, 0);
+      scene.add(sPlus);
+
+      // Origin Center Dot
+      const originGeo = new THREE.SphereGeometry(0.04, 16, 16);
+      const originMat = new THREE.MeshBasicMaterial({ color: 0x64748b });
+      originDot = new THREE.Mesh(originGeo, originMat);
+      scene.add(originDot);
+
+      // State Vector (Stem & Cone Tip)
+      const arrowGeo = new THREE.CylinderGeometry(0.022, 0.022, 1, 16);
+      const arrowMat = new THREE.MeshPhongMaterial({ color: 0xff6097, shininess: 80 }); // Flamingo Pink
+      vectorArrow = new THREE.Mesh(arrowGeo, arrowMat);
+      scene.add(vectorArrow);
+
+      const coneGeo = new THREE.ConeGeometry(0.065, 0.16, 16);
+      const coneMat = new THREE.MeshPhongMaterial({ color: 0xff4081 });
+      vectorTip = new THREE.Mesh(coneGeo, coneMat);
+      scene.add(vectorTip);
+
+      // Mouse Orbit Controls
+      threeContainer.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        prevMousePos = { x: e.clientX, y: e.clientY };
+      });
+      window.addEventListener('mouseup', () => isDragging = false);
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevMousePos.x;
+        const dy = e.clientY - prevMousePos.y;
+        sphericalCoords.theta -= dx * 0.01;
+        sphericalCoords.phi = Math.max(0.1, Math.min(Math.PI - 0.1, sphericalCoords.phi - dy * 0.01));
+        updateCameraPosition();
+        prevMousePos = { x: e.clientX, y: e.clientY };
+      });
+
+      // Touch support for mobile
+      threeContainer.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isDragging = true;
+          prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+      }, { passive: true });
+      window.addEventListener('touchend', () => isDragging = false);
+      window.addEventListener('touchmove', (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - prevMousePos.x;
+        const dy = e.touches[0].clientY - prevMousePos.y;
+        sphericalCoords.theta -= dx * 0.015;
+        sphericalCoords.phi = Math.max(0.1, Math.min(Math.PI - 0.1, sphericalCoords.phi - dy * 0.015));
+        updateCameraPosition();
+        prevMousePos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }, { passive: true });
+
+      window.addEventListener('resize', onResize);
+    }
+
+    function updateCameraPosition() {
+      camera.position.x = sphericalCoords.radius * Math.sin(sphericalCoords.phi) * Math.cos(sphericalCoords.theta);
+      camera.position.y = sphericalCoords.radius * Math.cos(sphericalCoords.phi);
+      camera.position.z = sphericalCoords.radius * Math.sin(sphericalCoords.phi) * Math.sin(sphericalCoords.theta);
+      camera.lookAt(0, 0, 0);
+    }
+
+    function onResize() {
+      const w = threeContainer.clientWidth;
+      const h = threeContainer.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    }
+
+    // --- 2. Update Physics & Vector Geometry ---
+    function updateStateVector(t) {
+      const normalizedTime = (t % CYCLE_DURATION) / CYCLE_DURATION; // 0.0 to 1.0
+      const decayFactor = Math.exp(-normalizedTime * 3.5 * noiseMultiplier); // Exponential decay e^(-t/T)
+      const larmorPhase = t * 4.0; // Precession around Z
+
+      let x, y, z;
+      if (decayMode === 'dephasing') {
+        // T2 dephasing: Vector stays in XY equator but length decays to 0 (mixed center)
+        const radius = 1.18 * decayFactor;
+        x = radius * Math.cos(larmorPhase);
+        y = radius * Math.sin(larmorPhase);
+        z = 0.02 * Math.sin(t * 2); // Tiny wobble
+      } else {
+        // T1 relaxation: Decays toward ground state |0> (z = +1.18)
+        const xyRadius = 1.18 * decayFactor;
+        x = xyRadius * Math.cos(larmorPhase);
+        y = xyRadius * Math.sin(larmorPhase);
+        z = 1.18 * (1.0 - decayFactor) * 0.95;
+      }
+
+      // Reorient vector cylinder and cone
+      const target = new THREE.Vector3(x, z, y); // Map physics Z to Three.js Y (up)
+      const len = target.length();
+
+      if (len > 0.04) {
+        vectorArrow.visible = true;
+        vectorTip.visible = true;
+
+        const halfPoint = target.clone().multiplyScalar(0.5);
+        vectorArrow.position.copy(halfPoint);
+        vectorArrow.scale.set(1, Math.max(0.01, len - 0.14), 1);
+        vectorArrow.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), target.clone().normalize());
+
+        const tipPos = target.clone().sub(target.clone().normalize().multiplyScalar(0.08));
+        vectorTip.position.copy(tipPos);
+        vectorTip.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), target.clone().normalize());
+      } else {
+        vectorArrow.visible = false;
+        vectorTip.visible = false;
+      }
+
+      // Update badge and readout cards
+      const purityPct = Math.round((len / 1.18) * 100);
+      const purityBadge = document.getElementById('purityBadge');
+      purityBadge.innerText = purityPct > 70 ? `Pure State: ${purityPct}%` : (purityPct > 35 ? `Partial Superposition: ${purityPct}%` : `Statistical Mixture: ${purityPct}%`);
+      if (purityPct > 70) {
+        purityBadge.className = "text-xs px-2.5 py-1 rounded-md font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200";
+      } else if (purityPct > 35) {
+        purityBadge.className = "text-xs px-2.5 py-1 rounded-md font-semibold bg-amber-50 text-amber-600 border border-amber-200";
+      } else {
+        purityBadge.className = "text-xs px-2.5 py-1 rounded-md font-semibold bg-rose-50 text-rose-600 border border-rose-200";
+      }
+
+      document.getElementById('valX').innerText = Math.abs(x / 1.18).toFixed(2);
+      document.getElementById('valY').innerText = Math.abs(y / 1.18).toFixed(2);
+      document.getElementById('valZ').innerText = (z / 1.18).toFixed(2);
+
+      return { normalizedTime, decayFactor };
+    }
+
+    // --- 3. 2D Wavepacket Interference Canvas ---
+    function drawWaveCanvas(t, decayFactor) {
+      const w = waveCanvas.width;
+      const h = waveCanvas.height;
+      waveCtx.clearRect(0, 0, w, h);
+
+      // Baseline grid line
+      waveCtx.strokeStyle = '#f1f5f9';
+      waveCtx.lineWidth = 1;
+      waveCtx.beginPath();
+      waveCtx.moveTo(0, h / 2);
+      waveCtx.lineTo(w, h / 2);
+      waveCtx.stroke();
+
+      // Envelope Curves (Top and bottom dashed pink)
+      waveCtx.setLineDash([4, 4]);
+      waveCtx.strokeStyle = '#ff85b3';
+      waveCtx.lineWidth = 1.5;
+
+      const amp = (h * 0.42) * decayFactor;
+
+      // Top envelope
+      waveCtx.beginPath();
+      waveCtx.moveTo(0, h / 2 - amp);
+      waveCtx.lineTo(w, h / 2 - amp);
+      waveCtx.stroke();
+
+      // Bottom envelope
+      waveCtx.beginPath();
+      waveCtx.moveTo(0, h / 2 + amp);
+      waveCtx.lineTo(w, h / 2 + amp);
+      waveCtx.stroke();
+      waveCtx.setLineDash([]);
+
+      // Coherent Interference Waveform (Pastel Cobalto Blue)
+      waveCtx.strokeStyle = '#2f80ed';
+      waveCtx.lineWidth = 2.5;
+      waveCtx.beginPath();
+      for (let px = 0; px < w; px++) {
+        const spatialPhase = px * 0.08;
+        const timePhase = t * 6;
+        const wave = Math.sin(spatialPhase - timePhase) * amp;
+        const py = (h / 2) + wave;
+        if (px === 0) waveCtx.moveTo(px, py);
+        else waveCtx.lineTo(px, py);
+      }
+      waveCtx.stroke();
+
+      // Labels inside 2D Canvas
+      waveCtx.font = '10px Inter, sans-serif';
+      waveCtx.fillStyle = '#64748b';
+      waveCtx.fillText(`Fringe Visibility = ${(decayFactor * 100).toFixed(0)}%`, 10, 16);
+    }
+
+    // --- 4. Main Animation Loop ---
+    let lastStamp = performance.now();
+    function animate(now) {
+      requestAnimationFrame(animate);
+
+      if (isPlaying) {
+        const dt = (now - lastStamp) / 1000;
+        time += dt;
+      }
+      lastStamp = now;
+
+      // Auto-rotation around sphere slowly for 3D depth
+      sphereMesh.rotation.y = time * 0.15;
+      equatorLine.rotation.z = time * 0.15;
+
+      const { decayFactor } = updateStateVector(time);
+      renderer.render(scene, camera);
+      drawWaveCanvas(time, decayFactor);
+    }
+
+    // --- 5. UI Event Listeners ---
+    document.getElementById('btnPlayPause').addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      document.getElementById('playText').innerText = isPlaying ? 'Pause' : 'Resume';
+      document.getElementById('playIcon').classList.toggle('hidden', isPlaying);
+      document.getElementById('pauseIcon').classList.toggle('hidden', !isPlaying);
+    });
+
+    document.getElementById('btnReset').addEventListener('click', () => {
+      time = 0;
+      updateStateVector(0);
+    });
+
+    document.getElementById('noiseRate').addEventListener('input', (e) => {
+      noiseMultiplier = parseFloat(e.target.value);
+      document.getElementById('rateLabel').innerText = `${noiseMultiplier.toFixed(1)}x`;
+    });
+
+    const btnDephase = document.getElementById('btnDephase');
+    const btnRelax = document.getElementById('btnRelax');
+
+    btnDephase.addEventListener('click', () => {
+      decayMode = 'dephasing';
+      btnDephase.className = "px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#2f80ed] text-white transition-all shadow-sm";
+      btnRelax.className = "px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all";
+      time = 0;
+    });
+
+    btnRelax.addEventListener('click', () => {
+      decayMode = 'relaxation';
+      btnRelax.className = "px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#ff6097] text-white transition-all shadow-sm";
+      btnDephase.className = "px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all";
+      time = 0;
+    });
+
+    // --- 6. Direct GIF Generation and Download ---
+    const btnExportGif = document.getElementById('btnExportGif');
+    const exportStatus = document.getElementById('exportStatus');
+
+    btnExportGif.addEventListener('click', () => {
+      if (typeof gifshot === 'undefined') {
+        alert("The gifshot library is still loading. Please try again in a few seconds.");
+        return;
+      }
+
+      // Pause regular rendering while capturing
+      isPlaying = false;
+      document.getElementById('playText').innerText = 'Resume';
+      document.getElementById('playIcon').classList.remove('hidden');
+      document.getElementById('pauseIcon').classList.add('hidden');
+
+      btnExportGif.disabled = true;
+      btnExportGif.classList.add('opacity-50');
+      exportStatus.classList.remove('hidden');
+      exportStatus.innerText = "Preparing decoherence frames...";
+
+      // Composite canvas to merge the 3D Bloch sphere and 2D wave packet into one GIF frame
+      const compCanvas = document.createElement('canvas');
+      compCanvas.width = 540;
+      compCanvas.height = 540;
+      const compCtx = compCanvas.getContext('2d');
+
+      const totalFrames = 30;
+      const stepDt = CYCLE_DURATION / totalFrames;
+      const frames = [];
+
+      for (let i = 0; i < totalFrames; i++) {
+        const frameTime = i * stepDt;
+        const { decayFactor } = updateStateVector(frameTime);
+        renderer.render(scene, camera);
+        drawWaveCanvas(frameTime, decayFactor);
+
+        // Draw background
+        compCtx.fillStyle = '#ffffff';
+        compCtx.fillRect(0, 0, compCanvas.width, compCanvas.height);
+
+        // Title on GIF
+        compCtx.fillStyle = '#231555';
+        compCtx.font = 'bold 22px Inter, sans-serif';
+        compCtx.textAlign = 'center';
+        compCtx.fillText('Quantum Decoherence (Qiskit 2026)', compCanvas.width / 2, 34);
+
+        compCtx.font = '13px Inter, sans-serif';
+        compCtx.fillStyle = '#64748b';
+        compCtx.fillText(decayMode === 'dephasing' ? 'Phase & Interference Loss (T₂)' : 'Energy Relaxation to Ground State (T₁)', compCanvas.width / 2, 54);
+
+        // Draw 3D Bloch Sphere
+        compCtx.drawImage(renderer.domElement, 30, 68, 480, 310);
+
+        // Draw 2D Wave decay at bottom
+        compCtx.drawImage(waveCanvas, 40, 385, 460, 115);
+
+        // Purity label at bottom
+        compCtx.fillStyle = '#2f80ed';
+        compCtx.font = 'bold 12px Inter, sans-serif';
+        compCtx.textAlign = 'right';
+        compCtx.fillText(`Coherence: ${(decayFactor * 100).toFixed(0)}%`, compCanvas.width - 45, 520);
+
+        frames.push(compCanvas.toDataURL('image/png'));
+      }
+
+      exportStatus.innerText = "Compiling GIF file with smooth palette...";
+
+      gifshot.createGIF({
+        images: frames,
+        gifWidth: 540,
+        gifHeight: 540,
+        interval: 0.1, // 10 fps smooth loop
+        numWorkers: 2
+      }, function (obj) {
+        if (!obj.error) {
+          const animatedImage = obj.image;
+          const downloadLink = document.createElement('a');
+          downloadLink.href = animatedImage;
+          downloadLink.download = 'quantum_decoherence_qiskit_2026.gif';
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+
+          exportStatus.innerText = "GIF generated and downloaded successfully!";
+          setTimeout(() => {
+            exportStatus.classList.add('hidden');
+            btnExportGif.disabled = false;
+            btnExportGif.classList.remove('opacity-50');
+            isPlaying = true;
+            document.getElementById('playText').innerText = 'Pause';
+            document.getElementById('playIcon').classList.add('hidden');
+            document.getElementById('pauseIcon').classList.remove('hidden');
+          }, 3000);
+        } else {
+          exportStatus.innerText = "Error generating GIF. Please try again.";
+          btnExportGif.disabled = false;
+          btnExportGif.classList.remove('opacity-50');
+        }
+      });
+    });
+
+    // Start on Window Load
+    window.onload = function () {
+      initThree();
+      animate(performance.now());
+    };
+  </script>
+</body>
+</html>

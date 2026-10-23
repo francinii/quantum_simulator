@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Bell States Simulator - Qiskit Style</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Three.js CDN para la visualización 3D interactiva -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- gifshot para exportar GIF directamente -->
+  <script src="https://cdn.jsdelivr.net/npm/gifshot@0.3.2/build/gifshot.min.js"></script>
+  <!-- Optional canvas-confetti for measurement celebrations -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #ffffff;
+      color: #1e1244;
+    }
+    .font-mono-code {
+      font-family: 'Fira Code', monospace;
+    }
+    /* Quantum pulse animation travelling along circuit wires */
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 6px rgba(47, 128, 237, 0.6)); }
+      50% { opacity: 1; filter: drop-shadow(0 0 12px rgba(255, 133, 179, 0.9)); }
+    }
+    .quantum-glow {
+      animation: pulseGlow 2.5s infinite ease-in-out;
+    }
+    /* Smooth SVG transitions */
+    .wire-line {
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  </style>
+</head>
+<body class="bg-[#fafcff] min-h-screen flex flex-col justify-between p-3 md:p-6 text-slate-800">
+
+  <!-- Header: Qiskit Fall Fest Style -->
+  <header class="w-full max-w-6xl mx-auto text-center mb-5">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-[#ff6097] bg-[#fdf2f7] border border-[#ff85b3]/40 mb-2">
+      <span class="w-2 h-2 rounded-full bg-[#ff6097] animate-ping"></span>
+      Qiskit Fall Fest 2026 &bull; Entanglement Lab
+    </div>
+    <h1 class="text-3xl md:text-4xl font-extrabold text-[#1e1244] tracking-tight">
+      The 4 Bell States: <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2f80ed] via-[#8b5cf6] to-[#ff6097]">Quantum Entanglement in Action</span>
+    </h1>
+    <p class="text-xs md:text-sm text-slate-500 max-w-2xl mx-auto mt-1">
+      Visualize in real time the wavepacket propagation through <span class="font-bold text-[#ff6097]">X</span>, <span class="font-bold text-[#2f80ed]">Hadamard (H)</span>, and <span class="font-bold text-[#2f80ed]">CNOT</span> gates, observing the creation of non-local correlations.
+    </p>
+  </header>
+
+  <!-- Selector Interactivo de los 4 Estados de Bell -->
+  <div class="w-full max-w-6xl mx-auto mb-5">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+      
+      <!-- Botón Phi+ -->
+      <button id="btnPhiPlus" onclick="selectBellState('phi_plus')" class="state-card p-3 rounded-2xl border-2 transition-all duration-200 text-left relative bg-white border-[#2f80ed] shadow-md ring-2 ring-[#2f80ed]/20">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#2f80ed]">Basis State 00</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-mono font-bold">H → CX</span>
+        </div>
+        <div class="text-lg font-extrabold text-[#1e1244] mt-1 font-mono-code">|Φ⁺⟩ = (|00⟩+|11⟩)/√2</div>
+        <div class="text-[11px] text-slate-400 mt-0.5">Symmetric identical correlation</div>
+      </button>
+
+      <!-- Botón Phi- -->
+      <button id="btnPhiMinus" onclick="selectBellState('phi_minus')" class="state-card p-3 rounded-2xl border-2 transition-all duration-200 text-left relative bg-white border-slate-200 hover:border-slate-300">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#8b5cf6]">Basis State 01</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-50 text-purple-600 font-mono font-bold">X₀ → H → CX</span>
+        </div>
+        <div class="text-lg font-extrabold text-[#1e1244] mt-1 font-mono-code">|Φ⁻⟩ = (|00⟩-|11⟩)/√2</div>
+        <div class="text-[11px] text-slate-400 mt-0.5">Identical correlation with phase -</div>
+      </button>
+
+      <!-- Botón Psi+ -->
+      <button id="btnPsiPlus" onclick="selectBellState('psi_plus')" class="state-card p-3 rounded-2xl border-2 transition-all duration-200 text-left relative bg-white border-slate-200 hover:border-slate-300">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#ff6097]">Basis State 10</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-pink-50 text-pink-600 font-mono font-bold">X₁ → H → CX</span>
+        </div>
+        <div class="text-lg font-extrabold text-[#1e1244] mt-1 font-mono-code">|Ψ⁺⟩ = (|01⟩+|10⟩)/√2</div>
+        <div class="text-[11px] text-slate-400 mt-0.5">Anti-correlation (opposite bits)</div>
+      </button>
+
+      <!-- Botón Psi- (Singlete) -->
+      <button id="btnPsiMinus" onclick="selectBellState('psi_minus')" class="state-card p-3 rounded-2xl border-2 transition-all duration-200 text-left relative bg-white border-slate-200 hover:border-slate-300">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Singlet State 11</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 font-mono font-bold">X₀,X₁ → H → CX</span>
+        </div>
+        <div class="text-lg font-extrabold text-[#1e1244] mt-1 font-mono-code">|Ψ⁻⟩ = (|01⟩-|10⟩)/√2</div>
+        <div class="text-[11px] text-slate-400 mt-0.5">Rotationally invariant singlet</div>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Layout Principal de Simulación Interactiva -->
+  <main class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch flex-1">
+    
+    <!-- Panel Izquierdo: Circuito Cuántico Animado y Onda Temporal (7 columnas) -->
+    <div class="lg:col-span-7 flex flex-col gap-4">
+      
+      <!-- Contenedor del Circuito Cuántico Interactivo -->
+      <div class="bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-[#2f80ed]">Quantum Circuit Diagram</span>
+            <h2 id="circuitHeaderTitle" class="text-base font-bold text-[#1e1244]">Circuit for State |Φ⁺⟩</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="stepBadge" class="text-xs px-2.5 py-1 rounded-lg font-semibold bg-blue-50 text-[#2f80ed] border border-blue-200 font-mono">
+              Step 0: Initialization
+            </span>
+          </div>
+        </div>
+
+        <!-- Canvas / SVG para el circuito animado -->
+        <div class="relative w-full bg-[#f8fbff] border border-[#e2e8f0] rounded-2xl p-4 overflow-hidden">
+          <svg id="circuitSvg" viewBox="0 0 620 220" class="w-full h-auto select-none font-sans">
+            <!-- Definición de gradientes pastel -->
+            <defs>
+              <linearGradient id="gateHGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#bae6fd"/>
+                <stop offset="100%" stop-color="#7dd3fc"/>
+              </linearGradient>
+              <linearGradient id="gateXGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fbcfe8"/>
+                <stop offset="100%" stop-color="#f472b6"/>
+              </linearGradient>
+              <linearGradient id="cnotGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#bae6fd"/>
+                <stop offset="100%" stop-color="#38bdf8"/>
+              </linearGradient>
+              <filter id="glowEffect" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+              </filter>
+            </defs>
+
+            <!-- Líneas de Qubits (Hilos cuánticos) -->
+            <!-- Qubit 0 -->
+            <text x="30" y="70" class="text-sm font-bold fill-[#1e1244] font-mono" font-size="16">|0⟩</text>
+            <line x1="70" y1="65" x2="520" y2="65" stroke="#94a3b8" stroke-width="2.5" class="wire-line"/>
+            <text x="535" y="70" class="text-xs font-semibold fill-slate-400 font-mono" font-size="12">q₀</text>
+
+            <!-- Qubit 1 -->
+            <text x="30" y="155" class="text-sm font-bold fill-[#1e1244] font-mono" font-size="16">|0⟩</text>
+            <line x1="70" y1="150" x2="520" y2="150" stroke="#94a3b8" stroke-width="2.5" class="wire-line"/>
+            <text x="535" y="155" class="text-xs font-semibold fill-slate-400 font-mono" font-size="12">q₁</text>
+
+            <!-- Compuerta X en Qubit 0 (Opcional según estado) -->
+            <g id="gateX0Group" opacity="0" transform="translate(130, 40)">
+              <rect width="50" height="50" rx="10" fill="url(#gateXGrad)" stroke="#f472b6" stroke-width="1.5" class="shadow-sm"/>
+              <text x="25" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#831843" font-family="'Inter', sans-serif">X</text>
+            </g>
+
+            <!-- Compuerta X en Qubit 1 (Opcional según estado) -->
+            <g id="gateX1Group" opacity="0" transform="translate(130, 125)">
+              <rect width="50" height="50" rx="10" fill="url(#gateXGrad)" stroke="#f472b6" stroke-width="1.5"/>
+              <text x="25" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#831843" font-family="'Inter', sans-serif">X</text>
+            </g>
+
+            <!-- Compuerta Hadamard (H) en Qubit 0 -->
+            <g id="gateHGroup" transform="translate(240, 40)">
+              <rect width="50" height="50" rx="10" fill="url(#gateHGrad)" stroke="#38bdf8" stroke-width="1.5"/>
+              <text x="25" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#0369a1" font-family="'Inter', sans-serif">H</text>
+            </g>
+
+            <!-- Compuerta CNOT (Control en Q0, Target en Q1) -->
+            <g id="gateCnotGroup" transform="translate(390, 0)">
+              <!-- Línea de control vertical -->
+              <line x1="0" y1="65" x2="0" y2="150" stroke="#0f172a" stroke-width="2.5"/>
+              <!-- Punto negro de control (Q0) -->
+              <circle cx="0" cy="65" r="7" fill="#0f172a"/>
+              <!-- Círculo de Target con cruz (Q1) -->
+              <circle cx="0" cy="150" r="22" fill="url(#cnotGrad)" stroke="#0284c7" stroke-width="1.5"/>
+              <line x1="0" y1="130" x2="0" y2="170" stroke="#0369a1" stroke-width="2.2"/>
+              <line x1="-20" y1="150" x2="20" y2="150" stroke="#0369a1" stroke-width="2.2"/>
+            </g>
+
+            <!-- Llave rosada de estado final entrelazado -->
+            <path d="M 500 50 Q 515 50 515 107.5 Q 515 110 525 110 Q 515 110 515 112.5 Q 515 170 500 170" 
+                  fill="none" stroke="#ff85b3" stroke-width="2.5" stroke-linecap="round"/>
+            <text id="svgResultLabel" x="540" y="115" font-size="14" font-weight="bold" fill="#ff6097" font-family="monospace">|Φ⁺⟩</text>
+
+            <!-- Partícula cuántica animada (Pulso de fotón viajando por el hilo) -->
+            <circle id="pulsePhoton0" cx="70" cy="65" r="6.5" fill="#2f80ed" filter="url(#glowEffect)"/>
+            <circle id="pulsePhoton1" cx="70" cy="150" r="6.5" fill="#ff6097" filter="url(#glowEffect)"/>
+
+            <!-- Línea de escaneo temporal vertical (Step tracker) -->
+            <line id="timeCursorLine" x1="70" y1="20" x2="70" y2="200" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="4,4" opacity="0.75"/>
+          </svg>
+        </div>
+
+        <!-- Barra de Controles de Reproducción y Velocidad -->
+        <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-3 border-t border-slate-100">
+          <div class="flex items-center gap-2">
+            <button id="btnPlayPause" onclick="togglePlay()" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#1e1244] text-white hover:bg-slate-800 transition-colors flex items-center gap-1.5 shadow-sm">
+              <svg id="playIcon" class="w-3.5 h-3.5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"/></svg>
+              <svg id="pauseIcon" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"/></svg>
+              <span id="playBtnText">Pause</span>
+            </button>
+            <button onclick="restartAnimation()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#f4f8fe] text-[#2f80ed] hover:bg-[#e6f0fc] transition-colors border border-[#cfe2f7]">
+              Reset
+            </button>
+            <button onclick="stepForward()" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
+              Step →
+            </button>
+          </div>
+
+          <!-- Velocidad del pulso -->
+          <div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+            <span>Speed:</span>
+            <input id="speedSlider" type="range" min="0.5" max="2.5" step="0.25" value="1" class="w-24 accent-[#2f80ed] cursor-pointer">
+            <span id="speedValue" class="font-bold text-[#1e1244]">1.0x</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Evolución Matemática en Vivo (Dirac vs Matricial Dinámico) -->
+      <div class="bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#8b5cf6]">Step-by-Step Quantum Evolution</span>
+          <span class="text-[11px] text-slate-400">Dirac Notation & State Matrix</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+          
+          <!-- Tarjeta Dirac Step -->
+          <div class="p-3.5 rounded-2xl bg-[#fbfbff] border border-[#d8b4fe]/40">
+            <div class="text-[11px] font-bold text-[#8b5cf6] uppercase tracking-wider mb-1">Dirac State (|ψ(t)⟩)</div>
+            <div id="diracLiveMath" class="text-sm font-bold text-[#1e1244] font-mono-code min-h-[44px] flex items-center">
+              |ψ₀⟩ = |00⟩
+            </div>
+            <div id="diracExplanation" class="text-[11px] text-slate-500 mt-1">
+              Both qubits start in the classical ground state.
+            </div>
+          </div>
+
+          <!-- Tarjeta Vector de Estado Step -->
+          <div class="p-3.5 rounded-2xl bg-[#f0f9ff] border border-[#7dd3fc]/40">
+            <div class="text-[11px] font-bold text-[#0284c7] uppercase tracking-wider mb-1">Amplitude Vector [c₀₀, c₀₁, c₁₀, c₁₁]ᵀ</div>
+            <div class="flex items-center gap-3">
+              <div id="vectorLiveBox" class="font-mono-code text-xs bg-white px-3 py-1.5 rounded-xl border border-blue-200 text-[#0284c7] font-bold">
+                [ 1.0,  0.0,  0.0,  0.0 ]ᵀ
+              </div>
+              <div class="text-[11px] text-slate-500">
+                P(00) = <span id="prob00" class="font-bold text-slate-800">100%</span>
+              </div>
+            </div>
+            <div id="matrixExplanation" class="text-[11px] text-slate-500 mt-1">
+              Probability is concentrated in a single configuration.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Panel Derecho: 3D Quantum Correlation + Simulador de Medición + Exportar GIF (5 columnas) -->
+    <div class="lg:col-span-5 flex flex-col gap-4">
+      
+      <!-- Esfera de Bloch Conjunta / Esferas de Correlación Entrelazada -->
+      <div class="bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-1">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-[#2f80ed]">3D Spatial Visualization</span>
+            <h3 class="text-sm font-bold text-[#1e1244]">Bloch Spheres: Qubit 0 & Qubit 1</h3>
+          </div>
+          <span id="entanglementBadge" class="text-[10px] px-2 py-0.5 rounded-md font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+            Separable: Not Entangled
+          </span>
+        </div>
+        <p class="text-[11px] text-slate-400 mb-2">
+          Upon completing CNOT, the individual state shrinks to the center (maximal entanglement).
+        </p>
+
+        <!-- Contenedor Three.js para las dos esferas -->
+        <div id="threeContainer" class="w-full h-56 rounded-2xl relative bg-[#f8fbff] border border-slate-200 overflow-hidden cursor-grab active:cursor-grabbing">
+          <div class="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] text-slate-500 border border-slate-200 pointer-events-none">
+            Drag to rotate 3D view
+          </div>
+        </div>
+
+        <!-- Indicador de Correlación Bell -->
+        <div class="mt-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center text-xs">
+          <span class="text-slate-500 font-medium">Entanglement Entropy: </span>
+          <span id="entropyValue" class="font-bold text-[#ff6097]">0.00 qubits</span>
+          <span class="text-slate-400 ml-1 font-mono">(EPR Pair: 1.00)</span>
+        </div>
+      </div>
+
+      <!-- Simulador de Medición Cuántica Interactivo -->
+      <div class="bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#ff6097]">Shots Simulator</span>
+          <span class="text-[11px] text-slate-400 font-mono">Collapse on Measurement</span>
+        </div>
+
+        <div class="grid grid-cols-4 gap-2 text-center my-3">
+          <div class="p-2 rounded-xl bg-[#f8fafc] border border-slate-200">
+            <div class="text-[10px] font-mono text-slate-400">|00⟩</div>
+            <div id="bar00" class="h-10 bg-slate-100 rounded-md my-1 relative overflow-hidden flex items-end justify-center">
+              <div id="fill00" class="w-full bg-[#2f80ed] transition-all duration-300" style="height: 100%;"></div>
+            </div>
+            <div id="pct00" class="text-[11px] font-bold text-[#1e1244]">100%</div>
+          </div>
+
+          <div class="p-2 rounded-xl bg-[#f8fafc] border border-slate-200">
+            <div class="text-[10px] font-mono text-slate-400">|01⟩</div>
+            <div id="bar01" class="h-10 bg-slate-100 rounded-md my-1 relative overflow-hidden flex items-end justify-center">
+              <div id="fill01" class="w-full bg-[#8b5cf6] transition-all duration-300" style="height: 0%;"></div>
+            </div>
+            <div id="pct01" class="text-[11px] font-bold text-[#1e1244]">0%</div>
+          </div>
+
+          <div class="p-2 rounded-xl bg-[#f8fafc] border border-slate-200">
+            <div class="text-[10px] font-mono text-slate-400">|10⟩</div>
+            <div id="bar10" class="h-10 bg-slate-100 rounded-md my-1 relative overflow-hidden flex items-end justify-center">
+              <div id="fill10" class="w-full bg-[#ff85b3] transition-all duration-300" style="height: 0%;"></div>
+            </div>
+            <div id="pct10" class="text-[11px] font-bold text-[#1e1244]">0%</div>
+          </div>
+
+          <div class="p-2 rounded-xl bg-[#f8fafc] border border-slate-200">
+            <div class="text-[10px] font-mono text-slate-400">|11⟩</div>
+            <div id="bar11" class="h-10 bg-slate-100 rounded-md my-1 relative overflow-hidden flex items-end justify-center">
+              <div id="fill11" class="w-full bg-[#2f80ed] transition-all duration-300" style="height: 0%;"></div>
+            </div>
+            <div id="pct11" class="text-[11px] font-bold text-[#1e1244]">0%</div>
+          </div>
+        </div>
+
+        <button onclick="measureCircuit()" class="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-gradient-to-r from-[#2f80ed] via-[#8b5cf6] to-[#ff6097] text-white hover:opacity-95 transition-opacity shadow-sm flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Perform Quantum Measurement (1 Shot)
+        </button>
+        <div id="measureResultToast" class="text-center text-xs font-bold text-[#1e1244] mt-2 hidden">
+          Collapsed Outcome: <span id="measureResultVal" class="text-[#2f80ed] font-mono text-sm">|00⟩</span>
+        </div>
+      </div>
+
+      <!-- Herramienta de Exportación Directa a GIF -->
+      <div class="bg-[#fdf9fb] border border-[#fbd4e2] rounded-3xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#ff6097]">Export for Presentation</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-pink-100 text-pink-700 font-bold">540x540 Loop</span>
+        </div>
+        <p class="text-[11px] text-slate-500 mb-3">
+          Generate a GIF file of the circuit animation and selected Bell state for your presentation slides.
+        </p>
+
+        <button id="btnExportGif" onclick="exportBellGif()" class="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-[#1e1244] text-white hover:bg-slate-800 transition-colors shadow flex items-center justify-center gap-2">
+          <svg class="w-4 h-4 text-[#ff85b3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span id="exportBtnText">Download GIF for Current State</span>
+        </button>
+        <div id="exportStatus" class="text-[11px] text-center text-slate-500 mt-2 hidden font-medium">
+          Capturing frames... 0%
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer Didáctico con Resumen Matemático -->
+  <footer class="w-full max-w-6xl mx-auto mt-6 p-4 rounded-2xl bg-white border border-slate-200 text-xs text-slate-600 flex flex-col md:flex-row justify-between items-center gap-2 shadow-sm">
+    <div class="flex items-center gap-2">
+      <span class="w-6 h-6 rounded-lg bg-[#1e1244] text-white flex items-center justify-center font-bold text-xs">Ψ</span>
+      <span><strong>Fundamental Property:</strong> The Bell states form a complete orthonormal basis of the 2-qubit Hilbert space $\mathbb{C}^4$.</span>
+    </div>
+    <div class="text-[11px] text-slate-400 font-mono">
+      Qiskit 2026 Edition &bull; Quantum Circuit Model
+    </div>
+  </footer>
+
+  <!-- Lógica de Simulación, Three.js y Exportador GIF -->
+  <script>
+    // --- Configuración y Estado Global ---
+    let currentBell = 'phi_plus'; // 'phi_plus', 'phi_minus', 'psi_plus', 'psi_minus'
+    let isPlaying = true;
+    let animProgress = 0.0; // 0.0 a 1.0 (ciclo de tiempo de paso por el circuito)
+    let speed = 1.0;
+    const CYCLE_DURATION = 4.0; // segundos por ciclo completo
+
+    // Definición de configuraciones de los 4 estados
+    const bellConfigs = {
+      phi_plus: {
+        title: "Circuit for State |Φ⁺⟩",
+        symbol: "|Φ⁺⟩",
+        formula: "|Φ⁺⟩ = (|00⟩ + |11⟩)/√2",
+        needsX0: false,
+        needsX1: false,
+        probabilities: { p00: 0.5, p01: 0.0, p10: 0.0, p11: 0.5 },
+        color: "#2f80ed",
+        steps: [
+          { t: 0.00, desc: "Initial state: |00⟩", dirac: "|ψ₀⟩ = |00⟩", vec: "[1.0, 0, 0, 0]ᵀ", p00: 1, p01: 0, p10: 0, p11: 0 },
+          { t: 0.35, desc: "Hadamard on q₀: Uniform superposition", dirac: "|ψ₁⟩ = (|0⟩+|1⟩)/√2 ⊗ |0⟩ = (|00⟩+|10⟩)/√2", vec: "[0.71, 0, 0.71, 0]ᵀ", p00: 0.5, p01: 0, p10: 0.5, p11: 0 },
+          { t: 0.75, desc: "CNOT: If q₀=|1⟩, flips q₁ → Entanglement!", dirac: "|ψ₂⟩ = (|00⟩ + |11⟩)/√2 = |Φ⁺⟩", vec: "[0.71, 0, 0, 0.71]ᵀ", p00: 0.5, p01: 0, p10: 0, p11: 0.5 }
+        ]
+      },
+      phi_minus: {
+        title: "Circuit for State |Φ⁻⟩",
+        symbol: "|Φ⁻⟩",
+        formula: "|Φ⁻⟩ = (|00⟩ - |11⟩)/√2",
+        needsX0: true,
+        needsX1: false,
+        probabilities: { p00: 0.5, p01: 0.0, p10: 0.0, p11: 0.5 },
+        color: "#8b5cf6",
+        steps: [
+          { t: 0.00, desc: "Initial state: |00⟩", dirac: "|ψ₀⟩ = |00⟩", vec: "[1.0, 0, 0, 0]ᵀ", p00: 1, p01: 0, p10: 0, p11: 0 },
+          { t: 0.20, desc: "X on q₀: Bit flip to |1⟩", dirac: "|ψ₁⟩ = |10⟩", vec: "[0, 0, 1.0, 0]ᵀ", p00: 0, p01: 0, p10: 1, p11: 0 },
+          { t: 0.45, desc: "Hadamard on q₀: Introduces negative phase", dirac: "|ψ₂⟩ = (|0⟩-|1⟩)/√2 ⊗ |0⟩ = (|00⟩-|10⟩)/√2", vec: "[0.71, 0, -0.71, 0]ᵀ", p00: 0.5, p01: 0, p10: 0.5, p11: 0 },
+          { t: 0.75, desc: "CNOT: Correlates negative phase into |11⟩", dirac: "|ψ₃⟩ = (|00⟩ - |11⟩)/√2 = |Φ⁻⟩", vec: "[0.71, 0, 0, -0.71]ᵀ", p00: 0.5, p01: 0, p10: 0, p11: 0.5 }
+        ]
+      },
+      psi_plus: {
+        title: "Circuit for State |Ψ⁺⟩",
+        symbol: "|Ψ⁺⟩",
+        formula: "|Ψ⁺⟩ = (|01⟩ + |10⟩)/√2",
+        needsX0: false,
+        needsX1: true,
+        probabilities: { p00: 0.0, p01: 0.5, p10: 0.5, p11: 0.0 },
+        color: "#ff6097",
+        steps: [
+          { t: 0.00, desc: "Initial state: |00⟩", dirac: "|ψ₀⟩ = |00⟩", vec: "[1.0, 0, 0, 0]ᵀ", p00: 1, p01: 0, p10: 0, p11: 0 },
+          { t: 0.20, desc: "X on q₁: Target bit flip", dirac: "|ψ₁⟩ = |01⟩", vec: "[0, 1.0, 0, 0]ᵀ", p00: 0, p01: 1, p10: 0, p11: 0 },
+          { t: 0.45, desc: "Hadamard on q₀: Superposition on control", dirac: "|ψ₂⟩ = (|0⟩+|1⟩)/√2 ⊗ |1⟩ = (|01⟩+|11⟩)/√2", vec: "[0, 0.71, 0, 0.71]ᵀ", p00: 0, p01: 0.5, p10: 0, p11: 0.5 },
+          { t: 0.75, desc: "CNOT: Flips |11⟩ → |10⟩ (Anti-correlation)", dirac: "|ψ₃⟩ = (|01⟩ + |10⟩)/√2 = |Ψ⁺⟩", vec: "[0, 0.71, 0.71, 0]ᵀ", p00: 0, p01: 0.5, p10: 0.5, p11: 0 }
+        ]
+      },
+      psi_minus: {
+        title: "Circuit for State |Ψ⁻⟩ (Singlet)",
+        symbol: "|Ψ⁻⟩",
+        formula: "|Ψ⁻⟩ = (|01⟩ - |10⟩)/√2",
+        needsX0: true,
+        needsX1: true,
+        probabilities: { p00: 0.0, p01: 0.5, p10: 0.5, p11: 0.0 },
+        color: "#059669",
+        steps: [
+          { t: 0.00, desc: "Initial state: |00⟩", dirac: "|ψ₀⟩ = |00⟩", vec: "[1.0, 0, 0, 0]ᵀ", p00: 1, p01: 0, p10: 0, p11: 0 },
+          { t: 0.20, desc: "X on both qubits: Transitions to |11⟩", dirac: "|ψ₁⟩ = |11⟩", vec: "[0, 0, 0, 1.0]ᵀ", p00: 0, p01: 0, p10: 0, p11: 1 },
+          { t: 0.45, desc: "Hadamard on q₀: Negative phase on q₀", dirac: "|ψ₂⟩ = (|0⟩-|1⟩)/√2 ⊗ |1⟩ = (|01⟩-|11⟩)/√2", vec: "[0, 0.71, 0, -0.71]ᵀ", p00: 0, p01: 0.5, p10: 0, p11: 0.5 },
+          { t: 0.75, desc: "CNOT: Inversion produces singlet state", dirac: "|ψ₃⟩ = (|01⟩ - |10⟩)/√2 = |Ψ⁻⟩", vec: "[0, 0.71, -0.71, 0]ᵀ", p00: 0, p01: 0.5, p10: 0.5, p11: 0 }
+        ]
+      }
+    };
+
+    // --- 1. Inicialización de Three.js (2 Esferas de Bloch: Q0 y Q1) ---
+    let scene, camera, renderer;
+    let sphere0Mesh, sphere1Mesh, vector0Mesh, vector1Mesh;
+    let isDragging = false;
+    let prevMousePos = { x: 0, y: 0 };
+    let cameraAngle = { theta: 0.3, phi: 0.4, dist: 5.2 };
+
+    function initThree() {
+      const container = document.getElementById('threeContainer');
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf8fbff);
+
+      camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+      updateCamera();
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      // Luces suaves
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.9);
+      scene.add(ambLight);
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+      dirLight.position.set(4, 8, 6);
+      scene.add(dirLight);
+
+      // Crear Esfera 0 (Izquierda, Q0) y Esfera 1 (Derecha, Q1)
+      const sphereGeo = new THREE.SphereGeometry(0.9, 32, 32);
+      const sphereMat0 = new THREE.MeshPhongMaterial({
+        color: 0xbae6fd, // Pastel Sky Blue
+        transparent: true,
+        opacity: 0.28,
+        shininess: 80,
+        depthWrite: false
+      });
+      const sphereMat1 = new THREE.MeshPhongMaterial({
+        color: 0xfbcfe8, // Pastel Pink
+        transparent: true,
+        opacity: 0.28,
+        shininess: 80,
+        depthWrite: false
+      });
+
+      sphere0Mesh = new THREE.Mesh(sphereGeo, sphereMat0);
+      sphere0Mesh.position.x = -1.35;
+      scene.add(sphere0Mesh);
+
+      sphere1Mesh = new THREE.Mesh(sphereGeo, sphereMat1);
+      sphere1Mesh.position.x = 1.35;
+      scene.add(sphere1Mesh);
+
+      // Anillos Ecuatoriales
+      const ringGeo = new THREE.RingGeometry(0.89, 0.91, 48);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, side: THREE.DoubleSide, transparent: true, opacity: 0.4 });
+      
+      const ring0 = new THREE.Mesh(ringGeo, ringMat);
+      ring0.rotation.x = Math.PI / 2;
+      sphere0Mesh.add(ring0);
+
+      const ring1 = new THREE.Mesh(ringGeo, ringMat);
+      ring1.rotation.x = Math.PI / 2;
+      sphere1Mesh.add(ring1);
+
+      // Vectores de Estado (Agujas)
+      function makeVector(colorHex) {
+        const group = new THREE.Group();
+        const cylinderGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.85, 16);
+        const mat = new THREE.MeshPhongMaterial({ color: colorHex, shininess: 90 });
+        const cylinder = new THREE.Mesh(cylinderGeo, mat);
+        cylinder.position.y = 0.425;
+        group.add(cylinder);
+
+        const coneGeo = new THREE.ConeGeometry(0.06, 0.15, 16);
+        const cone = new THREE.Mesh(coneGeo, mat);
+        cone.position.y = 0.85;
+        group.add(cone);
+
+        return group;
+      }
+
+      vector0Mesh = makeVector(0x0284c7); // Azul intenso
+      sphere0Mesh.add(vector0Mesh);
+
+      vector1Mesh = makeVector(0xdb2777); // Rosa intenso
+      sphere1Mesh.add(vector1Mesh);
+
+      // Etiquetas 3D de texto (|0⟩ y |1⟩)
+      function makeLabel(text, color) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 64; canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+        ctx.font = 'bold 36px Inter, sans-serif';
+        ctx.fillStyle = color;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, 32, 32);
+        const tex = new THREE.CanvasTexture(canvas);
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex }));
+        sprite.scale.set(0.35, 0.35, 1);
+        return sprite;
+      }
+
+      const l0A = makeLabel('|0⟩', '#0369a1'); l0A.position.set(0, 1.15, 0); sphere0Mesh.add(l0A);
+      const l1A = makeLabel('|1⟩', '#0369a1'); l1A.position.set(0, -1.15, 0); sphere0Mesh.add(l1A);
+      const name0 = makeLabel('Q0', '#0369a1'); name0.position.set(0, -1.5, 0); sphere0Mesh.add(name0);
+
+      const l0B = makeLabel('|0⟩', '#be185d'); l0B.position.set(0, 1.15, 0); sphere1Mesh.add(l0B);
+      const l1B = makeLabel('|1⟩', '#be185d'); l1B.position.set(0, -1.15, 0); sphere1Mesh.add(l1B);
+      const name1 = makeLabel('Q1', '#be185d'); name1.position.set(0, -1.5, 0); sphere1Mesh.add(name1);
+
+      // Eventos de ratón para rotar la cámara
+      container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        prevMousePos = { x: e.clientX, y: e.clientY };
+      });
+      window.addEventListener('mouseup', () => isDragging = false);
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevMousePos.x;
+        const dy = e.clientY - prevMousePos.y;
+        cameraAngle.theta -= dx * 0.01;
+        cameraAngle.phi = Math.max(-0.6, Math.min(0.6, cameraAngle.phi - dy * 0.01));
+        updateCamera();
+        prevMousePos = { x: e.clientX, y: e.clientY };
+      });
+
+      window.addEventListener('resize', () => {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      });
+    }
+
+    function updateCamera() {
+      camera.position.x = cameraAngle.dist * Math.sin(cameraAngle.theta) * Math.cos(cameraAngle.phi);
+      camera.position.y = cameraAngle.dist * Math.sin(cameraAngle.phi);
+      camera.position.z = cameraAngle.dist * Math.cos(cameraAngle.theta) * Math.cos(cameraAngle.phi);
+      camera.lookAt(0, 0, 0);
+    }
+
+    // --- 2. Actualización Dinámica del Circuito SVG y Física ---
+    function selectBellState(stateKey) {
+      currentBell = stateKey;
+      const cfg = bellConfigs[stateKey];
+
+      // Actualizar estilos de los botones selectores
+      document.querySelectorAll('.state-card').forEach(btn => {
+        btn.classList.remove('border-[#2f80ed]', 'shadow-md', 'ring-2', 'ring-[#2f80ed]/20');
+        btn.classList.add('border-slate-200');
+      });
+
+      const activeMap = {
+        phi_plus: 'btnPhiPlus',
+        phi_minus: 'btnPhiMinus',
+        psi_plus: 'btnPsiPlus',
+        psi_minus: 'btnPsiMinus'
+      };
+      const activeBtn = document.getElementById(activeMap[stateKey]);
+      activeBtn.classList.remove('border-slate-200');
+      activeBtn.classList.add('border-[#2f80ed]', 'shadow-md', 'ring-2', 'ring-[#2f80ed]/20');
+
+      // Actualizar visibilidad de compuertas X según el circuito
+      document.getElementById('gateX0Group').setAttribute('opacity', cfg.needsX0 ? "1" : "0");
+      document.getElementById('gateX1Group').setAttribute('opacity', cfg.needsX1 ? "1" : "0");
+
+      document.getElementById('circuitHeaderTitle').innerText = cfg.title;
+      document.getElementById('svgResultLabel').innerText = cfg.symbol;
+      document.getElementById('exportBtnText').innerText = `Download GIF for State ${cfg.symbol}`;
+
+      // Reiniciar barra de animación
+      animProgress = 0.0;
+    }
+
+    function updateSimulationStep(progress) {
+      const cfg = bellConfigs[currentBell];
+      
+      // Mapear posición X del cursor temporal (70px a 500px)
+      const startX = 70;
+      const endX = 500;
+      const currentX = startX + progress * (endX - startX);
+
+      // Posicionar fotones y línea de tiempo
+      document.getElementById('pulsePhoton0').setAttribute('cx', currentX);
+      document.getElementById('pulsePhoton1').setAttribute('cx', currentX);
+      document.getElementById('timeCursorLine').setAttribute('x1', currentX);
+      document.getElementById('timeCursorLine').setAttribute('x2', currentX);
+
+      // Determinar en qué etapa del circuito estamos
+      let currentStep = cfg.steps[0];
+      for (let i = cfg.steps.length - 1; i >= 0; i--) {
+        if (progress >= cfg.steps[i].t) {
+          currentStep = cfg.steps[i];
+          break;
+        }
+      }
+
+      // Actualizar fórmulas de Dirac y vector
+      document.getElementById('diracLiveMath').innerText = currentStep.dirac;
+      document.getElementById('diracExplanation').innerText = currentStep.desc;
+      document.getElementById('vectorLiveBox').innerText = currentStep.vec;
+
+      // Actualizar barras de probabilidades en tiempo real
+      const p00 = currentStep.p00 * 100;
+      const p01 = currentStep.p01 * 100;
+      const p10 = currentStep.p10 * 100;
+      const p11 = currentStep.p11 * 100;
+
+      document.getElementById('fill00').style.height = `${p00}%`;
+      document.getElementById('fill01').style.height = `${p01}%`;
+      document.getElementById('fill10').style.height = `${p10}%`;
+      document.getElementById('fill11').style.height = `${p11}%`;
+
+      document.getElementById('pct00').innerText = `${p00.toFixed(0)}%`;
+      document.getElementById('pct01').innerText = `${p01.toFixed(0)}%`;
+      document.getElementById('pct10').innerText = `${p10.toFixed(0)}%`;
+      document.getElementById('pct11').innerText = `${p11.toFixed(0)}%`;
+
+      // Paso textual
+      const stepIdx = cfg.steps.indexOf(currentStep);
+      document.getElementById('stepBadge').innerText = `Step ${stepIdx}: ${progress < 0.2 ? 'Input' : (progress < 0.6 ? 'Superposition' : 'Entanglement')}`;
+
+      // Entrelazamiento e insignia
+      const isEntangled = progress >= 0.70;
+      const entBadge = document.getElementById('entanglementBadge');
+      if (isEntangled) {
+        entBadge.innerText = "Maximal Entanglement (EPR)!";
+        entBadge.className = "text-[10px] px-2 py-0.5 rounded-md font-semibold bg-rose-50 text-[#ff6097] border border-rose-200 animate-pulse";
+        document.getElementById('entropyValue').innerText = "1.00 qubit (Max)";
+      } else {
+        entBadge.innerText = "Separable: Not Entangled";
+        entBadge.className = "text-[10px] px-2 py-0.5 rounded-md font-semibold bg-slate-100 text-slate-600 border border-slate-200";
+        document.getElementById('entropyValue').innerText = (progress * 1.2).toFixed(2) + " qubits";
+      }
+
+      // Animación 3D de los vectores en la esfera de Bloch
+      updateBlochVectors(progress, currentBell);
+    }
+
+    function updateBlochVectors(prog, bellKey) {
+      // Si prog < 0.2: Estados iniciales |0⟩ (apuntando hacia arriba en Y)
+      // Conforme pasa por H: se mueve al ecuador (eje X o -X)
+      // Tras CNOT (prog > 0.7): El vector se acorta hacia el origen porque cada qubit individual
+      // se convierte en una mezcla maximal (traza parcial = I/2)
+      
+      let len0 = 1.0;
+      let len1 = 1.0;
+      let rot0 = new THREE.Vector3(0, 1, 0);
+      let rot1 = new THREE.Vector3(0, 1, 0);
+
+      const cfg = bellConfigs[bellKey];
+
+      // Compuerta X previa
+      if (cfg.needsX0 && prog > 0.15) rot0.set(0, -1, 0); // Apunta a |1⟩
+      if (cfg.needsX1 && prog > 0.15) rot1.set(0, -1, 0);
+
+      // Hadamard en q0
+      if (prog >= 0.35 && prog < 0.70) {
+        if (!cfg.needsX0) {
+          rot0.set(1, 0, 0); // |+⟩
+        } else {
+          rot0.set(-1, 0, 0); // |-⟩
+        }
+      }
+
+      // Estado entrelazado tras CNOT: Longitud del vector de Bloch individual colapsa a 0 (estado mixto)
+      if (prog >= 0.70) {
+        const shrink = Math.max(0.02, 1.0 - (prog - 0.70) * 3.3);
+        len0 = shrink;
+        len1 = shrink;
+      }
+
+      // Aplicar escala y rotación a los vectores de Three.js
+      vector0Mesh.scale.set(1, len0, 1);
+      vector1Mesh.scale.set(1, len1, 1);
+
+      vector0Mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), rot0.normalize());
+      vector1Mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), rot1.normalize());
+
+      // Ligera rotación orbital para efecto de profundidad
+      sphere0Mesh.rotation.y = prog * 0.8;
+      sphere1Mesh.rotation.y = prog * 0.8;
+    }
+
+    // --- 3. Bucle Principal de Animación ---
+    let lastTime = performance.now();
+    function animate(now) {
+      requestAnimationFrame(animate);
+
+      if (isPlaying) {
+        const dt = (now - lastTime) / 1000;
+        animProgress += (dt / CYCLE_DURATION) * speed;
+        if (animProgress > 1.0) {
+          animProgress = 0.0; // Reinicio suave en bucle
+        }
+        updateSimulationStep(animProgress);
+      }
+      lastTime = now;
+
+      renderer.render(scene, camera);
+    }
+
+    // --- 4. Controles Interactivos ---
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      document.getElementById('playBtnText').innerText = isPlaying ? 'Pause' : 'Resume';
+      document.getElementById('playIcon').classList.toggle('hidden', isPlaying);
+      document.getElementById('pauseIcon').classList.toggle('hidden', !isPlaying);
+    }
+
+    function restartAnimation() {
+      animProgress = 0.0;
+      updateSimulationStep(0.0);
+    }
+
+    function stepForward() {
+      isPlaying = false;
+      document.getElementById('playBtnText').innerText = 'Resume';
+      document.getElementById('playIcon').classList.remove('hidden');
+      document.getElementById('pauseIcon').classList.add('hidden');
+      
+      animProgress = (animProgress + 0.15) % 1.0;
+      updateSimulationStep(animProgress);
+    }
+
+    document.getElementById('speedSlider').addEventListener('input', (e) => {
+      speed = parseFloat(e.target.value);
+      document.getElementById('speedValue').innerText = `${speed.toFixed(1)}x`;
+    });
+
+    // --- 5. Medición Cuántica Simulada ---
+    function measureCircuit() {
+      const cfg = bellConfigs[currentBell];
+      const probs = cfg.probabilities;
+      
+      const rand = Math.random();
+      let outcome = "|00⟩";
+      let sum = 0;
+
+      if (probs.p00 > 0 && rand < (sum += probs.p00)) outcome = "|00⟩";
+      else if (probs.p01 > 0 && rand < (sum += probs.p01)) outcome = "|01⟩";
+      else if (probs.p10 > 0 && rand < (sum += probs.p10)) outcome = "|10⟩";
+      else outcome = "|11⟩";
+
+      // Mostrar toast
+      const toast = document.getElementById('measureResultToast');
+      const val = document.getElementById('measureResultVal');
+      val.innerText = outcome;
+      toast.classList.remove('hidden');
+
+      // Animación de confeti cuántico sutil
+      if (typeof confetti !== 'undefined') {
+        confetti({
+          particleCount: 28,
+          spread: 45,
+          origin: { y: 0.8 },
+          colors: ['#2f80ed', '#ff85b3', '#8b5cf6']
+        });
+      }
+
+      // Ocultar tras 2.5s
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 2500);
+    }
+
+    // --- 6. Exportador Directo a GIF (540x540) ---
+    function exportBellGif() {
+      if (typeof gifshot === 'undefined') {
+        alert("The gifshot library is still loading. Please try again in a few seconds.");
+        return;
+      }
+
+      const btn = document.getElementById('btnExportGif');
+      const status = document.getElementById('exportStatus');
+
+      // Pausar reproducción mientras se capturan los fotogramas
+      isPlaying = false;
+      document.getElementById('playBtnText').innerText = 'Resume';
+      document.getElementById('playIcon').classList.remove('hidden');
+      document.getElementById('pauseIcon').classList.add('hidden');
+
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+      status.classList.remove('hidden');
+      status.innerText = "Preparing Bell State frames...";
+
+      // Canvas compuesto de 540x540 para renderizar el GIF
+      const compCanvas = document.createElement('canvas');
+      compCanvas.width = 540;
+      compCanvas.height = 540;
+      const compCtx = compCanvas.getContext('2d');
+
+      const totalFrames = 28;
+      const frames = [];
+      const cfg = bellConfigs[currentBell];
+
+      // Convertir SVG del circuito a imagen para dibujarla en el canvas
+      const svgEl = document.getElementById('circuitSvg');
+      const xml = new XMLSerializer().serializeToString(svgEl);
+      const svgBlob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' });
+      const URLObj = window.URL || window.webkitURL || window;
+      const svgUrl = URLObj.createObjectURL(svgBlob);
+
+      const circuitImg = new Image();
+      circuitImg.onload = function () {
+        for (let i = 0; i < totalFrames; i++) {
+          const stepProg = i / totalFrames;
+          updateSimulationStep(stepProg);
+          renderer.render(scene, camera);
+
+          // 1. Fondo blanco puro
+          compCtx.fillStyle = '#ffffff';
+          compCtx.fillRect(0, 0, 540, 540);
+
+          // 2. Cabecera con degradado
+          compCtx.fillStyle = '#1e1244';
+          compCtx.font = 'bold 20px Inter, sans-serif';
+          compCtx.textAlign = 'center';
+          compCtx.fillText(`${cfg.title} (Qiskit 2026)`, 270, 36);
+
+          compCtx.font = '13px monospace';
+          compCtx.fillStyle = cfg.color;
+          compCtx.fillText(cfg.formula, 270, 58);
+
+          // 3. Circuito cuántico con fotones
+          compCtx.drawImage(circuitImg, 20, 75, 500, 180);
+
+          // 4. Esferas de Bloch 3D renderizadas
+          compCtx.drawImage(renderer.domElement, 40, 265, 460, 210);
+
+          // 5. Pie informativo
+          compCtx.fillStyle = '#64748b';
+          compCtx.font = '11px Inter, sans-serif';
+          compCtx.textAlign = 'center';
+          compCtx.fillText(`P(00)=${(cfg.probabilities.p00*100).toFixed(0)}%  |  P(11)=${(cfg.probabilities.p11*100).toFixed(0)}%  |  P(01)=${(cfg.probabilities.p01*100).toFixed(0)}%  |  P(10)=${(cfg.probabilities.p10*100).toFixed(0)}%`, 270, 510);
+
+          frames.push(compCanvas.toDataURL('image/png'));
+        }
+
+        URLObj.revokeObjectURL(svgUrl);
+        status.innerText = "Compiling GIF file with smooth palette...";
+
+        gifshot.createGIF({
+          images: frames,
+          gifWidth: 540,
+          gifHeight: 540,
+          interval: 0.12,
+          numWorkers: 2
+        }, function (obj) {
+          if (!obj.error) {
+            const dl = document.createElement('a');
+            dl.href = obj.image;
+            dl.download = `bell_state_${currentBell}_qiskit2026.gif`;
+            document.body.appendChild(dl);
+            dl.click();
+            document.body.removeChild(dl);
+
+            status.innerText = "GIF generated and downloaded successfully!";
+            setTimeout(() => {
+              status.classList.add('hidden');
+              btn.disabled = false;
+              btn.classList.remove('opacity-50');
+              isPlaying = true;
+              document.getElementById('playBtnText').innerText = 'Pause';
+              document.getElementById('playIcon').classList.add('hidden');
+              document.getElementById('pauseIcon').classList.remove('hidden');
+            }, 3000);
+          } else {
+            status.innerText = "Error generating GIF. Please try again.";
+            btn.disabled = false;
+            btn.classList.remove('opacity-50');
+          }
+        });
+      };
+      circuitImg.src = svgUrl;
+    }
+
+    // Iniciar al cargar la ventana
+    window.onload = function () {
+      initThree();
+      selectBellState('phi_plus');
+      animate(performance.now());
+    };
+  </script>
+</body>
+</html>

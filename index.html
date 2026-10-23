@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Lab: Interactive Simulations - Qiskit Fall Fest 2026</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fafcff;
+      color: #1e1244;
+    }
+    .font-code {
+      font-family: 'Fira Code', monospace;
+    }
+    /* Card hover lift */
+    .sim-card {
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .sim-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px -8px rgba(47, 128, 237, 0.25);
+      border-color: #8b5cf6;
+    }
+    /* Photon traveling along the preview wires */
+    @keyframes travel {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(220px); }
+    }
+    .photon {
+      animation: travel 3s infinite ease-in-out alternate;
+    }
+    /* Decoherence shrinking vector */
+    @keyframes shrink {
+      0%, 100% { r: 38; opacity: 1; }
+      50% { r: 14; opacity: 0.5; }
+    }
+    .shrink {
+      animation: shrink 4s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-[#fafcff] min-h-screen flex flex-col justify-between p-3 md:p-6 text-slate-800">
+
+  <!-- Header: Qiskit Fall Fest Style -->
+  <header class="w-full max-w-6xl mx-auto text-center mt-4 mb-8">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-[#ff6097] bg-[#fdf2f7] border border-[#ff85b3]/40 mb-3">
+      <span class="w-2 h-2 rounded-full bg-[#ff6097] animate-ping"></span>
+      Quantum Pedagogy &bull; Qiskit Fall Fest 2026
+    </div>
+    <h1 class="text-3xl md:text-5xl font-extrabold text-[#1e1244] tracking-tight">
+      Quantum Lab: <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2f80ed] via-[#8b5cf6] to-[#ff6097]">Interactive Simulations</span>
+    </h1>
+    <p class="text-sm md:text-base text-slate-500 max-w-2xl mx-auto mt-3">
+      A collection of animated, step-by-step visualizations to explore the core ideas of quantum computing. Each simulation can export a looping GIF for your class slides.
+    </p>
+  </header>
+
+  <!-- Simulation Gallery -->
+  <main class="w-full max-w-6xl mx-auto flex-1">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <!-- Card 1: Matrix Algebra vs Dirac Notation -->
+      <a href="simulador_interactivo_lgebra_matricial_vs_notaci_n_dirac.html" class="sim-card group bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm flex flex-col">
+        <div class="bg-[#f8fbff] border border-[#e2e8f0] rounded-2xl p-3 mb-4 overflow-hidden">
+          <svg viewBox="0 0 300 120" class="w-full h-auto">
+            <defs>
+              <linearGradient id="hGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffd5e5"/>
+                <stop offset="100%" stop-color="#ff85b3"/>
+              </linearGradient>
+            </defs>
+            <text x="8" y="39" font-size="13" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">|0⟩</text>
+            <line x1="40" y1="35" x2="280" y2="35" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+            <text x="8" y="89" font-size="13" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">|0⟩</text>
+            <line x1="40" y1="85" x2="280" y2="85" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+            <rect x="135" y="17" width="36" height="36" rx="8" fill="url(#hGrad1)" stroke="#ff6097" stroke-width="1.5"/>
+            <text x="153" y="41" text-anchor="middle" font-size="17" font-weight="800" fill="#831843">H</text>
+            <rect x="135" y="67" width="36" height="36" rx="8" fill="url(#hGrad1)" stroke="#ff6097" stroke-width="1.5"/>
+            <text x="153" y="91" text-anchor="middle" font-size="17" font-weight="800" fill="#831843">H</text>
+            <line x1="153" y1="53" x2="153" y2="67" stroke="#ff85b3" stroke-width="1.5" stroke-dasharray="3,3"/>
+            <circle class="photon" cx="45" cy="35" r="5" fill="#2f80ed"/>
+            <circle class="photon" cx="45" cy="85" r="5" fill="#ff6097"/>
+          </svg>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#2f80ed]">Simulation 01</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-blue-50 text-[#0284c7] font-bold font-code">H ⊗ H</span>
+        </div>
+        <h2 class="text-lg font-extrabold text-[#1e1244] leading-snug">Matrix Algebra vs. Dirac Notation</h2>
+        <p class="text-xs text-slate-500 mt-2 flex-1">
+          Explore step by step the Kronecker product, the operator H ⊗ H, and its equivalence in bra-ket notation, side by side.
+        </p>
+        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+          <span class="text-slate-400 font-code">Linear Algebra</span>
+          <span class="font-bold text-[#2f80ed] group-hover:translate-x-1 transition-transform">Open simulation →</span>
+        </div>
+      </a>
+
+      <!-- Card 2: Bell States -->
+      <a href="simulador_animado_y_generador_gif_estados_de_bell.html" class="sim-card group bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm flex flex-col">
+        <div class="bg-[#f8fbff] border border-[#e2e8f0] rounded-2xl p-3 mb-4 overflow-hidden">
+          <svg viewBox="0 0 300 120" class="w-full h-auto">
+            <defs>
+              <linearGradient id="hGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffd5e5"/>
+                <stop offset="100%" stop-color="#ff85b3"/>
+              </linearGradient>
+            </defs>
+            <text x="8" y="39" font-size="13" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">|0⟩</text>
+            <line x1="40" y1="35" x2="280" y2="35" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+            <text x="8" y="89" font-size="13" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">|0⟩</text>
+            <line x1="40" y1="85" x2="280" y2="85" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+            <rect x="105" y="17" width="36" height="36" rx="8" fill="url(#hGrad2)" stroke="#ff6097" stroke-width="1.5"/>
+            <text x="123" y="41" text-anchor="middle" font-size="17" font-weight="800" fill="#831843">H</text>
+            <!-- CNOT -->
+            <line x1="195" y1="35" x2="195" y2="98" stroke="#2f80ed" stroke-width="2"/>
+            <circle cx="195" cy="35" r="5" fill="#2f80ed"/>
+            <circle cx="195" cy="85" r="13" fill="white" stroke="#2f80ed" stroke-width="2"/>
+            <line x1="182" y1="85" x2="208" y2="85" stroke="#2f80ed" stroke-width="2"/>
+            <circle class="photon" cx="45" cy="35" r="5" fill="#2f80ed"/>
+            <circle class="photon" cx="45" cy="85" r="5" fill="#ff6097"/>
+          </svg>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#8b5cf6]">Simulation 02</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-purple-50 text-[#8b5cf6] font-bold font-code">|Φ⁺⟩ |Ψ⁻⟩</span>
+        </div>
+        <h2 class="text-lg font-extrabold text-[#1e1244] leading-snug">The 4 Bell States: Entanglement in Action</h2>
+        <p class="text-xs text-slate-500 mt-2 flex-1">
+          Watch the wavepacket propagate through X, Hadamard and CNOT gates in real time, and observe how non-local correlations are created.
+        </p>
+        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+          <span class="text-slate-400 font-code">Entanglement</span>
+          <span class="font-bold text-[#8b5cf6] group-hover:translate-x-1 transition-transform">Open simulation →</span>
+        </div>
+      </a>
+
+      <!-- Card 3: Quantum Decoherence -->
+      <a href="decoherencia_cu_ntica_animaci_n_y_generador_gif.html" class="sim-card group bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm flex flex-col">
+        <div class="bg-[#f8fbff] border border-[#e2e8f0] rounded-2xl p-3 mb-4 overflow-hidden">
+          <svg viewBox="0 0 300 120" class="w-full h-auto">
+            <!-- Bloch-like sphere with shrinking state vector -->
+            <circle cx="150" cy="60" r="45" fill="none" stroke="#cfe2f7" stroke-width="2"/>
+            <ellipse cx="150" cy="60" rx="45" ry="13" fill="none" stroke="#cfe2f7" stroke-width="1.5" stroke-dasharray="4,4"/>
+            <circle class="shrink" cx="150" cy="60" r="38" fill="rgba(139, 92, 246, 0.12)" stroke="#8b5cf6" stroke-width="1.5"/>
+            <circle cx="150" cy="60" r="3" fill="#1e1244"/>
+            <!-- Environment noise -->
+            <circle cx="40" cy="25" r="3" fill="#ff85b3" opacity="0.7"/>
+            <circle cx="62" cy="90" r="2.5" fill="#2f80ed" opacity="0.6"/>
+            <circle cx="250" cy="30" r="3" fill="#2f80ed" opacity="0.6"/>
+            <circle cx="262" cy="88" r="2.5" fill="#ff85b3" opacity="0.7"/>
+            <circle cx="30" cy="60" r="2" fill="#8b5cf6" opacity="0.6"/>
+            <circle cx="275" cy="60" r="2" fill="#8b5cf6" opacity="0.6"/>
+            <text x="150" y="115" text-anchor="middle" font-size="10" font-weight="bold" fill="#8b5cf6" font-family="'Fira Code', monospace">ρ → mixed state</text>
+          </svg>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#ff6097]">Simulation 03</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-pink-50 text-pink-600 font-bold font-code">ρ(t)</span>
+        </div>
+        <h2 class="text-lg font-extrabold text-[#1e1244] leading-snug">Quantum Decoherence</h2>
+        <p class="text-xs text-slate-500 mt-2 flex-1">
+          See how interaction with the environment destroys superposition, shrinking the pure state vector into a classical statistical mixture.
+        </p>
+        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+          <span class="text-slate-400 font-code">Open Systems</span>
+          <span class="font-bold text-[#ff6097] group-hover:translate-x-1 transition-transform">Open simulation →</span>
+        </div>
+      </a>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full max-w-6xl mx-auto mt-8 p-4 rounded-2xl bg-white border border-slate-200 text-xs text-slate-600 flex flex-col md:flex-row justify-between items-center gap-2 shadow-sm">
+    <div class="flex items-center gap-2">
+      <span class="w-6 h-6 rounded-lg bg-[#1e1244] text-white flex items-center justify-center font-bold text-xs font-mono">⊗</span>
+      <span><strong>Tip:</strong> Every simulation includes playback controls and a GIF exporter ready for presentations.</span>
+    </div>
+    <div class="text-[11px] text-slate-400 font-mono">
+      Qiskit Fall Fest 2026 &bull; Mathematical Quantum Physics
+    </div>
+  </footer>
+
+</body>
+</html>
