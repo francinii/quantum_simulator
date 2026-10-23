@@ -176,13 +176,35 @@
       <a href="interferencia_constructiva_y_destructiva.html" class="sim-card group bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm flex flex-col">
         <div class="bg-[#f8fbff] border border-[#e2e8f0] rounded-2xl p-3 mb-4 overflow-hidden">
           <svg viewBox="0 0 300 120" class="w-full h-auto">
-            <!-- Onda A, onda B y su suma -->
+            <defs>
+              <clipPath id="waveClip4">
+                <rect x="10" y="0" width="280" height="120"/>
+              </clipPath>
+            </defs>
+            <!-- Onda A fija -->
             <path d="M 10 30 Q 45 10 80 30 T 150 30 T 220 30 T 290 30" fill="none" stroke="#2f80ed" stroke-width="2.5"/>
-            <path d="M 10 62 Q 45 42 80 62 T 150 62 T 220 62 T 290 62" fill="none" stroke="#ff6097" stroke-width="2.5"/>
-            <path d="M 10 98 Q 45 64 80 98 T 150 98 T 220 98 T 290 98" fill="rgba(139, 92, 246, 0.10)" stroke="#1e1244" stroke-width="3"/>
+            <!-- Onda B: se desplaza media longitud de onda (0° ↔ 180°) -->
+            <g clip-path="url(#waveClip4)">
+              <path d="M -130 62 Q -95 42 -60 62 T 10 62 T 80 62 T 150 62 T 220 62 T 290 62" fill="none" stroke="#ff6097" stroke-width="2.5">
+                <animateTransform attributeName="transform" type="translate" values="0 0;70 0;0 0" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="5s" repeatCount="indefinite"/>
+              </path>
+            </g>
+            <!-- Suma A + B: crece y se anula en sincronía -->
+            <path d="M 10 98 Q 45 64 80 98 T 150 98 T 220 98 T 290 98" fill="rgba(139, 92, 246, 0.10)" stroke="#1e1244" stroke-width="3">
+              <animate attributeName="d" values="M 10 98 Q 45 64 80 98 T 150 98 T 220 98 T 290 98;M 10 98 Q 45 98 80 98 T 150 98 T 220 98 T 290 98;M 10 98 Q 45 64 80 98 T 150 98 T 220 98 T 290 98" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" dur="5s" repeatCount="indefinite"/>
+            </path>
             <text x="292" y="22" text-anchor="end" font-size="10" font-weight="bold" fill="#2f80ed" font-family="'Fira Code', monospace">A</text>
             <text x="292" y="54" text-anchor="end" font-size="10" font-weight="bold" fill="#ff6097" font-family="'Fira Code', monospace">B</text>
             <text x="292" y="118" text-anchor="end" font-size="10" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">A + B</text>
+            <!-- Etiqueta del tipo de interferencia -->
+            <text x="10" y="118" font-size="9" font-weight="bold" fill="#10b981" font-family="'Inter', sans-serif">
+              Constructive
+              <animate attributeName="opacity" values="1;0;1" keyTimes="0;0.5;1" dur="5s" repeatCount="indefinite"/>
+            </text>
+            <text x="10" y="118" font-size="9" font-weight="bold" fill="#ff6097" font-family="'Inter', sans-serif" opacity="0">
+              Destructive
+              <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.5;1" dur="5s" repeatCount="indefinite"/>
+            </text>
           </svg>
         </div>
         <div class="flex items-center gap-2 mb-1">
@@ -206,17 +228,26 @@
             <!-- Mini esfera de Bloch -->
             <circle cx="80" cy="60" r="45" fill="#eef5fd" stroke="#cfe2f7" stroke-width="2"/>
             <ellipse cx="80" cy="60" rx="45" ry="12" fill="none" stroke="#a5c8f0" stroke-width="1.2" stroke-dasharray="4,4"/>
-            <line x1="80" y1="60" x2="118" y2="40" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round"/>
-            <circle cx="118" cy="40" r="5" fill="#8b5cf6"/>
+            <!-- Vector de estado: gira de |0⟩ a |1⟩ y regresa -->
+            <g>
+              <line x1="80" y1="60" x2="80" y2="20" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="80" cy="20" r="5" fill="#8b5cf6"/>
+              <animateTransform attributeName="transform" type="rotate" values="0 80 60;180 80 60;0 80 60" keyTimes="0;0.5;1" dur="6s" repeatCount="indefinite"/>
+            </g>
+            <circle cx="80" cy="60" r="2.5" fill="#1e1244"/>
             <text x="80" y="11" text-anchor="middle" font-size="10" font-weight="bold" fill="#2f80ed" font-family="'Fira Code', monospace">|0⟩</text>
             <text x="80" y="117" text-anchor="middle" font-size="10" font-weight="bold" fill="#ff6097" font-family="'Fira Code', monospace">|1⟩</text>
-            <!-- Barras de probabilidad -->
+            <!-- Barras de probabilidad sincronizadas: cos²(θ/2) y sin²(θ/2) -->
             <rect x="170" y="30" width="110" height="14" rx="7" fill="#e2e8f0"/>
-            <rect x="170" y="30" width="82" height="14" rx="7" fill="#2f80ed"/>
+            <rect x="170" y="30" width="110" height="14" rx="7" fill="#2f80ed">
+              <animate attributeName="width" values="110;94;55;16;0;16;55;94;110" keyTimes="0;0.125;0.25;0.375;0.5;0.625;0.75;0.875;1" dur="6s" repeatCount="indefinite"/>
+            </rect>
             <rect x="170" y="70" width="110" height="14" rx="7" fill="#e2e8f0"/>
-            <rect x="170" y="70" width="28" height="14" rx="7" fill="#ff6097"/>
-            <text x="170" y="24" font-size="10" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">P(0) = 75%</text>
-            <text x="170" y="64" font-size="10" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">P(1) = 25%</text>
+            <rect x="170" y="70" width="0" height="14" rx="7" fill="#ff6097">
+              <animate attributeName="width" values="0;16;55;94;110;94;55;16;0" keyTimes="0;0.125;0.25;0.375;0.5;0.625;0.75;0.875;1" dur="6s" repeatCount="indefinite"/>
+            </rect>
+            <text x="170" y="24" font-size="10" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">P(0) = cos²(θ/2)</text>
+            <text x="170" y="64" font-size="10" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">P(1) = sin²(θ/2)</text>
           </svg>
         </div>
         <div class="flex items-center gap-2 mb-1">
@@ -230,6 +261,48 @@
         <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
           <span class="text-slate-400 font-code">Born's Rule</span>
           <span class="font-bold text-[#0284c7] group-hover:translate-x-1 transition-transform">Open simulation →</span>
+        </div>
+      </a>
+
+      <!-- Card 6: Qubit Measurement -->
+      <a href="medicion_de_qubits.html" class="sim-card group bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm flex flex-col">
+        <div class="bg-[#f8fbff] border border-[#e2e8f0] rounded-2xl p-3 mb-4 overflow-hidden">
+          <svg viewBox="0 0 300 120" class="w-full h-auto">
+            <defs>
+              <linearGradient id="mGrad6" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f5f3ff"/>
+                <stop offset="100%" stop-color="#ddd6fe"/>
+              </linearGradient>
+            </defs>
+            <!-- Cable cuántico, medidor y registro clásico -->
+            <text x="8" y="39" font-size="13" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">|ψ⟩</text>
+            <line x1="40" y1="35" x2="280" y2="35" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+            <line x1="40" y1="94" x2="280" y2="94" stroke="#c4b5fd" stroke-width="1.5"/>
+            <line x1="40" y1="98" x2="280" y2="98" stroke="#c4b5fd" stroke-width="1.5"/>
+            <text x="22" y="100" font-size="12" font-weight="bold" fill="#8b5cf6" font-family="'Fira Code', monospace">c</text>
+            <rect x="125" y="15" width="44" height="40" rx="8" fill="url(#mGrad6)" stroke="#8b5cf6" stroke-width="1.5"/>
+            <path d="M 133 46 A 14 14 0 0 1 161 46" fill="none" stroke="#1e1244" stroke-width="1.8"/>
+            <line x1="147" y1="47" x2="157" y2="27" stroke="#1e1244" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="145" y1="55" x2="145" y2="90" stroke="#8b5cf6" stroke-width="1.3"/>
+            <line x1="149" y1="55" x2="149" y2="90" stroke="#8b5cf6" stroke-width="1.3"/>
+            <circle class="photon" cx="45" cy="35" r="5" fill="#8b5cf6"/>
+            <rect x="215" y="76" width="22" height="22" rx="5" fill="#2f80ed"/>
+            <text x="226" y="92" text-anchor="middle" font-size="13" font-weight="bold" fill="white" font-family="'Fira Code', monospace">0</text>
+            <rect x="243" y="76" width="22" height="22" rx="5" fill="#ff6097"/>
+            <text x="254" y="92" text-anchor="middle" font-size="13" font-weight="bold" fill="white" font-family="'Fira Code', monospace">1</text>
+          </svg>
+        </div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-[#8b5cf6]">Simulation 06</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-purple-50 text-[#8b5cf6] font-bold font-code">qc.measure()</span>
+        </div>
+        <h2 class="text-lg font-extrabold text-[#1e1244] leading-snug">Qubit Measurement: Collapse, Bases &amp; Statistics</h2>
+        <p class="text-xs text-slate-500 mt-2 flex-1">
+          Measure in the Z, X or Y basis, chain two measurements, watch the state collapse, and compare Qiskit-style counts with Born's rule.
+        </p>
+        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+          <span class="text-slate-400 font-code">Measurement</span>
+          <span class="font-bold text-[#8b5cf6] group-hover:translate-x-1 transition-transform">Open simulation →</span>
         </div>
       </a>
 

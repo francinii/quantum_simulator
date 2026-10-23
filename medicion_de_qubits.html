@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qubit Measurement: Collapse, Bases & Statistics - Qiskit Style</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- MathJax para renderizado matemático -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <!-- gifshot para exportar la animación como GIF para diapositivas -->
+  <script src="https://cdn.jsdelivr.net/npm/gifshot@0.3.2/build/gifshot.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fafcff;
+      color: #1e1244;
+    }
+    .font-code {
+      font-family: 'Fira Code', monospace;
+    }
+    /* Pulso del medidor al colapsar */
+    @keyframes meterPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.55; }
+    }
+    .meter-active {
+      animation: meterPulse 0.4s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-[#fafcff] min-h-screen flex flex-col justify-between p-3 md:p-6 text-slate-800">
+
+  <!-- Enlace de regreso al índice -->
+  <nav class="w-full max-w-6xl mx-auto mb-2">
+    <a href="index.html" class="inline-flex items-center gap-1 text-xs font-bold text-[#2f80ed] hover:text-[#8b5cf6] transition-colors">← All simulations</a>
+  </nav>
+
+  <!-- Header: Qiskit Fall Fest Style -->
+  <header class="w-full max-w-6xl mx-auto text-center mb-4">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-[#ff6097] bg-[#fdf2f7] border border-[#ff85b3]/40 mb-2">
+      <span class="w-2 h-2 rounded-full bg-[#ff6097] animate-ping"></span>
+      Quantum Pedagogy &bull; Qiskit Fall Fest 2026
+    </div>
+    <h1 class="text-2xl md:text-4xl font-extrabold text-[#1e1244] tracking-tight">
+      Qubit Measurement: <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2f80ed] via-[#8b5cf6] to-[#ff6097]">Collapse, Bases &amp; Statistics</span>
+    </h1>
+    <p class="text-xs md:text-sm text-slate-500 max-w-3xl mx-auto mt-1">
+      Measuring a qubit forces it to pick an answer and changes its state. Choose what to prepare and in which basis to measure, then watch the Bloch vector collapse shot by shot while the counts build up just like in Qiskit.
+    </p>
+  </header>
+
+  <!-- Selector de Experimentos (Presets) -->
+  <div class="w-full max-w-6xl mx-auto mb-4">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
+      <button id="scenarioBtn0" onclick="applyScenario(0)" class="scenario-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#2f80ed]">Experiment 1</div>
+        <div class="text-xs font-extrabold text-[#1e1244] mt-0.5">Definite State</div>
+        <div class="text-[10px] text-slate-400 font-mono">|0⟩ → Z: always 0</div>
+      </button>
+      <button id="scenarioBtn1" onclick="applyScenario(1)" class="scenario-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#8b5cf6]">Experiment 2</div>
+        <div class="text-xs font-extrabold text-[#1e1244] mt-0.5">Random Outcome</div>
+        <div class="text-[10px] text-slate-400 font-mono">|+⟩ → Z: 50 / 50</div>
+      </button>
+      <button id="scenarioBtn2" onclick="applyScenario(2)" class="scenario-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#ff6097]">Experiment 3</div>
+        <div class="text-xs font-extrabold text-[#1e1244] mt-0.5">The Basis Matters</div>
+        <div class="text-[10px] text-slate-400 font-mono">|+⟩ → X: always +</div>
+      </button>
+      <button id="scenarioBtn3" onclick="applyScenario(3)" class="scenario-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#0284c7]">Experiment 4</div>
+        <div class="text-xs font-extrabold text-[#1e1244] mt-0.5">Collapse Persists</div>
+        <div class="text-[10px] text-slate-400 font-mono">|+⟩ → Z → Z: repeats</div>
+      </button>
+      <button id="scenarioBtn4" onclick="applyScenario(4)" class="scenario-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200 col-span-2 md:col-span-1">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Experiment 5</div>
+        <div class="text-xs font-extrabold text-[#1e1244] mt-0.5">Incompatible Bases</div>
+        <div class="text-[10px] text-slate-400 font-mono">|0⟩ → Z → X: random again</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenedor Principal -->
+  <main class="w-full max-w-6xl mx-auto flex flex-col gap-4 flex-1">
+
+    <!-- Fila 1: Configuración + Circuito -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+      <!-- Configuración del experimento (4 Cols) -->
+      <div class="lg:col-span-4 bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+          <h2 class="text-sm font-extrabold uppercase tracking-wider text-[#0284c7]">Experiment Setup</h2>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-blue-50 text-[#0284c7] font-bold font-mono">1 qubit</span>
+        </div>
+
+        <div class="space-y-4 text-xs">
+          <div>
+            <div class="font-bold text-[#1e1244] mb-1.5">1. Prepare the state</div>
+            <div id="stateChips" class="grid grid-cols-4 gap-1.5"></div>
+            <div id="thetaBox" class="mt-2 hidden">
+              <div class="flex justify-between mb-1">
+                <span class="text-slate-500">Rotation Ry(θ)</span>
+                <span id="thetaDisplay" class="font-mono font-bold text-[#8b5cf6]">60°</span>
+              </div>
+              <input id="thetaRange" type="range" min="0" max="180" step="1" value="60" class="w-full accent-[#8b5cf6] cursor-pointer">
+            </div>
+          </div>
+          <div>
+            <div class="font-bold text-[#1e1244] mb-1.5">2. First measurement basis <span class="font-normal text-slate-400">→ c₀</span></div>
+            <div id="m1Chips" class="grid grid-cols-3 gap-1.5"></div>
+          </div>
+          <div>
+            <div class="font-bold text-[#1e1244] mb-1.5">3. Second measurement basis <span class="font-normal text-slate-400">→ c₁</span></div>
+            <div id="m2Chips" class="grid grid-cols-4 gap-1.5"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Circuito animado (8 Cols) -->
+      <div class="lg:col-span-8 bg-white border border-[#cfe2f7] rounded-3xl p-4 shadow-sm flex flex-col">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#2f80ed]">Circuit Diagram</span>
+            <span id="stageLabel" class="text-xs font-semibold px-2 py-0.5 rounded-md bg-blue-50 text-[#2f80ed] border border-blue-200 font-mono">Ready</span>
+          </div>
+
+          <!-- Controles de Reproducción -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="btnPlayPause" onclick="togglePlay()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#1e1244] text-white hover:bg-slate-800 transition-colors flex items-center gap-1.5 shadow-sm">
+              <svg id="playIcon" class="w-3.5 h-3.5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"/></svg>
+              <svg id="pauseIcon" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"/></svg>
+              <span id="playBtnText">Pause</span>
+            </button>
+            <button onclick="runOneShot()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">1 shot</button>
+            <button onclick="runManyShots(1024)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-[#f4f8fe] text-[#2f80ed] hover:bg-[#e6f0fc] transition-colors border border-[#cfe2f7]">shots = 1024</button>
+            <button onclick="resetCounts()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors">Reset</button>
+            <div class="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 ml-1 pl-2 border-l border-slate-200">
+              <span>Speed:</span>
+              <input id="speedRange" type="range" min="0.5" max="3.0" step="0.25" value="1.0" class="w-16 accent-[#2f80ed] cursor-pointer">
+              <span id="speedDisplay" class="font-bold text-[#1e1244]">1.0x</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative w-full bg-[#f8fbff] border border-[#e2e8f0] rounded-2xl p-3 overflow-hidden select-none flex-1 flex items-center">
+          <svg id="svgCircuit" viewBox="0 0 700 200" class="w-full h-auto"></svg>
+        </div>
+
+        <!-- Último disparo -->
+        <div id="lastShot" class="mt-3 text-xs text-slate-500 text-center font-mono">Each shot: prepare → measure → read the classical bits.</div>
+      </div>
+    </div>
+
+    <!-- Fila 2: Esfera de Bloch + Histograma -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+      <!-- Esfera de Bloch (5 Cols) -->
+      <div class="lg:col-span-5 bg-white border border-[#cfe2f7] rounded-3xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#d946ef]">Bloch Sphere</span>
+          <span id="blochCaption" class="text-[11px] px-2 py-0.5 rounded bg-pink-50 text-pink-600 font-bold font-mono">Prepared state</span>
+        </div>
+        <div class="w-full bg-[#f8fbff] border border-[#e2e8f0] rounded-2xl overflow-hidden">
+          <canvas id="blochCanvas" width="420" height="400" class="w-full h-auto block"></canvas>
+        </div>
+        <p class="text-[11px] text-slate-500 mt-2">
+          The thick colored line is the <strong>measurement axis</strong>. A measurement snaps the arrow to one of its two ends; the closer the arrow already is to an end, the more likely that outcome.
+        </p>
+      </div>
+
+      <!-- Histograma estilo Qiskit (7 Cols) -->
+      <div class="lg:col-span-7 bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm flex flex-col">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-slate-100 pb-2">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-[#8b5cf6]">Counts (plot_histogram)</span>
+            <h3 class="text-sm font-bold text-[#1e1244]">Measured outcomes vs. theory</h3>
+          </div>
+          <span class="text-xs font-mono text-slate-500">Total shots: <span id="shotTotal" class="font-bold text-[#1e1244]">0</span></span>
+        </div>
+
+        <div id="histogram" class="grid gap-4 h-52 items-end px-2"></div>
+
+        <div class="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
+          <span>Dashed line = theoretical probability &bull; bars = measured frequency</span>
+          <span id="bitOrderNote" class="font-mono text-[#8b5cf6] font-bold">Qiskit bitstrings read right to left: c₁c₀</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fila 3: Teoría dinámica + Código Qiskit -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+      <div class="lg:col-span-6 bg-white border border-[#cfe2f7] rounded-3xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-[#2f80ed]"></span>
+            <h2 class="text-sm font-extrabold uppercase tracking-wider text-[#0284c7]">Born's Rule for this Setup</h2>
+          </div>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-blue-50 text-[#0284c7] font-bold font-mono">P = |⟨b|ψ⟩|²</span>
+        </div>
+        <div class="text-center text-xs py-1">
+          $$P(b) = |\langle b|\psi\rangle|^2 \qquad\Longrightarrow\qquad |\psi\rangle \xrightarrow{\text{measure}} |b\rangle$$
+        </div>
+        <div id="theoryTable" class="mt-2 space-y-1.5 text-xs font-mono"></div>
+      </div>
+
+      <div class="lg:col-span-6 bg-[#1e1244] border border-[#1e1244] rounded-3xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-3 border-b border-white/10 pb-2">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-[#ff6097]"></span>
+            <h2 class="text-sm font-extrabold uppercase tracking-wider text-[#ff85b3]">Equivalent Qiskit Code</h2>
+          </div>
+          <button onclick="copyCode()" id="btnCopy" class="text-[11px] px-2 py-0.5 rounded bg-white/10 text-white hover:bg-white/20 font-bold transition-colors">Copy</button>
+        </div>
+        <pre id="qiskitCode" class="font-code text-[11px] md:text-xs leading-relaxed text-slate-100 overflow-x-auto"></pre>
+      </div>
+    </div>
+
+    <!-- Exportación -->
+    <div class="bg-white border border-[#cfe2f7] rounded-3xl p-4 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <p class="text-xs text-slate-500">
+          Want to include this explanation in your class slides? Generate a looping GIF of several shots collapsing the state and filling the histogram.
+        </p>
+        <button id="btnExportGif" onclick="exportPresentationGif()" class="px-4 py-2 rounded-xl text-xs font-bold bg-[#1e1244] text-white hover:bg-slate-800 transition-colors shadow-sm flex items-center gap-2">
+          <svg class="w-4 h-4 text-[#ff85b3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span>Export GIF for Slides (540x540)</span>
+        </button>
+      </div>
+      <div id="exportStatus" class="text-[11px] text-center text-slate-500 mt-2 hidden font-medium"></div>
+    </div>
+
+    <!-- Fila 4: Explicación Didáctica -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white border border-blue-100 rounded-3xl p-5 shadow-sm">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#2f80ed]">Rule 1</div>
+        <h3 class="text-sm font-extrabold text-[#1e1244] mt-0.5">Outcomes are probabilistic</h3>
+        <p class="text-[11px] text-slate-500 mt-2">
+          The chance of outcome $b$ is the squared overlap $|\langle b|\psi\rangle|^2$. Only states lying exactly on the measurement axis give a certain answer.
+        </p>
+      </div>
+      <div class="bg-white border border-pink-100 rounded-3xl p-5 shadow-sm">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#ff6097]">Rule 2</div>
+        <h3 class="text-sm font-extrabold text-[#1e1244] mt-0.5">The state collapses</h3>
+        <p class="text-[11px] text-slate-500 mt-2">
+          After measuring, the qubit <em>becomes</em> the state it reported. Measure again in the same basis and you get the same answer every time (Experiment 4).
+        </p>
+      </div>
+      <div class="bg-white border border-purple-100 rounded-3xl p-5 shadow-sm">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-[#8b5cf6]">Rule 3</div>
+        <h3 class="text-sm font-extrabold text-[#1e1244] mt-0.5">The basis is a choice</h3>
+        <p class="text-[11px] text-slate-500 mt-2">
+          Hardware measures in the Z basis. To measure in X we apply $H$ first; for Y we apply $S^\dagger$ and then $H$. Z and X are incompatible: knowing one erases the other (Experiment 5).
+        </p>
+      </div>
+      <div class="bg-white border border-emerald-100 rounded-3xl p-5 shadow-sm">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Rule 4</div>
+        <h3 class="text-sm font-extrabold text-[#1e1244] mt-0.5">One shot is not enough</h3>
+        <p class="text-[11px] text-slate-500 mt-2">
+          A single shot returns one bit and destroys the superposition. To learn $\alpha$ and $\beta$ we must prepare and measure the state many times &mdash; that is why Qiskit runs 1024 shots by default.
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer con Nota Didáctica -->
+  <footer class="w-full max-w-6xl mx-auto mt-5 p-4 rounded-2xl bg-white border border-slate-200 text-xs text-slate-600 flex flex-col md:flex-row justify-between items-center gap-2 shadow-sm">
+    <div class="flex items-center gap-2">
+      <span class="w-6 h-6 rounded-lg bg-[#1e1244] text-white flex items-center justify-center font-bold text-xs font-mono">⏚</span>
+      <span><strong>Pedagogical Takeaway:</strong> Measurement is not a passive look: it picks an answer at random, following Born's rule, and leaves the qubit in that answer.</span>
+    </div>
+    <div class="text-[11px] text-slate-400 font-mono">
+      Qiskit Fall Fest 2026 &bull; Mathematical Quantum Physics
+    </div>
+  </footer>
+
+  <!-- Script de Control, Animación y Lógica Cuántica -->
+  <script>
+    // --- Definiciones: estados preparables y bases de medición ---
+    // Cada estado se representa por su vector de Bloch (x, y, z)
+    const STATES = {
+      zero:   { label: '|0⟩',  vec: [0, 0, 1],  gates: [],          code: [] },
+      one:    { label: '|1⟩',  vec: [0, 0, -1], gates: ['X'],       code: ['qc.x(0)'] },
+      plus:   { label: '|+⟩',  vec: [1, 0, 0],  gates: ['H'],       code: ['qc.h(0)'] },
+      minus:  { label: '|−⟩',  vec: [-1, 0, 0], gates: ['X', 'H'],  code: ['qc.x(0)', 'qc.h(0)'] },
+      plusI:  { label: '|+i⟩', vec: [0, 1, 0],  gates: ['H', 'S'],  code: ['qc.h(0)', 'qc.s(0)'] },
+      minusI: { label: '|−i⟩', vec: [0, -1, 0], gates: ['H', 'S†'], code: ['qc.h(0)', 'qc.sdg(0)'] },
+      ry:     { label: 'Ry(θ)', vec: null,      gates: ['Ry'],      code: null }
+    };
+
+    const BASES = {
+      Z: { axis: [0, 0, 1], plus: '|0⟩', minus: '|1⟩', color: '#2f80ed', pre: [], post: [] },
+      X: { axis: [1, 0, 0], plus: '|+⟩', minus: '|−⟩', color: '#ff6097', pre: ['qc.h(0)'], post: ['qc.h(0)'] },
+      Y: { axis: [0, 1, 0], plus: '|+i⟩', minus: '|−i⟩', color: '#0284c7', pre: ['qc.sdg(0)', 'qc.h(0)'], post: ['qc.h(0)', 'qc.s(0)'] }
+    };
+
+    const scenarios = [
+      { state: 'zero', m1: 'Z', m2: null },
+      { state: 'plus', m1: 'Z', m2: null },
+      { state: 'plus', m1: 'X', m2: null },
+      { state: 'plus', m1: 'Z', m2: 'Z' },
+      { state: 'zero', m1: 'Z', m2: 'X' }
+    ];
+
+    // --- Estado Global ---
+    let cfg = { state: 'plus', m1: 'Z', m2: null, theta: 60 };
+    let counts = {};
+    let isPlaying = true;
+    let speed = 1.0;
+    let shot = null;       // disparo animado en curso
+    let idleTime = 0;
+    let lastFrame = null;
+
+    const DUR = { travel1: 0.9, collapse1: 0.6, travel2: 0.7, collapse2: 0.6, hold: 1.1 };
+    const X_START = 70, X_M1 = 330, X_M2 = 480;
+
+    const blochCanvas = document.getElementById('blochCanvas');
+    const blochCtx = blochCanvas.getContext('2d');
+
+    // --- Álgebra de vectores de Bloch ---
+    const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    const scale = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
+
+    function normalize(v, fallback) {
+      const n = Math.hypot(v[0], v[1], v[2]);
+      return n < 1e-3 ? fallback : scale(v, 1 / n);
+    }
+
+    function preparedVec() {
+      if (cfg.state !== 'ry') return STATES[cfg.state].vec;
+      const t = cfg.theta * Math.PI / 180;
+      return [Math.sin(t), 0, Math.cos(t)];
+    }
+
+    function stateLabel() {
+      return cfg.state === 'ry' ? `Ry(${cfg.theta}°)|0⟩` : STATES[cfg.state].label;
+    }
+
+    // Probabilidad de obtener el bit 0 (extremo "+" del eje)
+    function probZero(vec, basisKey) {
+      return Math.min(1, Math.max(0, (1 + dot(vec, BASES[basisKey].axis)) / 2));
+    }
+
+    function collapseTarget(basisKey, bit) {
+      return scale(BASES[basisKey].axis, bit === 0 ? 1 : -1);
+    }
+
+    function outcomeKeys() {
+      return cfg.m2 ? ['00', '01', '10', '11'] : ['0', '1'];
+    }
+
+    // Clave estilo Qiskit: c1 c0 (derecha a izquierda)
+    function keyFor(b0, b1) {
+      return cfg.m2 ? `${b1}${b0}` : `${b0}`;
+    }
+
+    function theoryProbs() {
+      const v = preparedVec();
+      const p = {};
+      outcomeKeys().forEach(k => p[k] = 0);
+      [0, 1].forEach(b0 => {
+        const p0 = probZero(v, cfg.m1);
+        const pb0 = b0 === 0 ? p0 : 1 - p0;
+        if (!cfg.m2) { p[keyFor(b0)] += pb0; return; }
+        const post = collapseTarget(cfg.m1, b0);
+        const q0 = probZero(post, cfg.m2);
+        p[keyFor(b0, 0)] += pb0 * q0;
+        p[keyFor(b0, 1)] += pb0 * (1 - q0);
+      });
+      return p;
+    }
+
+    function sampleShot() {
+      const v = preparedVec();
+      const b0 = Math.random() < probZero(v, cfg.m1) ? 0 : 1;
+      if (!cfg.m2) return { b0, b1: null };
+      const b1 = Math.random() < probZero(collapseTarget(cfg.m1, b0), cfg.m2) ? 0 : 1;
+      return { b0, b1 };
+    }
+
+    // --- Proyección 3D → 2D de la esfera de Bloch ---
+    const VIEW_AZ = -35 * Math.PI / 180;
+    const VIEW_EL = 18 * Math.PI / 180;
+
+    function project(v, cx, cy, R) {
+      const xr = v[0] * Math.cos(VIEW_AZ) - v[1] * Math.sin(VIEW_AZ);
+      const yr = v[0] * Math.sin(VIEW_AZ) + v[1] * Math.cos(VIEW_AZ);
+      return { x: cx + R * yr, y: cy - R * (v[2] * Math.cos(VIEW_EL) - xr * Math.sin(VIEW_EL)), depth: xr };
+    }
+
+    function drawBloch(ctx, cx, cy, R, vec, basisKey, highlightBit) {
+      // Esfera
+      const grad = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.3, R * 0.1, cx, cy, R);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(1, '#e6f0fc');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.strokeStyle = '#cfe2f7';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Ecuador (trasera punteada, delantera sólida)
+      for (let pass = 0; pass < 2; pass++) {
+        ctx.beginPath();
+        ctx.setLineDash(pass === 0 ? [4, 5] : []);
+        let started = false;
+        for (let a = 0; a <= 360; a += 3) {
+          const r = a * Math.PI / 180;
+          const p = project([Math.cos(r), Math.sin(r), 0], cx, cy, R);
+          if ((pass === 1) === (p.depth >= 0)) {
+            if (!started) { ctx.moveTo(p.x, p.y); started = true; } else ctx.lineTo(p.x, p.y);
+          } else started = false;
+        }
+        ctx.strokeStyle = '#a5c8f0';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+
+      const o = project([0, 0, 0], cx, cy, R);
+
+      // Ejes de referencia y etiquetas
+      Object.keys(BASES).forEach(k => {
+        const b = BASES[k];
+        const isActive = k === basisKey;
+        [1, -1].forEach(sign => {
+          const end = project(scale(b.axis, sign), cx, cy, R);
+          ctx.strokeStyle = isActive ? b.color : '#cbd5e1';
+          ctx.globalAlpha = isActive ? 0.55 : 1;
+          ctx.lineWidth = isActive ? 6 : 1;
+          ctx.setLineDash(isActive ? [] : [3, 4]);
+          ctx.beginPath();
+          ctx.moveTo(o.x, o.y);
+          ctx.lineTo(end.x, end.y);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+          ctx.setLineDash([]);
+
+          const lp = project(scale(b.axis, sign * 1.18), cx, cy, R);
+          const bit = sign === 1 ? 0 : 1;
+          const hl = isActive && highlightBit === bit;
+          ctx.fillStyle = isActive ? b.color : '#94a3b8';
+          ctx.font = `bold ${hl ? 22 : (isActive ? 17 : 13)}px 'Fira Code', monospace`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(sign === 1 ? b.plus : b.minus, lp.x, lp.y);
+        });
+      });
+      ctx.textBaseline = 'alphabetic';
+
+      // Vector de estado
+      const tip = project(vec, cx, cy, R);
+      const vecGrad = ctx.createLinearGradient(o.x, o.y, tip.x, tip.y);
+      vecGrad.addColorStop(0, '#2f80ed');
+      vecGrad.addColorStop(1, '#8b5cf6');
+      ctx.strokeStyle = vecGrad;
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(o.x, o.y);
+      ctx.lineTo(tip.x, tip.y);
+      ctx.stroke();
+      ctx.lineCap = 'butt';
+
+      ctx.fillStyle = '#8b5cf6';
+      ctx.shadowColor = 'rgba(139, 92, 246, 0.6)';
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.arc(tip.x, tip.y, 8, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      ctx.fillStyle = '#1e1244';
+      ctx.beginPath();
+      ctx.arc(o.x, o.y, 3.5, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+
+    // --- Construcción del circuito SVG ---
+    function meterSvg(x, basisKey, bitIndex) {
+      const b = BASES[basisKey];
+      return `
+        <g id="meter${bitIndex}">
+          <rect x="${x}" y="36" width="52" height="48" rx="10" fill="url(#mGrad)" stroke="#8b5cf6" stroke-width="1.8"/>
+          <path d="M ${x + 10} 72 A 16 16 0 0 1 ${x + 42} 72" fill="none" stroke="#1e1244" stroke-width="2"/>
+          <line x1="${x + 26}" y1="74" x2="${x + 38}" y2="50" stroke="#1e1244" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="${x + 50}" cy="38" r="11" fill="${b.color}"/>
+          <text x="${x + 50}" y="42.5" text-anchor="middle" font-size="12" font-weight="800" fill="white" font-family="'Inter', sans-serif">${basisKey}</text>
+          <line x1="${x + 24}" y1="84" x2="${x + 24}" y2="140" stroke="#8b5cf6" stroke-width="1.5"/>
+          <line x1="${x + 28}" y1="84" x2="${x + 28}" y2="140" stroke="#8b5cf6" stroke-width="1.5"/>
+          <path d="M ${x + 19} 138 L ${x + 26} 147 L ${x + 33} 138 Z" fill="#8b5cf6"/>
+          <text x="${x + 26}" y="172" text-anchor="middle" font-size="12" font-weight="bold" fill="#8b5cf6" font-family="'Fira Code', monospace">c${bitIndex === 0 ? '₀' : '₁'}</text>
+          <text id="bitVal${bitIndex}" x="${x + 26}" y="192" text-anchor="middle" font-size="15" font-weight="800" fill="#94a3b8" font-family="'Fira Code', monospace">?</text>
+          <text x="${x + 26}" y="26" text-anchor="middle" font-size="10" font-weight="bold" fill="${b.color}" font-family="'Inter', sans-serif">${basisKey} basis</text>
+        </g>`;
+    }
+
+    function buildCircuit() {
+      const st = STATES[cfg.state];
+      let gatesSvg = '';
+      st.gates.forEach((g, i) => {
+        const x = 130 + i * 62;
+        const isX = g === 'X';
+        gatesSvg += `
+          <g transform="translate(${x}, 37)">
+            <rect width="46" height="46" rx="10" fill="url(${isX ? '#xGateGrad' : '#hGateGrad'})" stroke="${isX ? '#0284c7' : '#ff6097'}" stroke-width="1.8"/>
+            <text x="23" y="30" text-anchor="middle" font-size="${g.length > 1 ? 16 : 20}" font-weight="800" fill="${isX ? '#0369a1' : '#831843'}" font-family="'Inter', sans-serif">${g}</text>
+          </g>`;
+      });
+      if (!st.gates.length) {
+        gatesSvg = `<text x="180" y="30" text-anchor="middle" font-size="10" fill="#94a3b8" font-family="'Inter', sans-serif">(no gates: stays |0⟩)</text>`;
+      }
+
+      document.getElementById('svgCircuit').innerHTML = `
+        <defs>
+          <linearGradient id="hGateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffd5e5"/><stop offset="100%" stop-color="#ff85b3"/>
+          </linearGradient>
+          <linearGradient id="xGateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#bae6fd"/><stop offset="100%" stop-color="#38bdf8"/>
+          </linearGradient>
+          <linearGradient id="mGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f5f3ff"/><stop offset="100%" stop-color="#ddd6fe"/>
+          </linearGradient>
+          <filter id="laserGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3.5" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+        </defs>
+
+        <!-- Cable cuántico -->
+        <text x="22" y="65" font-size="16" font-weight="bold" fill="#1e1244" font-family="'Fira Code', monospace">|0⟩</text>
+        <line x1="62" y1="60" x2="640" y2="60" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="650" y="65" font-size="12" fill="#94a3b8" font-family="'Fira Code', monospace">q₀</text>
+
+        <!-- Registro clásico (doble línea) -->
+        <text x="30" y="155" font-size="14" font-weight="bold" fill="#8b5cf6" font-family="'Fira Code', monospace">c</text>
+        <line x1="62" y1="147" x2="640" y2="147" stroke="#c4b5fd" stroke-width="1.5"/>
+        <line x1="62" y1="152" x2="640" y2="152" stroke="#c4b5fd" stroke-width="1.5"/>
+        <text x="650" y="155" font-size="11" fill="#8b5cf6" font-family="'Fira Code', monospace">${cfg.m2 ? '2' : '1'} bit${cfg.m2 ? 's' : ''}</text>
+
+        <!-- Preparación -->
+        <text x="${130 + Math.max(0, st.gates.length - 1) * 31 + 23}" y="108" text-anchor="middle" font-size="10" font-weight="bold" fill="#ff6097" font-family="'Inter', sans-serif">prepare ${stateLabel()}</text>
+        ${gatesSvg}
+
+        ${meterSvg(X_M1 - 26, cfg.m1, 0)}
+        ${cfg.m2 ? meterSvg(X_M2 - 26, cfg.m2, 1) : ''}
+
+        <!-- Fotón -->
+        <circle id="photon" cx="${X_START}" cy="60" r="7" fill="#8b5cf6" filter="url(#laserGlow)" opacity="0"/>
+      `;
+    }
+
+    // --- Botones de configuración ---
+    function chip(label, active, onclick, color) {
+      return `<button onclick="${onclick}" class="px-2 py-1.5 rounded-xl border-2 font-mono font-bold transition-all ${active ? `bg-white shadow-sm ring-2 ring-[${color}]/20` : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'}" style="${active ? `border-color:${color};color:${color}` : ''}">${label}</button>`;
+    }
+
+    function buildChips() {
+      document.getElementById('stateChips').innerHTML = Object.keys(STATES)
+        .map(k => chip(STATES[k].label, cfg.state === k, `setConfig({state:'${k}'})`, '#8b5cf6')).join('');
+      document.getElementById('m1Chips').innerHTML = Object.keys(BASES)
+        .map(k => chip(k, cfg.m1 === k, `setConfig({m1:'${k}'})`, BASES[k].color)).join('');
+      document.getElementById('m2Chips').innerHTML = chip('None', cfg.m2 === null, 'setConfig({m2:null})', '#64748b') +
+        Object.keys(BASES).map(k => chip(k, cfg.m2 === k, `setConfig({m2:'${k}'})`, BASES[k].color)).join('');
+      document.getElementById('thetaBox').classList.toggle('hidden', cfg.state !== 'ry');
+
+      scenarios.forEach((s, i) => {
+        const active = s.state === cfg.state && s.m1 === cfg.m1 && s.m2 === cfg.m2;
+        document.getElementById(`scenarioBtn${i}`).className = (active
+          ? 'scenario-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-[#2f80ed] shadow-md ring-2 ring-[#2f80ed]/20'
+          : 'scenario-btn p-2.5 rounded-2xl border-2 transition-all text-left bg-white border-slate-200 hover:border-slate-300 opacity-75') + (i === 4 ? ' col-span-2 md:col-span-1' : '');
+      });
+    }
+
+    // Cualquier cambio de configuración reinicia el experimento
+    function setConfig(patch) {
+      Object.assign(cfg, patch);
+      shot = null;
+      idleTime = 0;
+      buildChips();
+      buildCircuit();
+      buildCode();
+      buildTheory();
+      resetCounts();
+    }
+
+    function applyScenario(i) {
+      setConfig({ ...scenarios[i] });
+    }
+
+    // --- Código Qiskit equivalente ---
+    let codeText = '';
+    function buildCode() {
+      const lines = [];
+      const cm = s => `<span class="text-slate-400">${s}</span>`;
+      const nClbits = cfg.m2 ? 2 : 1;
+      const add = (code, comment) => lines.push({ code, comment });
+
+      add('from qiskit import QuantumCircuit');
+      add('');
+      add(`qc = QuantumCircuit(1, ${nClbits})`);
+      add('', `# 1. Prepare ${stateLabel()}`);
+      if (cfg.state === 'ry') add(`qc.ry(${(cfg.theta * Math.PI / 180).toFixed(4)}, 0)`, `θ = ${cfg.theta}°`);
+      else STATES[cfg.state].code.forEach(c => add(c));
+
+      const addMeasure = (basisKey, clbit, label) => {
+        add('', `# ${label}. Measure in the ${basisKey} basis → c${clbit}`);
+        BASES[basisKey].pre.forEach(c => add(c, 'rotate basis to Z'));
+        add(`qc.measure(0, ${clbit})`);
+        if (cfg.m2 && clbit === 0) BASES[basisKey].post.forEach(c => add(c, 'rotate back'));
+      };
+      addMeasure(cfg.m1, 0, 2);
+      if (cfg.m2) addMeasure(cfg.m2, 1, 3);
+
+      add('');
+      add('', '# Run on a simulator, e.g. with qiskit_aer:');
+      add('', '# counts = AerSimulator().run(qc, shots=1024).result().get_counts()');
+
+      codeText = lines.map(l => l.code ? (l.comment ? `${l.code}  # ${l.comment}` : l.code) : (l.comment || '')).join('\n');
+      document.getElementById('qiskitCode').innerHTML = lines.map(l => {
+        if (!l.code) return l.comment ? cm(l.comment) : '';
+        const code = l.code.replace(/^(from|import)\b/, '<span class="text-[#ff85b3]">$1</span>')
+          .replace(/\b(qc)\.(\w+)/, '$1.<span class="text-[#7dd3fc]">$2</span>');
+        return l.comment ? `${code}  ${cm('# ' + l.comment)}` : code;
+      }).join('\n');
+    }
+
+    function copyCode() {
+      navigator.clipboard.writeText(codeText).then(() => {
+        const btn = document.getElementById('btnCopy');
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = 'Copy', 1500);
+      });
+    }
+
+    // --- Tabla de teoría dinámica ---
+    function buildTheory() {
+      const v = preparedVec();
+      const b1 = BASES[cfg.m1];
+      const p0 = probZero(v, cfg.m1);
+      const rows = [];
+      rows.push(`<div class="p-2 rounded-xl bg-[#f8fbff] border border-blue-100">
+        <span class="text-slate-500">M1 (${cfg.m1}):</span>
+        P(${b1.plus}) = <b class="text-[#2f80ed]">${(p0 * 100).toFixed(1)}%</b> &nbsp;•&nbsp;
+        P(${b1.minus}) = <b class="text-[#ff6097]">${((1 - p0) * 100).toFixed(1)}%</b></div>`);
+      if (cfg.m2) {
+        const b2 = BASES[cfg.m2];
+        [0, 1].forEach(bit => {
+          const q0 = probZero(collapseTarget(cfg.m1, bit), cfg.m2);
+          rows.push(`<div class="p-2 rounded-xl bg-[#faf5ff] border border-purple-100">
+            <span class="text-slate-500">If M1 gave ${bit === 0 ? b1.plus : b1.minus}, then M2 (${cfg.m2}):</span>
+            P(${b2.plus}) = <b class="text-[#2f80ed]">${(q0 * 100).toFixed(0)}%</b> &nbsp;•&nbsp;
+            P(${b2.minus}) = <b class="text-[#ff6097]">${((1 - q0) * 100).toFixed(0)}%</b></div>`);
+        });
+      }
+      const certain = p0 > 0.999 || p0 < 0.001;
+      rows.push(`<div class="text-[11px] text-slate-500 font-sans pt-1">${certain
+        ? `${stateLabel()} lies on the ${cfg.m1} axis, so the first result is <b>certain</b>.`
+        : `${stateLabel()} is not on the ${cfg.m1} axis, so the first result is <b>random</b>.`}</div>`);
+      document.getElementById('theoryTable').innerHTML = rows.join('');
+    }
+
+    // --- Histograma ---
+    function resetCounts() {
+      counts = {};
+      outcomeKeys().forEach(k => counts[k] = 0);
+      resetBits();
+      document.getElementById('lastShot').innerText = 'Each shot: prepare → measure → read the classical bits.';
+      updateHistogram();
+    }
+
+    function updateHistogram() {
+      const keys = outcomeKeys();
+      const theory = theoryProbs();
+      const total = keys.reduce((s, k) => s + (counts[k] || 0), 0);
+      const colors = ['#2f80ed', '#ff85b3', '#8b5cf6', '#10b981'];
+      const hist = document.getElementById('histogram');
+      hist.style.gridTemplateColumns = `repeat(${keys.length}, minmax(0, 1fr))`;
+      hist.innerHTML = keys.map((k, i) => {
+        const c = counts[k] || 0;
+        const f = total ? c / total : 0;
+        return `<div class="flex flex-col items-center h-full justify-end">
+          <div class="text-[11px] font-bold font-mono text-[#1e1244] mb-1">${total ? c : ''}</div>
+          <div class="relative w-full flex-1 bg-[#f8fbff] border border-slate-200 rounded-xl overflow-hidden flex items-end">
+            <div class="w-full transition-all duration-300" style="height:${f * 100}%;background:${colors[i]}"></div>
+            <div class="absolute left-0 right-0 border-t-2 border-dashed border-[#1e1244]" style="bottom:${theory[k] * 100}%"></div>
+          </div>
+          <div class="text-sm font-extrabold font-mono text-[#1e1244] mt-1">${k}</div>
+          <div class="text-[10px] font-mono text-slate-400">${total ? (f * 100).toFixed(1) + '%' : '—'} / ${(theory[k] * 100).toFixed(0)}%</div>
+        </div>`;
+      }).join('');
+      document.getElementById('shotTotal').innerText = total;
+      document.getElementById('bitOrderNote').classList.toggle('invisible', !cfg.m2);
+    }
+
+    function recordOutcome(b0, b1) {
+      const k = keyFor(b0, b1);
+      counts[k] = (counts[k] || 0) + 1;
+    }
+
+    function runManyShots(n) {
+      shot = null;
+      for (let i = 0; i < n; i++) {
+        const s = sampleShot();
+        recordOutcome(s.b0, s.b1);
+      }
+      resetBits();
+      document.getElementById('lastShot').innerText = `Ran ${n} shots instantly (like backend.run(qc, shots=${n})).`;
+      updateHistogram();
+    }
+
+    // --- Disparo animado (máquina de estados) ---
+    function startShot() {
+      const s = sampleShot();
+      const v = preparedVec();
+      shot = { stage: 'travel1', t: 0, b0: s.b0, b1: s.b1, vec: v, from: v };
+      resetBits();
+    }
+
+    function runOneShot() {
+      if (!shot) startShot();
+    }
+
+    function resetBits() {
+      ['bitVal0', 'bitVal1'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = '?'; el.setAttribute('fill', '#94a3b8'); }
+      });
+      ['meter0', 'meter1'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('meter-active');
+      });
+    }
+
+    function showBit(index, bit) {
+      const el = document.getElementById(`bitVal${index}`);
+      if (!el) return;
+      el.textContent = bit;
+      el.setAttribute('fill', bit === 0 ? '#2f80ed' : '#ff6097');
+    }
+
+    const ease = u => u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+
+    function advanceShot(dt) {
+      shot.t += dt;
+      const d = DUR[shot.stage];
+      const u = Math.min(1, shot.t / d);
+
+      if (shot.stage === 'collapse1' || shot.stage === 'collapse2') {
+        const target = shot.stage === 'collapse1' ? collapseTarget(cfg.m1, shot.b0) : collapseTarget(cfg.m2, shot.b1);
+        const e = ease(u);
+        const mix = [0, 1, 2].map(i => shot.from[i] * (1 - e) + target[i] * e);
+        shot.vec = normalize(mix, target);
+      }
+
+      if (u < 1) return;
+      shot.t = 0;
+
+      switch (shot.stage) {
+        case 'travel1':
+          shot.stage = 'collapse1';
+          shot.from = shot.vec;
+          document.getElementById('meter0').classList.add('meter-active');
+          break;
+        case 'collapse1':
+          document.getElementById('meter0').classList.remove('meter-active');
+          showBit(0, shot.b0);
+          if (cfg.m2) {
+            shot.stage = 'travel2';
+          } else {
+            finishShot();
+          }
+          break;
+        case 'travel2':
+          shot.stage = 'collapse2';
+          shot.from = shot.vec;
+          document.getElementById('meter1').classList.add('meter-active');
+          break;
+        case 'collapse2':
+          document.getElementById('meter1').classList.remove('meter-active');
+          showBit(1, shot.b1);
+          finishShot();
+          break;
+        case 'hold':
+          shot = null;
+          idleTime = 0;
+          break;
+      }
+    }
+
+    function finishShot() {
+      shot.stage = 'hold';
+      recordOutcome(shot.b0, shot.b1);
+      updateHistogram();
+      const b1 = BASES[cfg.m1];
+      let msg = `Last shot: M1 → ${shot.b0 === 0 ? b1.plus : b1.minus} (c₀ = ${shot.b0})`;
+      if (cfg.m2) {
+        const b2 = BASES[cfg.m2];
+        msg += `, M2 → ${shot.b1 === 0 ? b2.plus : b2.minus} (c₁ = ${shot.b1})  ⇒  bitstring "${keyFor(shot.b0, shot.b1)}"`;
+      }
+      document.getElementById('lastShot').innerText = msg;
+    }
+
+    function photonX() {
+      if (!shot) return X_START;
+      const u = Math.min(1, shot.t / DUR[shot.stage]);
+      switch (shot.stage) {
+        case 'travel1': return X_START + (X_M1 - X_START) * ease(u);
+        case 'collapse1': return X_M1;
+        case 'travel2': return X_M1 + (X_M2 - X_M1) * ease(u);
+        default: return cfg.m2 ? X_M2 : X_M1;
+      }
+    }
+
+    // --- Renderizado ---
+    function render() {
+      const vec = shot ? shot.vec : preparedVec();
+      let basis = cfg.m1;
+      let highlight = null;
+      let caption = `Prepared state ${stateLabel()}`;
+
+      if (shot) {
+        const b1 = BASES[cfg.m1];
+        const collapsed1 = `Collapsed to ${shot.b0 === 0 ? b1.plus : b1.minus}`;
+        switch (shot.stage) {
+          case 'collapse1':
+            caption = `Measuring in ${cfg.m1}…`;
+            break;
+          case 'travel2':
+            highlight = shot.b0;
+            caption = collapsed1;
+            break;
+          case 'collapse2':
+            basis = cfg.m2;
+            caption = `Measuring in ${cfg.m2}…`;
+            break;
+          case 'hold':
+            if (cfg.m2) {
+              const b2 = BASES[cfg.m2];
+              basis = cfg.m2;
+              highlight = shot.b1;
+              caption = `Collapsed to ${shot.b1 === 0 ? b2.plus : b2.minus}`;
+            } else {
+              highlight = shot.b0;
+              caption = collapsed1;
+            }
+            break;
+        }
+      }
+
+      blochCtx.clearRect(0, 0, blochCanvas.width, blochCanvas.height);
+      drawBloch(blochCtx, 210, 205, 140, vec, basis, highlight);
+      document.getElementById('blochCaption').innerText = caption;
+
+      const photon = document.getElementById('photon');
+      if (photon) {
+        photon.setAttribute('cx', photonX());
+        photon.setAttribute('opacity', shot ? 1 : 0);
+      }
+
+      const stage = document.getElementById('stageLabel');
+      const labels = { travel1: 'Preparing…', collapse1: 'Measurement 1', travel2: 'Between measurements', collapse2: 'Measurement 2', hold: 'Result read' };
+      stage.innerText = shot ? labels[shot.stage] : (isPlaying ? 'Next shot…' : 'Ready');
+    }
+
+    // --- Bucle de animación ---
+    function loop(ts) {
+      if (lastFrame === null) lastFrame = ts;
+      const dt = Math.min(0.1, (ts - lastFrame) / 1000) * speed;
+      lastFrame = ts;
+
+      if (shot) {
+        advanceShot(dt);
+      } else if (isPlaying) {
+        idleTime += dt;
+        if (idleTime > 0.35) startShot();
+      }
+      render();
+      requestAnimationFrame(loop);
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      document.getElementById('playBtnText').innerText = isPlaying ? 'Pause' : 'Auto-run';
+      document.getElementById('playIcon').classList.toggle('hidden', isPlaying);
+      document.getElementById('pauseIcon').classList.toggle('hidden', !isPlaying);
+    }
+
+    // --- Controles ---
+    document.getElementById('thetaRange').addEventListener('input', e => {
+      document.getElementById('thetaDisplay').innerText = `${e.target.value}°`;
+      setConfig({ theta: parseInt(e.target.value, 10) });
+    });
+    document.getElementById('speedRange').addEventListener('input', e => {
+      speed = parseFloat(e.target.value);
+      document.getElementById('speedDisplay').innerText = `${speed.toFixed(1)}x`;
+    });
+
+    // --- Exportador a GIF para Presentaciones (540x540) ---
+    function drawGifHistogram(ctx, gifCounts, x, y, w, h) {
+      const keys = outcomeKeys();
+      const theory = theoryProbs();
+      const total = keys.reduce((s, k) => s + gifCounts[k], 0);
+      const colors = ['#2f80ed', '#ff85b3', '#8b5cf6', '#10b981'];
+      const slot = w / keys.length;
+      const bw = Math.min(70, slot * 0.6);
+      keys.forEach((k, i) => {
+        const bx = x + slot * i + (slot - bw) / 2;
+        const f = total ? gifCounts[k] / total : 0;
+        ctx.fillStyle = '#eef2f7';
+        ctx.fillRect(bx, y, bw, h);
+        ctx.fillStyle = colors[i];
+        ctx.fillRect(bx, y + h * (1 - f), bw, h * f);
+        ctx.strokeStyle = '#1e1244';
+        ctx.setLineDash([4, 3]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(bx - 4, y + h * (1 - theory[k]));
+        ctx.lineTo(bx + bw + 4, y + h * (1 - theory[k]));
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#1e1244';
+        ctx.font = "bold 13px 'Fira Code', monospace";
+        ctx.textAlign = 'center';
+        ctx.fillText(k, bx + bw / 2, y + h + 16);
+        ctx.font = '10px Inter, sans-serif';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText(`${gifCounts[k]}`, bx + bw / 2, y - 4);
+      });
+    }
+
+    function exportPresentationGif() {
+      if (typeof gifshot === 'undefined') {
+        alert("The gifshot library is still loading. Please try again in a few moments.");
+        return;
+      }
+      if (isPlaying) togglePlay();
+      shot = null;
+
+      const btn = document.getElementById('btnExportGif');
+      const status = document.getElementById('exportStatus');
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+      status.classList.remove('hidden');
+      status.innerText = "Simulating shots and capturing frames...";
+
+      const c = document.createElement('canvas');
+      c.width = 540;
+      c.height = 540;
+      const ctx = c.getContext('2d');
+      const frames = [];
+      const gifCounts = {};
+      outcomeKeys().forEach(k => gifCounts[k] = 0);
+
+      const drawFrame = (vec, basis, highlight, caption) => {
+        ctx.fillStyle = '#fafcff';
+        ctx.fillRect(0, 0, 540, 540);
+        ctx.fillStyle = '#1e1244';
+        ctx.font = 'bold 20px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Qubit Measurement', 270, 32);
+        ctx.font = '13px Inter, sans-serif';
+        ctx.fillStyle = '#64748b';
+        const setup = `${stateLabel()} → measure ${cfg.m1}${cfg.m2 ? ' → measure ' + cfg.m2 : ''}`;
+        ctx.fillText(setup, 270, 52);
+        ctx.font = "bold 13px 'Fira Code', monospace";
+        ctx.fillStyle = '#8b5cf6';
+        ctx.fillText(caption, 270, 74);
+        drawBloch(ctx, 270, 200, 105, vec, basis, highlight);
+        drawGifHistogram(ctx, gifCounts, 60, 360, 420, 120);
+        ctx.font = '9px monospace';
+        ctx.fillStyle = '#94a3b8';
+        ctx.textAlign = 'center';
+        ctx.fillText('Qiskit Fall Fest 2026', 270, 528);
+        frames.push(c.toDataURL('image/png'));
+      };
+
+      const collapseFrames = (from, target, basis) => {
+        for (let i = 1; i <= 4; i++) {
+          const e = ease(i / 4);
+          const v = normalize([0, 1, 2].map(j => from[j] * (1 - e) + target[j] * e), target);
+          drawFrame(v, basis, null, `Measuring in ${basis}…`);
+        }
+      };
+
+      const v0 = preparedVec();
+      for (let s = 0; s < 8; s++) {
+        const r = sampleShot();
+        const b1 = BASES[cfg.m1];
+        for (let i = 0; i < 3; i++) drawFrame(v0, cfg.m1, null, `Shot ${s + 1}: prepared ${stateLabel()}`);
+        const t1 = collapseTarget(cfg.m1, r.b0);
+        collapseFrames(v0, t1, cfg.m1);
+        let finalVec = t1, finalBasis = cfg.m1, finalBit = r.b0;
+        let caption = `Collapsed to ${r.b0 === 0 ? b1.plus : b1.minus}  (c₀ = ${r.b0})`;
+        if (cfg.m2) {
+          for (let i = 0; i < 2; i++) drawFrame(t1, cfg.m1, r.b0, caption);
+          const t2 = collapseTarget(cfg.m2, r.b1);
+          collapseFrames(t1, t2, cfg.m2);
+          const b2 = BASES[cfg.m2];
+          finalVec = t2; finalBasis = cfg.m2; finalBit = r.b1;
+          caption = `Collapsed to ${r.b1 === 0 ? b2.plus : b2.minus}  →  "${keyFor(r.b0, r.b1)}"`;
+        }
+        gifCounts[keyFor(r.b0, r.b1)]++;
+        for (let i = 0; i < 4; i++) drawFrame(finalVec, finalBasis, finalBit, caption);
+      }
+
+      status.innerText = "Compiling GIF file with smooth palette...";
+
+      gifshot.createGIF({
+        images: frames,
+        gifWidth: 540,
+        gifHeight: 540,
+        interval: 0.18,
+        numWorkers: 2
+      }, function (obj) {
+        if (!obj.error) {
+          const dl = document.createElement('a');
+          dl.href = obj.image;
+          dl.download = 'qubit_measurement_qff2026.gif';
+          document.body.appendChild(dl);
+          dl.click();
+          document.body.removeChild(dl);
+          status.innerText = "GIF generated and downloaded successfully!";
+        } else {
+          status.innerText = "Error generating GIF. Please try again.";
+        }
+        setTimeout(() => status.classList.add('hidden'), 3000);
+        btn.disabled = false;
+        btn.classList.remove('opacity-50');
+      });
+    }
+
+    // Inicializar al cargar
+    window.onload = function () {
+      applyScenario(1);
+      requestAnimationFrame(loop);
+    };
+  </script>
+</body>
+</html>
