@@ -1,0 +1,52 @@
+@import 'tailwindcss';
+
+@theme static {
+  --font-sans: 'Inter', sans-serif;
+  --font-code: 'Fira Code', monospace;
+
+  --color-page: #fafcff;
+  --color-ink: #1e1244;
+  --color-brand-blue: #2f80ed;
+  --color-brand-purple: #8b5cf6;
+  --color-brand-pink: #ff6097;
+  --color-brand-pink-soft: #ff85b3;
+  --color-brand-pink-pale: #ffd5e5;
+  --color-brand-sky: #0284c7;
+  --color-pink-wash: #fdf2f7;
+  --color-surface-preview: #f8fbff;
+  --color-line: #cfe2f7;
+  --color-line-strong: #a5c8f0;
+  --color-sphere: #eef5fd;
+  --color-measure-start: #f5f3ff;
+  --color-measure-end: #ddd6fe;
+
+  --animate-travel: travel 3s infinite ease-in-out alternate;
+  --animate-shrink: shrink 4s infinite ease-in-out;
+
+  @keyframes travel {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(220px);
+    }
+  }
+
+  @keyframes shrink {
+    0%,
+    100% {
+      r: 38;
+      opacity: 1;
+    }
+    50% {
+      r: 14;
+      opacity: 0.5;
+    }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-page font-sans text-slate-800;
+  }
+}

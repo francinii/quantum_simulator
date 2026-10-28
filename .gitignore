@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build output and caches
+dist
+.vite
+*.tsbuildinfo
+.eslintcache
+
+# Test output
+coverage
+test-results
+playwright-report
+
+# Logs
+*.log
+pnpm-debug.log*
+
+# Environment and secrets (commit only a .env.example)
+.env
+.env.*
+!.env.example
+*.local
+
+# Editors
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Claude Code local settings
+.claude/settings.local.json
