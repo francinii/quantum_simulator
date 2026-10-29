@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { SimulatorFrame } from '@/shared/components/SimulatorFrame'
 import { useAnimationFrame } from '@/shared/hooks/useAnimationFrame'
-import { downloadFile, encodeGif } from '@/shared/lib/export/gif'
+import { useGifExport } from '@/shared/hooks/useGifExport'
 import { prefersReducedMotion } from '@/shared/lib/prefers-reduced-motion'
 import { readCanvasTheme } from '@/shared/lib/theme/canvas-theme'
 import { drawPhasors } from '../lib/draw-phasors'
@@ -21,15 +21,12 @@ import { ControlsPanel } from './ControlsPanel'
 import { ExplanationCards } from './ExplanationCards'
 import { PhasorPanel } from './PhasorPanel'
 import { PresetSelector } from './PresetSelector'
-import { ResultPanel, type ExportStatus } from './ResultPanel'
+import { ResultPanel } from './ResultPanel'
 import { WavePanel } from './WavePanel'
 
 // Converts elapsed seconds into wave phase advance, tuned to look like the legacy page.
 const TIME_SCALE = 2.2
-const STATUS_VISIBLE_MS = 3000
 const GIF_FILENAME = 'wave_interference_qff2026.gif'
-
-const nextTick = () => new Promise<void>((resolve) => setTimeout(resolve, 0))
 
 export function InterferenceSimulator() {
   const [phase, setPhase] = useState(0)
@@ -37,7 +34,6 @@ export function InterferenceSimulator() {
   const [ampB, setAmpB] = useState(1)
   const [playing, setPlaying] = useState(() => !prefersReducedMotion())
   const [speed, setSpeed] = useState(1)
-  const [exportStatus, setExportStatus] = useState<ExportStatus>('idle')
   const [theme] = useState(readCanvasTheme)
 
   const waveCanvas = useRef<HTMLCanvasElement>(null)
@@ -89,12 +85,6 @@ export function InterferenceSimulator() {
   // Redraws on any control change, which is what updates the canvases while paused.
   useEffect(draw, [draw])
 
-  useEffect(() => {
-    if (exportStatus !== 'done' && exportStatus !== 'error') return
-    const timeout = setTimeout(() => setExportStatus('idle'), STATUS_VISIBLE_MS)
-    return () => clearTimeout(timeout)
-  }, [exportStatus])
-
   const applyPreset = (index: number) => {
     const preset = PRESETS[index]
     setPhase(preset.phase)
@@ -102,25 +92,13 @@ export function InterferenceSimulator() {
     setAmpB(preset.b)
   }
 
-  const exportGif = async () => {
-    setExportStatus('capturing')
-    await nextTick()
-    try {
-      const frames = renderSweepFrames(theme, ampA, ampB)
-      setExportStatus('compiling')
-      await nextTick()
-      const url = await encodeGif({
-        frames,
-        width: GIF_SIZE,
-        height: GIF_SIZE,
-        frameSeconds: GIF_FRAME_SECONDS,
-      })
-      downloadFile(url, GIF_FILENAME)
-      setExportStatus('done')
-    } catch {
-      setExportStatus('error')
-    }
-  }
+  const gifExport = useGifExport({
+    renderFrames: () => renderSweepFrames(theme, ampA, ampB),
+    width: GIF_SIZE,
+    height: GIF_SIZE,
+    frameSeconds: GIF_FRAME_SECONDS,
+    filename: GIF_FILENAME,
+  })
 
   const info = classifyInterference(ampA, ampB, phase)
 
@@ -169,8 +147,8 @@ export function InterferenceSimulator() {
         maxAmplitude={ampA + ampB}
         intensity={relativeIntensity(ampA, ampB, phase)}
         info={info}
-        exportStatus={exportStatus}
-        onExport={exportGif}
+        exportStatus={gifExport.status}
+        onExport={gifExport.start}
       />
 
       <ExplanationCards />

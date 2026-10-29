@@ -1,4 +1,5 @@
 import { Card } from '@/shared/components/Card'
+import { PanelHeader } from '@/shared/components/PanelHeader'
 import { Slider } from '@/shared/components/Slider'
 
 interface ControlsPanelProps {
@@ -20,14 +21,12 @@ export function ControlsPanel({
 }: ControlsPanelProps) {
   return (
     <Card className="p-5">
-      <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-2">
-        <h2 className="text-brand-sky text-sm font-extrabold tracking-wider uppercase">
-          Controls
-        </h2>
-        <span className="text-brand-sky rounded-sm bg-blue-50 px-2 py-0.5 font-mono text-[11px] font-bold">
-          y = A·sin(kx − ωt + φ)
-        </span>
-      </div>
+      <PanelHeader
+        title="Controls"
+        titleClass="text-brand-sky"
+        chip="y = A·sin(kx − ωt + φ)"
+        chipClass="bg-blue-50 text-brand-sky"
+      />
 
       <div className="space-y-3 text-xs">
         <Slider

@@ -1,24 +1,16 @@
 import { Card } from '@/shared/components/Card'
-import { ExportGifButton } from '@/shared/components/ExportGifButton'
+import { ExportBar } from '@/shared/components/ExportBar'
 import { Formula } from '@/shared/components/Formula'
+import type { GifExportStatus } from '@/shared/hooks/useGifExport'
 import type { InterferenceInfo } from '../lib/physics'
 import { TYPE_STYLES } from '../lib/type-styles'
-
-export type ExportStatus = 'idle' | 'capturing' | 'compiling' | 'done' | 'error'
-
-const STATUS_MESSAGES: Record<Exclude<ExportStatus, 'idle'>, string> = {
-  capturing: 'Capturing phase sweep frames...',
-  compiling: 'Compiling GIF file with smooth palette...',
-  done: 'GIF generated and downloaded successfully!',
-  error: 'Error generating GIF. Please try again.',
-}
 
 interface ResultPanelProps {
   amplitude: number
   maxAmplitude: number
   intensity: number
   info: InterferenceInfo
-  exportStatus: ExportStatus
+  exportStatus: GifExportStatus
   onExport: () => void
 }
 
@@ -30,8 +22,6 @@ export function ResultPanel({
   exportStatus,
   onExport,
 }: ResultPanelProps) {
-  const exporting = exportStatus === 'capturing' || exportStatus === 'compiling'
-
   return (
     <Card className="p-5">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -91,25 +81,13 @@ export function ResultPanel({
         </div>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3">
-        <p className="text-xs text-slate-500">
-          Want to include this explanation in your class slides? Generate a
-          looping GIF that sweeps the phase from 0° to 360°.
-        </p>
-        <ExportGifButton
-          label="Export GIF for Slides (540x540)"
-          disabled={exporting}
-          onClick={onExport}
-        />
-      </div>
-      {exportStatus !== 'idle' && (
-        <div
-          role="status"
-          className="mt-2 text-center text-[11px] font-medium text-slate-500"
-        >
-          {STATUS_MESSAGES[exportStatus]}
-        </div>
-      )}
+      <ExportBar
+        description="Want to include this explanation in your class slides? Generate a looping GIF that sweeps the phase from 0° to 360°."
+        buttonLabel="Export GIF for Slides (540x540)"
+        capturingMessage="Capturing phase sweep frames..."
+        status={exportStatus}
+        onExport={onExport}
+      />
     </Card>
   )
 }

@@ -1,5 +1,6 @@
 import type { RefObject } from 'react'
 import { Card } from '@/shared/components/Card'
+import { PanelHeader } from '@/shared/components/PanelHeader'
 
 interface PhasorPanelProps {
   canvasRef: RefObject<HTMLCanvasElement | null>
@@ -8,14 +9,13 @@ interface PhasorPanelProps {
 export function PhasorPanel({ canvasRef }: PhasorPanelProps) {
   return (
     <Card className="flex-1 p-5">
-      <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-sm font-extrabold tracking-wider text-fuchsia-500 uppercase">
-          Phasor Diagram
-        </h2>
-        <span className="rounded-sm bg-pink-50 px-2 py-0.5 font-mono text-[11px] font-bold text-pink-600">
-          A⃗ + B⃗ = R⃗
-        </span>
-      </div>
+      <PanelHeader
+        bordered={false}
+        title="Phasor Diagram"
+        titleClass="text-fuchsia-500"
+        chip="A⃗ + B⃗ = R⃗"
+        chipClass="bg-pink-50 text-pink-600"
+      />
       <canvas
         ref={canvasRef}
         width={320}
