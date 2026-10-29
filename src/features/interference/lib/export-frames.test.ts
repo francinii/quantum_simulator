@@ -1,22 +1,6 @@
-import type { CanvasTheme } from '@/shared/lib/theme/canvas-theme'
 import { makeFakeContext } from '@/shared/test/fake-canvas-context'
+import { testTheme } from '@/shared/test/test-theme'
 import { GIF_FRAME_COUNT, GIF_SIZE, renderSweepFrames } from './export-frames'
-
-const theme = Object.fromEntries(
-  [
-    'blue',
-    'purple',
-    'pink',
-    'ink',
-    'page',
-    'axis',
-    'track',
-    'muted',
-    'faint',
-    'sans',
-    'mono',
-  ].map((key) => [key, key]),
-) as unknown as CanvasTheme
 
 describe('renderSweepFrames', () => {
   it('renders 36 square frames sweeping the phase from 0 up to just below 360 degrees', () => {
@@ -28,7 +12,7 @@ describe('renderSweepFrames', () => {
       'data:image/png;base64,',
     )
 
-    const frames = renderSweepFrames(theme, 1, 1)
+    const frames = renderSweepFrames(testTheme, 1, 1)
 
     expect(frames).toHaveLength(GIF_FRAME_COUNT)
     expect(GIF_SIZE).toBe(540)

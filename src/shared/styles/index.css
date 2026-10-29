@@ -23,9 +23,14 @@
   --color-track: #e2e8f0;
   --color-muted: #64748b;
   --color-faint: #94a3b8;
+  --color-surface: #ffffff;
+  --color-sphere-edge: #e6f0fc;
+  --color-blue-wash: #f4f8fe;
+  --color-blue-wash-hover: #e6f0fc;
 
   --animate-travel: travel 3s infinite ease-in-out alternate;
   --animate-shrink: shrink 4s infinite ease-in-out;
+  --animate-collapse-flash: collapse-flash 0.5s ease-out;
 
   @keyframes travel {
     0% {
@@ -33,6 +38,21 @@
     }
     100% {
       transform: translateX(220px);
+    }
+  }
+
+  @keyframes collapse-flash {
+    0% {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+    40% {
+      transform: scale(1.15);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
     }
   }
 

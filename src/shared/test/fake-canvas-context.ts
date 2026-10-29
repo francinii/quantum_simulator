@@ -8,6 +8,7 @@ export function makeFakeContext() {
     fillText,
     clearRect,
     createLinearGradient: () => gradient,
+    createRadialGradient: () => gradient,
   }
   const ctx = new Proxy(overrides, {
     get: (target, key: string) => (key in target ? target[key] : noop),

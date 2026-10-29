@@ -2,8 +2,13 @@ export interface CanvasTheme {
   blue: string
   purple: string
   pink: string
+  sky: string
   ink: string
   page: string
+  surface: string
+  sphereEdge: string
+  line: string
+  lineStrong: string
   axis: string
   track: string
   muted: string
@@ -16,8 +21,13 @@ const TOKENS: Record<keyof CanvasTheme, string> = {
   blue: '--color-brand-blue',
   purple: '--color-brand-purple',
   pink: '--color-brand-pink',
+  sky: '--color-brand-sky',
   ink: '--color-ink',
   page: '--color-page',
+  surface: '--color-surface',
+  sphereEdge: '--color-sphere-edge',
+  line: '--color-line',
+  lineStrong: '--color-line-strong',
   axis: '--color-axis',
   track: '--color-track',
   muted: '--color-muted',

@@ -23,3 +23,4 @@ One line each: date · decision · reason.
 2026-10-28 · Simulator components load lazily; config, metadata and `Preview` stay eager · home bundle stays light as simulators and their libraries grow
 2026-10-28 · A load boundary shows a reload prompt when a chunk fails · static hosting can remove old chunks after a redeploy
 2026-10-28 · Anything used by two or more simulators moves to `shared` at its second use · `PresetButton`, `PanelHeader`, `ExportBar` and `useGifExport` extracted from interference before superposition needed them
+2026-10-28 · No CSS transition on bars driven every frame (superposition under Animate θ) · React commits before paint, so each transition restarts at zero progress and the bar freezes

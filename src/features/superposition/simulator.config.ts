@@ -1,6 +1,12 @@
-import { MigrationPending } from '@/shared/components/MigrationPending'
+import { lazy } from 'react'
 import type { SimulatorConfig } from '@/shared/types/simulator'
 import { SuperpositionPreview } from './SuperpositionPreview'
+
+const SuperpositionSimulator = lazy(() =>
+  import('./components/SuperpositionSimulator').then((module) => ({
+    default: module.SuperpositionSimulator,
+  })),
+)
 
 export const simulatorConfig: SimulatorConfig = {
   id: 'superposition',
@@ -12,5 +18,5 @@ export const simulatorConfig: SimulatorConfig = {
   category: "Born's Rule",
   accent: 'sky',
   Preview: SuperpositionPreview,
-  Component: MigrationPending,
+  Component: SuperpositionSimulator,
 }

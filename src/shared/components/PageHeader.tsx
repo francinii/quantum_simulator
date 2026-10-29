@@ -1,7 +1,9 @@
+import type { ReactNode } from 'react'
+
 interface PageHeaderProps {
   title: string
   highlight: string
-  description: string
+  description: ReactNode
   size?: 'home' | 'simulator'
 }
 

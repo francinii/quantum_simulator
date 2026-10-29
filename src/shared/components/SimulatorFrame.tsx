@@ -5,7 +5,7 @@ import { PageHeader } from './PageHeader'
 interface SimulatorFrameProps {
   title: string
   highlight: string
-  description: string
+  description: ReactNode
   footerIcon: string
   footerMessage: ReactNode
   children: ReactNode

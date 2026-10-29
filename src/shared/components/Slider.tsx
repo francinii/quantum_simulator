@@ -10,6 +10,7 @@ const TONES: Record<Tone, { value: string; accent: string }> = {
 
 interface SliderProps {
   label: string
+  labelHint?: string
   display: string
   value: number
   min: number
@@ -22,6 +23,7 @@ interface SliderProps {
 
 export function Slider({
   label,
+  labelHint,
   display,
   value,
   min,
@@ -38,6 +40,9 @@ export function Slider({
       <div className="mb-1 flex justify-between">
         <label htmlFor={id} className={`font-bold ${labelClass}`}>
           {label}
+          {labelHint && (
+            <span className="font-normal text-slate-400"> {labelHint}</span>
+          )}
         </label>
         <span className={`font-mono font-bold ${TONES[tone].value}`}>
           {display}

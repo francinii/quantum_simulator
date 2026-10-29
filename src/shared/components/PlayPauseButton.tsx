@@ -1,9 +1,14 @@
 interface PlayPauseButtonProps {
   playing: boolean
   onToggle: () => void
+  playLabel?: string
 }
 
-export function PlayPauseButton({ playing, onToggle }: PlayPauseButtonProps) {
+export function PlayPauseButton({
+  playing,
+  onToggle,
+  playLabel = 'Resume',
+}: PlayPauseButtonProps) {
   return (
     <button
       type="button"
@@ -22,7 +27,7 @@ export function PlayPauseButton({ playing, onToggle }: PlayPauseButtonProps) {
           <path d="M4 4l12 6-12 6z" />
         )}
       </svg>
-      <span>{playing ? 'Pause' : 'Resume'}</span>
+      <span>{playing ? 'Pause' : playLabel}</span>
     </button>
   )
 }
