@@ -1,7 +1,7 @@
 # Qubit Measurement
 
-Status: ready
-Legacy: legacy/medicion_de_qubits.html
+Status: implemented
+Legacy: legacy/medicion_de_qubits.html (migrated)
 
 ## Goal
 
@@ -40,22 +40,22 @@ Let a student prepare a qubit, choose one or two measurement bases, and watch sh
 
 ## Acceptance criteria
 
-- [ ] Math tests: P(+) is 1, 0.5, 0 for |0⟩, |+⟩ on Z/X and |+⟩ on Z; collapse targets are the ± axis ends; sequential probabilities sum to 1 and match Experiments 4 and 5 (|+⟩ Z→Z gives 00 and 11 only; |0⟩ Z→X gives 50/50 on c₁).
-- [ ] Sampling with a fixed random source is deterministic; 10,000 shots land within tolerance of theory.
-- [ ] Shot state machine: stage order and durations for one and two measurements, easing endpoints, photon position per stage.
-- [ ] Qiskit code text is exact for every state and basis, including Ry(θ) in radians with four decimals.
-- [ ] Each experiment sets state and bases as listed and highlights itself; manual setup clears the highlight when it no longer matches.
-- [ ] Any setup change cancels the shot and clears counts.
-- [ ] 1 shot adds exactly one count when it finishes; 1024 shots add 1024 instantly; Reset clears.
-- [ ] Auto-run starts shots until paused; speed scales the animation.
-- [ ] Histogram shows 2 or 4 bars with correct keys, counts, measured and theory percentages and theory lines.
-- [ ] Bloch caption, active axis and highlighted pole follow the shot stages.
-- [ ] Copy puts the code text on the clipboard and shows "Copied!" for 1.5 s.
-- [ ] Exported GIF has 88 frames (one measurement) or 136 (two), 540x540, looping, and the button is disabled while exporting.
-- [ ] All controls are keyboard operable with visible labels.
-- [ ] Side by side with the legacy page, layout, colors and texts match.
-- [ ] Auto-run starts paused under reduced motion.
-- [ ] Superposition and interference still pass their tests and look unchanged.
+- [x] Math tests: P(+) is 1, 0.5, 0 for |0⟩, |+⟩ on Z/X and |+⟩ on Z; collapse targets are the ± axis ends; sequential probabilities sum to 1 and match Experiments 4 and 5 (|+⟩ Z→Z gives 00 and 11 only; |0⟩ Z→X gives 50/50 on c₁).
+- [x] Sampling with a fixed random source is deterministic; 10,000 shots land within tolerance of theory.
+- [x] Shot state machine: stage order and durations for one and two measurements, easing endpoints, photon position per stage.
+- [x] Qiskit code text is exact for every state and basis, including Ry(θ) in radians with four decimals.
+- [x] Each experiment sets state and bases as listed and highlights itself; manual setup clears the highlight when it no longer matches.
+- [x] Any setup change cancels the shot and clears counts.
+- [x] 1 shot adds exactly one count when it finishes; 1024 shots add 1024 instantly; Reset clears.
+- [x] Auto-run starts shots until paused; speed scales the animation.
+- [x] Histogram shows 2 or 4 bars with correct keys, counts, measured and theory percentages and theory lines.
+- [x] Bloch caption, active axis and highlighted pole follow the shot stages.
+- [x] Copy puts the code text on the clipboard and shows "Copied!" for 1.5 s.
+- [x] Exported GIF has 88 frames (one measurement) or 136 (two), 540x540, looping, and the button is disabled while exporting.
+- [x] All controls are keyboard operable with visible labels.
+- [x] Side by side with the legacy page, layout, colors and texts match.
+- [x] Auto-run starts paused under reduced motion.
+- [x] Superposition and interference still pass their tests and look unchanged.
 
 ## Open questions
 

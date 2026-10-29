@@ -1,6 +1,7 @@
 import { useId, type RefObject } from 'react'
 import { Card } from '@/shared/components/Card'
 import { PlayPauseButton } from '@/shared/components/PlayPauseButton'
+import { formatSpeed } from '@/shared/lib/format-speed'
 import type { InterferenceInfo } from '../lib/physics'
 import { TYPE_STYLES } from '../lib/type-styles'
 
@@ -12,8 +13,6 @@ interface WavePanelProps {
   speed: number
   onSpeedChange: (speed: number) => void
 }
-
-const formatSpeed = (speed: number) => `${speed.toFixed(2).replace(/0$/, '')}x`
 
 export function WavePanel({
   canvasRef,

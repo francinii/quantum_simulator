@@ -1,7 +1,7 @@
 # Matrix Algebra
 
-Status: draft
-Legacy: legacy/simulador_interactivo_lgebra_matricial_vs_notaci_n_dirac.html
+Status: implemented
+Legacy: legacy/simulador_interactivo_lgebra_matricial_vs_notaci_n_dirac.html (migrated)
 
 ## Goal
 
@@ -23,6 +23,9 @@ Teach H ⊗ H step by step, side by side in matrix (Kronecker) and Dirac notatio
 - Displayed matrices stay static KaTeX; unit tests check the same identities numerically (H ⊗ H, column extraction, unitarity, 25% each).
 - Step data (names, active boxes, probabilities, x positions) is a typed table in the feature `lib/`.
 - Fix over legacy: the legacy GIF serialized the circuit once before the loop, so every frame showed step 0. Here each frame draws the circuit for its own step, natively on canvas.
+- Fix over legacy: the GIF footer used to print "25% each" on every frame; it now shows the real probabilities of each step (100% before the operator acts).
+- Fix over legacy: the note under the multiplication box printed literal `**first column**`; it is now bold.
+- Moving by hand restarts the 3.5 s wait, so the step you land on is never cut short.
 - Auto-play starts paused under reduced motion.
 - Step buttons reuse `PresetButton`; the rest reuses shared pieces.
 
@@ -33,19 +36,19 @@ Teach H ⊗ H step by step, side by side in matrix (Kronecker) and Dirac notatio
 
 ## Acceptance criteria
 
-- [ ] Math tests: kron([1,0],[1,0]) = [1,0,0,0]; H ⊗ H equals ½[[1,1,1,1],[1,-1,1,-1],[1,1,-1,-1],[1,-1,-1,1]]; (H ⊗ H)|00⟩ = ½[1,1,1,1]; the matrix is orthogonal; squared amplitudes are 25% each and sum to 1.
-- [ ] Gate tests: X, H and CNOT matrices; applying a gate to qubit k of n equals the Kronecker form.
-- [ ] Step table matches the spec: names, active boxes, probabilities and cursor positions for steps 0-4.
-- [ ] Step buttons, Previous, Next and Reset navigate with wraparound and update every panel.
-- [ ] Auto-play advances every 3.5 s divided by speed, loops, and pauses; manual navigation keeps it running.
-- [ ] H gates glow from step 2; photons and cursor sit at the step position.
-- [ ] Inactive boxes are dimmed and active boxes ringed in blue (matrix) or pink (Dirac).
-- [ ] Probability bars and percentages follow the step.
-- [ ] Exported GIF has 5 frames at 540x540, looping, each with its own circuit state; the button is disabled while exporting.
-- [ ] Formulas render (matrices, aligned expansion) and scroll horizontally on narrow screens.
-- [ ] Controls are keyboard operable with visible labels.
-- [ ] Side by side with the legacy page, layout, colors and texts match.
-- [ ] Auto-play starts paused under reduced motion.
+- [x] Math tests: kron([1,0],[1,0]) = [1,0,0,0]; H ⊗ H equals ½[[1,1,1,1],[1,-1,1,-1],[1,1,-1,-1],[1,-1,-1,1]]; (H ⊗ H)|00⟩ = ½[1,1,1,1]; the matrix is orthogonal; squared amplitudes are 25% each and sum to 1.
+- [x] Gate tests: X, H and CNOT matrices; applying a gate to qubit k of n equals the Kronecker form.
+- [x] Step table matches the spec: names, active boxes, probabilities and cursor positions for steps 0-4.
+- [x] Step buttons, Previous, Next and Reset navigate with wraparound and update every panel.
+- [x] Auto-play advances every 3.5 s divided by speed, loops, and pauses; manual navigation keeps it running.
+- [x] H gates glow from step 2; photons and cursor sit at the step position.
+- [x] Inactive boxes are dimmed and active boxes ringed in blue (matrix) or pink (Dirac).
+- [x] Probability bars and percentages follow the step.
+- [x] Exported GIF has 5 frames at 540x540, looping, each with its own circuit state; the button is disabled while exporting.
+- [x] Formulas render (matrices, aligned expansion) and scroll horizontally on narrow screens.
+- [x] Controls are keyboard operable with visible labels.
+- [x] Side by side with the legacy page, layout, colors and texts match.
+- [x] Auto-play starts paused under reduced motion.
 
 ## Open questions
 

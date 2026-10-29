@@ -1,6 +1,12 @@
-import { MigrationPending } from '@/shared/components/MigrationPending'
+import { lazy } from 'react'
 import type { SimulatorConfig } from '@/shared/types/simulator'
 import { MatrixAlgebraPreview } from './MatrixAlgebraPreview'
+
+const MatrixAlgebraSimulator = lazy(() =>
+  import('./components/MatrixAlgebraSimulator').then((module) => ({
+    default: module.MatrixAlgebraSimulator,
+  })),
+)
 
 export const simulatorConfig: SimulatorConfig = {
   id: 'matrix-algebra',
@@ -12,5 +18,5 @@ export const simulatorConfig: SimulatorConfig = {
   category: 'Linear Algebra',
   accent: 'blue',
   Preview: MatrixAlgebraPreview,
-  Component: MigrationPending,
+  Component: MatrixAlgebraSimulator,
 }

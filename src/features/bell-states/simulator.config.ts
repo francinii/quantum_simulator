@@ -1,6 +1,12 @@
-import { MigrationPending } from '@/shared/components/MigrationPending'
+import { lazy } from 'react'
 import type { SimulatorConfig } from '@/shared/types/simulator'
 import { BellStatesPreview } from './BellStatesPreview'
+
+const BellStatesSimulator = lazy(() =>
+  import('./components/BellStatesSimulator').then((module) => ({
+    default: module.BellStatesSimulator,
+  })),
+)
 
 export const simulatorConfig: SimulatorConfig = {
   id: 'bell-states',
@@ -12,5 +18,5 @@ export const simulatorConfig: SimulatorConfig = {
   category: 'Entanglement',
   accent: 'purple',
   Preview: BellStatesPreview,
-  Component: MigrationPending,
+  Component: BellStatesSimulator,
 }

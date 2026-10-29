@@ -26,3 +26,13 @@ One line each: date · decision · reason.
 2026-10-28 · No CSS transition on bars driven every frame (superposition under Animate θ) · React commits before paint, so each transition restarts at zero progress and the bar freezes
 2026-10-28 · This is a lab, not an event: no event branding anywhere (badge, footer, GIF text, file names) · it belonged to the legacy pages; "Qiskit" stays only as educational content in qubit-measurement
 2026-10-28 · Bell entanglement entropy is 0 until entangled, then 1 · legacy ramped it to 0.84 qubits while labeling the state "Separable"
+2026-10-28 · Bloch sphere body, equator, projection and state arrow live in `shared/lib/canvas` (second use) · superposition refactored onto them, verified pixel-identical against the previous commit
+2026-10-28 · Tailwind v4 needs `md:leading-4` where v3's `md:text-xs` also set the line height · otherwise multi-line `leading-relaxed` text grows taller than in legacy
+2026-10-28 · Linear algebra for gates lives in `shared/lib/quantum` on real matrices (kron, matMul, H, X, CNOT) · Bell states reuse it; complex entries are added when a gate needs them
+2026-10-28 · Circuit drawing has one implementation per simulator that serves both the on-screen SVG geometry and the GIF canvas · every GIF frame shows its own step, fixing the legacy frozen circuit
+2026-10-28 · Three.js comes from npm and stays in lazy simulator chunks; build warning limit raised to 700 kB · the home bundle stays ~325 kB while the 3D simulators ship ~540 kB only when opened
+2026-10-28 · The 3D scene is isolated behind a small API (`createBlochScene`) and everything else is pure or mockable · jsdom has no WebGL, so scene math (camera, arrow) is tested as plain functions and the rendering is verified in a real browser
+2026-10-28 · Three.js color management is disabled and light intensities scaled by π · it reproduces the look of r128, the version the legacy pages were tuned for
+2026-10-28 · Bell step vectors and probabilities are computed by the shared simulator, not typed in · tests compare them with the legacy tables, so a gate or ordering mistake fails loudly
+2026-10-28 · Bell cycle logic (step, phase, arrows, entropy, wrap) is pure in `lib/cycle.ts` · the component only renders it, so the 3D scene and the GIF frames reuse the same functions
+2026-10-28 · Confetti via `canvas-confetti` with `disableForReducedMotion` · the burst is decoration, so it is skipped for users who ask for less motion

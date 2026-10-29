@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 interface CardProps {
   className?: string
   borderClass?: string
+  backgroundClass?: string
   children: ReactNode
 }
 
@@ -10,11 +11,12 @@ interface CardProps {
 export function Card({
   className = '',
   borderClass = 'border-line',
+  backgroundClass = 'bg-white',
   children,
 }: CardProps) {
   return (
     <div
-      className={`rounded-3xl border bg-white shadow-xs transition-[transform,box-shadow,border-color] duration-250 ease-[ease] group-hover:border-brand-purple group-hover:-translate-y-1 group-hover:shadow-brand-blue/25 group-hover:shadow-[0_12px_28px_-8px] ${borderClass} ${className}`}
+      className={`rounded-3xl border shadow-xs transition-[transform,box-shadow,border-color] duration-250 ease-[ease] group-hover:border-brand-purple group-hover:-translate-y-1 group-hover:shadow-brand-blue/25 group-hover:shadow-[0_12px_28px_-8px] ${backgroundClass} ${borderClass} ${className}`}
     >
       {children}
     </div>

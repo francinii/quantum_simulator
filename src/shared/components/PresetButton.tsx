@@ -6,6 +6,7 @@ interface PresetButtonProps {
   title: string
   titleClass?: string
   detail: string
+  className?: string
 }
 
 export function PresetButton({
@@ -16,6 +17,7 @@ export function PresetButton({
   title,
   titleClass = 'text-xs',
   detail,
+  className = '',
 }: PresetButtonProps) {
   return (
     <button
@@ -26,7 +28,7 @@ export function PresetButton({
         active
           ? 'border-brand-blue ring-brand-blue/20 shadow-md ring-2'
           : 'border-slate-200 opacity-75 hover:border-slate-300'
-      }`}
+      } ${className}`}
     >
       <div
         className={`text-[10px] font-bold tracking-wider uppercase ${labelClass}`}

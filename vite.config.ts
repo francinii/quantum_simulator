@@ -24,6 +24,10 @@ function spaFallback(): Plugin {
 
 export default defineConfig(({ command, isPreview }) => ({
   base: command === 'build' || isPreview ? '/quantum_simulator/' : '/',
+  build: {
+    // Three.js (~540 kB) lives only in lazy simulator chunks; the main bundle is the one to keep small.
+    chunkSizeWarningLimit: 700,
+  },
   plugins: [react(), tailwindcss(), spaFallback()],
   resolve: {
     alias: { '@': path.resolve(import.meta.dirname, 'src') },

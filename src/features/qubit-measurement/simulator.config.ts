@@ -1,6 +1,12 @@
-import { MigrationPending } from '@/shared/components/MigrationPending'
+import { lazy } from 'react'
 import type { SimulatorConfig } from '@/shared/types/simulator'
 import { QubitMeasurementPreview } from './QubitMeasurementPreview'
+
+const QubitMeasurementSimulator = lazy(() =>
+  import('./components/QubitMeasurementSimulator').then((module) => ({
+    default: module.QubitMeasurementSimulator,
+  })),
+)
 
 export const simulatorConfig: SimulatorConfig = {
   id: 'qubit-measurement',
@@ -12,5 +18,5 @@ export const simulatorConfig: SimulatorConfig = {
   category: 'Measurement',
   accent: 'purple',
   Preview: QubitMeasurementPreview,
-  Component: MigrationPending,
+  Component: QubitMeasurementSimulator,
 }

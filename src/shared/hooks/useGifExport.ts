@@ -32,7 +32,8 @@ export function useGifExport({
     return () => clearTimeout(timeout)
   }, [status])
 
-  const start = async () => {
+  // Resolves true once the file was downloaded, false if anything failed.
+  const start = async (): Promise<boolean> => {
     setStatus('capturing')
     await nextTick()
     try {
@@ -42,8 +43,10 @@ export function useGifExport({
       const url = await encodeGif({ frames, width, height, frameSeconds })
       downloadFile(url, filename)
       setStatus('done')
+      return true
     } catch {
       setStatus('error')
+      return false
     }
   }
 

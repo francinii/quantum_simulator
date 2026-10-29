@@ -2,22 +2,33 @@ interface ExportGifButtonProps {
   label: string
   disabled: boolean
   onClick: () => void
+  variant?: 'solid' | 'block' | 'gradient'
+}
+
+const VARIANTS = {
+  solid:
+    'bg-ink flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-xs transition-colors hover:bg-slate-800 disabled:opacity-50',
+  block:
+    'bg-ink flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-white shadow transition-colors hover:bg-slate-800 disabled:opacity-50',
+  gradient:
+    'from-brand-pink-soft via-brand-purple to-brand-blue flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r px-4 py-2.5 text-xs font-bold text-white shadow-md transition-opacity hover:opacity-95 disabled:opacity-50',
 }
 
 export function ExportGifButton({
   label,
   disabled,
   onClick,
+  variant = 'solid',
 }: ExportGifButtonProps) {
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="bg-ink flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-xs transition-colors hover:bg-slate-800 disabled:opacity-50"
+      className={VARIANTS[variant]}
     >
       <svg
-        className="text-brand-pink-soft h-4 w-4"
+        className={`h-4 w-4 ${variant === 'gradient' ? '' : 'text-brand-pink-soft'}`}
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"

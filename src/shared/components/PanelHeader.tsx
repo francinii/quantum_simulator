@@ -4,6 +4,7 @@ interface PanelHeaderProps {
   chip: string
   chipClass: string
   bordered?: boolean
+  dotClass?: string
 }
 
 export function PanelHeader({
@@ -12,6 +13,7 @@ export function PanelHeader({
   chip,
   chipClass,
   bordered = true,
+  dotClass,
 }: PanelHeaderProps) {
   return (
     <div
@@ -19,11 +21,14 @@ export function PanelHeader({
         bordered ? 'mb-3 border-b border-slate-100 pb-2' : 'mb-2'
       }`}
     >
-      <h2
-        className={`text-sm font-extrabold tracking-wider uppercase ${titleClass}`}
-      >
-        {title}
-      </h2>
+      <div className="flex items-center gap-2">
+        {dotClass && <span className={`h-3 w-3 rounded-full ${dotClass}`} />}
+        <h2
+          className={`text-sm font-extrabold tracking-wider uppercase ${titleClass}`}
+        >
+          {title}
+        </h2>
+      </div>
       <span
         className={`rounded-sm px-2 py-0.5 font-mono text-[11px] font-bold ${chipClass}`}
       >
