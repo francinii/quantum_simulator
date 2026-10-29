@@ -18,7 +18,7 @@ export function PageFooter({ icon, size = 'home', children }: PageFooterProps) {
         <span>{children}</span>
       </div>
       <div className="font-mono text-[11px] text-slate-400">
-        Qiskit Fall Fest 2026 &bull; Mathematical Quantum Physics
+        Quantum Lab &bull; Mathematical Quantum Physics
       </div>
     </footer>
   )

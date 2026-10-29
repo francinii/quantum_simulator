@@ -390,7 +390,7 @@ describe('SuperpositionSimulator', () => {
       await waitFor(() => expect(exportButton).toBeEnabled())
       expect(downloadFile).toHaveBeenCalledWith(
         'data:image/gif;base64,',
-        'quantum_superposition_qff2026.gif',
+        'quantum_superposition.gif',
       )
       expect(screen.getByText(/downloaded successfully/)).toBeInTheDocument()
     })

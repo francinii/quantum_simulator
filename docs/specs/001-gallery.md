@@ -9,11 +9,12 @@ The home page where a visitor discovers every simulator and opens one with a sin
 
 ## Behavior
 
-- Header: event badge, gradient title, one-paragraph intro.
+- Header: "Quantum Pedagogy" badge, gradient title, one-paragraph intro.
 - One card per registered simulator in pedagogical order (config `order`), showing: animated preview, number ("Simulation 01"), chip (e.g. `H ⊗ H`), title, description, category, "Open simulation" link.
 - Cards link to `/simulators/:id`; hover lifts the card.
 - Grid: 1 column on mobile, 2 from `md`, 3 from `lg`.
-- Footer: GIF-export tip and event credit.
+- Footer: GIF-export tip and the credit "Quantum Lab • Mathematical Quantum Physics".
+- This is a lab, not an event: the legacy event branding is intentionally dropped everywhere (badge, footer, GIF text and file names). Side-by-side comparisons with legacy ignore those strings.
 - Cards come only from the simulator registry; the gallery knows no simulator by name.
 - Each feature provides its own `Preview` component (its animated SVG) via config.
 

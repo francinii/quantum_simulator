@@ -26,7 +26,7 @@ import { WavePanel } from './WavePanel'
 
 // Converts elapsed seconds into wave phase advance, tuned to look like the legacy page.
 const TIME_SCALE = 2.2
-const GIF_FILENAME = 'wave_interference_qff2026.gif'
+const GIF_FILENAME = 'wave_interference.gif'
 
 export function InterferenceSimulator() {
   const [phase, setPhase] = useState(0)

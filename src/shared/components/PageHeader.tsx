@@ -38,7 +38,7 @@ export function PageHeader({
         className={`border-brand-pink-soft/40 bg-pink-wash text-brand-pink inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold tracking-wider uppercase ${classes.badge}`}
       >
         <span className="bg-brand-pink h-2 w-2 animate-ping rounded-full motion-reduce:animate-none" />
-        Quantum Pedagogy &bull; Qiskit Fall Fest 2026
+        Quantum Pedagogy
       </div>
       <h1 className={`text-ink font-extrabold tracking-tight ${classes.title}`}>
         {title}{' '}

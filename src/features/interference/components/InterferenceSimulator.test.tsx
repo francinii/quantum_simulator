@@ -111,7 +111,7 @@ describe('InterferenceSimulator', () => {
     await waitFor(() => expect(exportButton).toBeEnabled())
     expect(downloadFile).toHaveBeenCalledWith(
       'data:image/gif;base64,',
-      'wave_interference_qff2026.gif',
+      'wave_interference.gif',
     )
     expect(screen.getByRole('status')).toHaveTextContent(
       'downloaded successfully',

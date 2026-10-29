@@ -26,7 +26,7 @@ import { StatePanel } from './StatePanel'
 
 const SWEEP_DEGREES_PER_SECOND = 45
 const COLLAPSE_VISIBLE_MS = 1400
-const GIF_FILENAME = 'quantum_superposition_qff2026.gif'
+const GIF_FILENAME = 'quantum_superposition.gif'
 
 export function SuperpositionSimulator() {
   const [theta, setTheta] = useState(PRESETS[INITIAL_PRESET].theta)

@@ -90,7 +90,7 @@ export function renderSweepFrames(
     ctx.font = `9px ${theme.mono}`
     ctx.fillStyle = theme.faint
     ctx.textAlign = 'center'
-    ctx.fillText('Qiskit Fall Fest 2026', center, 524)
+    ctx.fillText('Quantum Lab', center, 524)
 
     return canvas.toDataURL('image/png')
   })

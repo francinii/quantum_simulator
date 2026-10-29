@@ -59,7 +59,7 @@ export function renderSweepFrames(
 
     ctx.font = `9px ${theme.mono}`
     ctx.fillStyle = theme.faint
-    ctx.fillText(`R = ${r.toFixed(2)}  •  Qiskit Fall Fest 2026`, center, 526)
+    ctx.fillText(`R = ${r.toFixed(2)}  •  Quantum Lab`, center, 526)
 
     frames.push(canvas.toDataURL('image/png'))
   }
