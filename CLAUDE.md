@@ -12,11 +12,12 @@ Interactive quantum computing simulators for teaching. Currently **frontend only
 6. **Keep it simple**: no abstraction, package, or service until it is needed. No monorepo, state library, or backend layer until a real requirement appears.
 7. **Do not touch `legacy/`**: the original HTML simulators are preserved as the reference for migration. Never delete them until their feature is migrated and verified.
 8. **Comments explain why, not what.** Default to none.
-9. **Spec first (SDD)**: write or update the spec in `docs/specs/<feature>.md` before implementing a feature or changing its behavior.
-10. **Conventional commits**: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`.
-11. **Commits always need the owner's approval.** Never commit or push on your own, even if a similar commit was approved before. Propose the commit message and the files, then wait for a yes. Pushing is done by the owner.
-12. Responsive design for different devices
-13. **Keep the repo clean**: never commit dependencies, build output, caches, logs, secrets, or editor/OS files. `.gitignore` covers them; update it when a new tool adds generated files. `pnpm-lock.yaml` is the exception and is always committed.
+9. **Spec first (SDD)**: write or update the spec in `docs/specs/NNN-<feature>.md` before implementing a feature or changing its behavior. `NNN` is a 3-digit sequence in creation order (`000`, `001`, `002`, ...); never renumber existing specs.
+10. **The spec is the source of truth and must always be up to date.** Any change to behavior, scope, or a decision updates the spec in the same piece of work, before or together with the code. Tick acceptance criteria only once verified, and set `Status` to match reality (`draft`, `ready`, `implemented`). If code and spec disagree, stop and reconcile them; never leave the spec stale.
+11. **Conventional commits**: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`.
+12. **Commits always need the owner's approval.** Never commit or push on your own, even if a similar commit was approved before. Propose the commit message and the files, then wait for a yes. Pushing is done by the owner.
+13. Responsive design for different devices
+14. **Keep the repo clean**: never commit dependencies, build output, caches, logs, secrets, or editor/OS files. `.gitignore` covers them; update it when a new tool adds generated files. `pnpm-lock.yaml` is the exception and is always committed.
 
 
 ## Stack
@@ -104,7 +105,7 @@ quantum-lab/
 
 ## Adding a Simulator
 
-1. Write `docs/specs/<feature>.md`: goal, user interactions, math, acceptance criteria.
+1. Write `docs/specs/NNN-<feature>.md` from `_template.md` (next free number): goal, user interactions, math, acceptance criteria.
 2. Create `src/features/<feature>/` with the layout above.
 3. Put pure math in `shared/lib/quantum` if reusable, otherwise in the feature `lib/`. Add unit tests.
 4. Register it in `simulator.config.ts` so the gallery and router pick it up.

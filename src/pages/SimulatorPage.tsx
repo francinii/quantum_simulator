@@ -12,17 +12,16 @@ export function SimulatorPage({ simulators }: SimulatorPageProps) {
   if (!simulator) return <NotFoundPage />
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1">
-      <Link
-        to="/"
-        className="text-brand-blue hover:text-brand-purple inline-flex items-center gap-1 text-xs font-bold transition-colors"
-      >
-        ← All simulations
-      </Link>
-      <h1 className="text-ink my-3 text-2xl font-extrabold">
-        {simulator.title}
-      </h1>
-      <simulator.Component />
-    </main>
+    <>
+      <nav className="mx-auto mb-2 w-full max-w-6xl">
+        <Link
+          to="/"
+          className="text-brand-blue hover:text-brand-purple inline-flex items-center gap-1 text-xs font-bold transition-colors"
+        >
+          ← All simulations
+        </Link>
+      </nav>
+      <simulator.Component simulator={simulator} />
+    </>
   )
 }

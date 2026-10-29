@@ -1,5 +1,5 @@
-import { MigrationPending } from '@/shared/components/MigrationPending'
 import type { SimulatorConfig } from '@/shared/types/simulator'
+import { InterferenceSimulator } from './components/InterferenceSimulator'
 import { InterferencePreview } from './InterferencePreview'
 
 export const simulatorConfig: SimulatorConfig = {
@@ -12,5 +12,5 @@ export const simulatorConfig: SimulatorConfig = {
   category: 'Interference',
   accent: 'emerald',
   Preview: InterferencePreview,
-  Component: MigrationPending,
+  Component: InterferenceSimulator,
 }

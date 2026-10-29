@@ -21,7 +21,7 @@ The home page where a visitor discovers every simulator and opens one with a sin
 
 - Design tokens in `shared/styles`: colors (`#fafcff` bg, `#1e1244` ink, `#2f80ed` blue, `#8b5cf6` purple, `#ff6097` pink), Inter and Fira Code fonts, shared animations (`travel`, `shrink`).
 - `Layout` restyled to legacy look: light background, shared header and footer. Simulator pages reuse it, so the one inconsistent legacy page (decoherence: white bg, narrower width) adopts the same standard.
-- Reusable components: `Card`, `Badge`, `PageHeader`, `PageFooter`. No page restyles these inline.
+- Reusable components: `Card`, `Chip`, `PageHeader`, `PageFooter`. No page restyles these inline.
 
 ## Out of scope
 

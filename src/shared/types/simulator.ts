@@ -2,6 +2,10 @@ import type { ComponentType } from 'react'
 
 export type Accent = 'blue' | 'purple' | 'pink' | 'emerald' | 'sky'
 
+export interface SimulatorProps {
+  simulator: SimulatorConfig
+}
+
 export interface SimulatorConfig {
   id: string
   order: number
@@ -11,5 +15,5 @@ export interface SimulatorConfig {
   category: string
   accent: Accent
   Preview: ComponentType
-  Component: ComponentType
+  Component: ComponentType<SimulatorProps>
 }

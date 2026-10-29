@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react'
+import { prefersReducedMotion } from '@/shared/lib/prefers-reduced-motion'
 
 interface PreviewSvgProps {
   children: ReactNode
@@ -9,9 +10,7 @@ export function PreviewSvg({ children }: PreviewSvgProps) {
 
   // SMIL animations ignore CSS media queries, so reduced motion must pause them explicitly.
   useEffect(() => {
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
-      ref.current?.pauseAnimations?.()
-    }
+    if (prefersReducedMotion()) ref.current?.pauseAnimations?.()
   }, [])
 
   return (

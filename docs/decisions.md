@@ -12,3 +12,11 @@ One line each: date · decision · reason.
 2026-10-28 · Simulator order via `order` field in config · legacy order is pedagogical, not alphabetical
 2026-10-28 · Each feature supplies its own `Preview` component · gallery stays generic, previews match legacy SVGs
 2026-10-28 · Legacy look is the visual source of truth, standardized through shared tokens and components · decoherence page aligned to the others
+2026-10-28 · Spec files numbered `NNN-name.md` in creation order, never renumbered · shows which came first
+2026-10-28 · The spec is the source of truth and is always kept current · code and spec must not drift
+2026-10-28 · Formulas via KaTeX (npm), not MathJax CDN · lighter, synchronous, bundled with the app
+2026-10-28 · GIF export via `gifshot` (npm) in `shared/lib/export` · all simulators except one export GIFs
+2026-10-28 · Wave drawings use canvas, shared by screen and GIF · guarantees the GIF matches what is shown
+2026-10-28 · Canvas reads colors and fonts from the CSS tokens at runtime · one source of truth for the palette, no hex in TS
+2026-10-28 · Simulator components receive their own config as a `simulator` prop · lets the migration placeholder show a title without extra wiring
+2026-10-28 · Speed readout shows exact value (0.25x) · legacy rounded 0.25 to 0.3x, which was misleading

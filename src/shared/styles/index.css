@@ -19,6 +19,10 @@
   --color-sphere: #eef5fd;
   --color-measure-start: #f5f3ff;
   --color-measure-end: #ddd6fe;
+  --color-axis: #cbd5e1;
+  --color-track: #e2e8f0;
+  --color-muted: #64748b;
+  --color-faint: #94a3b8;
 
   --animate-travel: travel 3s infinite ease-in-out alternate;
   --animate-shrink: shrink 4s infinite ease-in-out;

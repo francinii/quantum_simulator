@@ -1,0 +1,115 @@
+import { Card } from '@/shared/components/Card'
+import { ExportGifButton } from '@/shared/components/ExportGifButton'
+import { Formula } from '@/shared/components/Formula'
+import type { InterferenceInfo } from '../lib/physics'
+import { TYPE_STYLES } from '../lib/type-styles'
+
+export type ExportStatus = 'idle' | 'capturing' | 'compiling' | 'done' | 'error'
+
+const STATUS_MESSAGES: Record<Exclude<ExportStatus, 'idle'>, string> = {
+  capturing: 'Capturing phase sweep frames...',
+  compiling: 'Compiling GIF file with smooth palette...',
+  done: 'GIF generated and downloaded successfully!',
+  error: 'Error generating GIF. Please try again.',
+}
+
+interface ResultPanelProps {
+  amplitude: number
+  maxAmplitude: number
+  intensity: number
+  info: InterferenceInfo
+  exportStatus: ExportStatus
+  onExport: () => void
+}
+
+export function ResultPanel({
+  amplitude,
+  maxAmplitude,
+  intensity,
+  info,
+  exportStatus,
+  onExport,
+}: ResultPanelProps) {
+  const exporting = exportStatus === 'capturing' || exportStatus === 'compiling'
+
+  return (
+    <Card className="p-5">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <span className="text-brand-purple text-xs font-bold tracking-wider uppercase">
+            Resulting Wave
+          </span>
+          <h3 className="text-ink text-sm font-bold">
+            Resultant Amplitude:{' '}
+            <Formula tex="R = \sqrt{A^2 + B^2 + 2AB\cos\Delta\varphi}" />
+          </h3>
+        </div>
+        <div className="font-mono text-xs text-slate-500">
+          Intensity is proportional to the squared amplitude:{' '}
+          <Formula tex="I \propto R^2" />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 text-center sm:grid-cols-3">
+        <div className="bg-surface-preview rounded-2xl border border-blue-100 p-3">
+          <div className="text-xs font-bold text-slate-700">
+            Resultant Amplitude R
+          </div>
+          <div className="text-ink mt-1 font-mono text-2xl font-extrabold">
+            {amplitude.toFixed(2)}
+          </div>
+          <div className="font-mono text-[11px] text-slate-400">
+            max possible: <span>{maxAmplitude.toFixed(2)}</span>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-purple-100 bg-purple-50 p-3">
+          <div className="text-xs font-bold text-slate-700">
+            Relative Intensity R² / (A+B)²
+          </div>
+          <div className="my-3 h-4 overflow-hidden rounded-full bg-slate-100">
+            <div
+              className="from-brand-blue via-brand-purple to-brand-pink h-full bg-linear-to-r transition-all duration-200"
+              style={{ width: `${intensity}%` }}
+            />
+          </div>
+          <div className="text-ink text-sm font-extrabold">
+            {intensity.toFixed(0)}%
+          </div>
+        </div>
+
+        <div className="bg-pink-wash rounded-2xl border border-pink-100 p-3">
+          <div className="text-xs font-bold text-slate-700">
+            Interference Type
+          </div>
+          <div
+            className={`mt-1 text-lg font-extrabold ${TYPE_STYLES[info.kind].text}`}
+          >
+            {info.text}
+          </div>
+          <div className="mt-1 text-[11px] text-slate-500">{info.hint}</div>
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3">
+        <p className="text-xs text-slate-500">
+          Want to include this explanation in your class slides? Generate a
+          looping GIF that sweeps the phase from 0° to 360°.
+        </p>
+        <ExportGifButton
+          label="Export GIF for Slides (540x540)"
+          disabled={exporting}
+          onClick={onExport}
+        />
+      </div>
+      {exportStatus !== 'idle' && (
+        <div
+          role="status"
+          className="mt-2 text-center text-[11px] font-medium text-slate-500"
+        >
+          {STATUS_MESSAGES[exportStatus]}
+        </div>
+      )}
+    </Card>
+  )
+}
