@@ -1,10 +1,14 @@
-import type { ComponentType } from 'react'
+import type { ComponentType, LazyExoticComponent } from 'react'
 
 export type Accent = 'blue' | 'purple' | 'pink' | 'emerald' | 'sky'
 
 export interface SimulatorProps {
   simulator: SimulatorConfig
 }
+
+export type SimulatorComponent =
+  | ComponentType<SimulatorProps>
+  | LazyExoticComponent<ComponentType<SimulatorProps>>
 
 export interface SimulatorConfig {
   id: string
@@ -15,5 +19,5 @@ export interface SimulatorConfig {
   category: string
   accent: Accent
   Preview: ComponentType
-  Component: ComponentType<SimulatorProps>
+  Component: SimulatorComponent
 }

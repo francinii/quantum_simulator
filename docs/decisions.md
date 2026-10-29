@@ -20,3 +20,5 @@ One line each: date · decision · reason.
 2026-10-28 · Canvas reads colors and fonts from the CSS tokens at runtime · one source of truth for the palette, no hex in TS
 2026-10-28 · Simulator components receive their own config as a `simulator` prop · lets the migration placeholder show a title without extra wiring
 2026-10-28 · Speed readout shows exact value (0.25x) · legacy rounded 0.25 to 0.3x, which was misleading
+2026-10-28 · Simulator components load lazily; config, metadata and `Preview` stay eager · home bundle stays light as simulators and their libraries grow
+2026-10-28 · A load boundary shows a reload prompt when a chunk fails · static hosting can remove old chunks after a redeploy

@@ -1,6 +1,12 @@
+import { lazy } from 'react'
 import type { SimulatorConfig } from '@/shared/types/simulator'
-import { InterferenceSimulator } from './components/InterferenceSimulator'
 import { InterferencePreview } from './InterferencePreview'
+
+const InterferenceSimulator = lazy(() =>
+  import('./components/InterferenceSimulator').then((module) => ({
+    default: module.InterferenceSimulator,
+  })),
+)
 
 export const simulatorConfig: SimulatorConfig = {
   id: 'interference',

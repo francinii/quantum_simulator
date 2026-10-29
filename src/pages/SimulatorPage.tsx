@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+import { LoadBoundary } from '@/shared/components/LoadBoundary'
 import type { SimulatorConfig } from '@/shared/types/simulator'
 import { NotFoundPage } from './NotFoundPage'
 
@@ -21,7 +22,9 @@ export function SimulatorPage({ simulators }: SimulatorPageProps) {
           ← All simulations
         </Link>
       </nav>
-      <simulator.Component simulator={simulator} />
+      <LoadBoundary>
+        <simulator.Component simulator={simulator} />
+      </LoadBoundary>
     </>
   )
 }
