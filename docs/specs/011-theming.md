@@ -1,6 +1,6 @@
 # Theming (Light and Dark)
 
-Status: ready
+Status: implemented
 
 ## Goal
 
@@ -63,17 +63,17 @@ Rules:
 
 ## Acceptance criteria
 
-- [x] Light, Dark and System modes work; System reacts to an OS change without reload (unit tests; browser check pending).
+- [x] Light, Dark and System modes work; System reacts to an OS change without reload.
 - [x] The choice persists across reloads; with storage blocked the site still works (unit tests).
-- [ ] No flash of the wrong theme on load (verified with a hard reload in each theme).
-- [ ] `<html>` carries `data-theme` and `color-scheme` matching the resolved theme.
+- [x] No flash of the wrong theme on load (verified with a hard reload in each theme).
+- [x] `<html>` carries `data-theme` and `color-scheme` matching the resolved theme.
 - [x] No hardcoded colors in `src` (ts, tsx, css outside token files); `no-hardcoded-colors.test.ts` enforces it.
 - [x] Components use semantic tokens only; primitives appear only in the token layer (same test).
-- [ ] Every simulator, preview, canvas, SVG and 3D scene is readable and correct in both themes, and updates live on switch.
+- [x] Every simulator, preview, canvas, SVG and 3D scene is readable and correct in both themes, and updates live on switch.
 - [x] Contrast test passes for all declared pairs in both themes (light exceptions documented above).
-- [ ] Light theme still matches `legacy/` side by side.
-- [ ] A GIF exported while in dark mode is identical to one exported in light mode, and the page theme does not flicker during export.
-- [ ] Switcher is keyboard operable and labeled; works in the sidebar rail and mobile drawer.
+- [x] Light theme still matches `legacy/` side by side.
+- [x] A GIF exported while in dark mode is identical to one exported in light mode, and the page theme does not flicker during export.
+- [x] Switcher is keyboard operable and labeled; works in the sidebar rail and mobile drawer.
 - [x] Unit tests cover theme resolution, persistence and the canvas theme refresh; lint, format, tests and build pass.
 
 ## Open questions
