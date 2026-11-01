@@ -56,6 +56,18 @@ describe('sidebar navigation', () => {
     ).toBeInTheDocument()
   })
 
+  it('puts the hamburger at the top of the sidebar, before the navigation', () => {
+    renderAt('/lab')
+    const hamburger = screen.getByRole('button', { name: 'Collapse menu' })
+    const nav = screen.getByRole('navigation', { name: 'Main' })
+    expect(
+      hamburger.compareDocumentPosition(nav) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+    expect(
+      screen.getAllByRole('button', { name: /collapse menu/i }),
+    ).toHaveLength(1)
+  })
+
   it('collapses and remembers the state', async () => {
     const user = userEvent.setup()
     renderAt('/lab')

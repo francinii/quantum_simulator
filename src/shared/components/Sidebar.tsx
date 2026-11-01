@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { isNavItemActive, NAV_ITEMS } from '@/shared/config/navigation'
+import { HamburgerIcon } from './HamburgerIcon'
 import { NavIcon } from './NavIcon'
 import { ThemeSwitcher } from './ThemeSwitcher'
 
@@ -39,11 +40,21 @@ export function Sidebar({
             : 'max-lg:hidden'
         }`}
       >
-        <div className="flex items-center justify-between gap-2 p-4">
+        <div className="flex items-center gap-2 p-3">
+          <button
+            type="button"
+            onClick={onToggleCollapsed}
+            aria-expanded={!collapsed}
+            aria-controls="main-sidebar"
+            aria-label={collapsed ? 'Expand menu' : 'Collapse menu'}
+            className="text-body hover:bg-blue-wash-hover focus-visible:outline-accent-strong hidden rounded-lg p-2 transition-colors focus-visible:outline-2 lg:block"
+          >
+            <HamburgerIcon />
+          </button>
           <Link
             to="/"
             onClick={onClose}
-            className={`text-ink hover:text-brand-purple text-lg font-extrabold tracking-tight transition-colors ${labelClass}`}
+            className={`text-ink hover:text-accent-strong text-lg font-extrabold tracking-tight transition-colors ${labelClass}`}
           >
             Quantum Lab
           </Link>
@@ -51,7 +62,7 @@ export function Sidebar({
             type="button"
             onClick={onClose}
             aria-label="Close menu"
-            className="text-muted hover:text-ink rounded p-1 lg:hidden"
+            className="text-muted hover:text-ink ml-auto rounded p-1 lg:hidden"
           >
             ✕
           </button>
@@ -67,9 +78,9 @@ export function Sidebar({
                     onClick={onClose}
                     aria-current={active ? 'page' : undefined}
                     title={collapsed ? item.label : undefined}
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+                    className={`focus-visible:outline-accent-strong relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 ${
                       active
-                        ? 'bg-blue-wash text-brand-blue'
+                        ? 'bg-accent-soft text-accent-strong before:bg-accent-strong before:absolute before:inset-y-1.5 before:left-0 before:w-1 before:rounded-full'
                         : 'text-body hover:bg-blue-wash-hover'
                     } ${collapsed ? 'lg:justify-center' : ''}`}
                   >
@@ -83,18 +94,6 @@ export function Sidebar({
         </nav>
         <div className="border-line border-t p-2">
           <ThemeSwitcher collapsed={collapsed} />
-        </div>
-        <div className="border-line hidden border-t p-2 lg:block">
-          <button
-            type="button"
-            onClick={onToggleCollapsed}
-            aria-expanded={!collapsed}
-            aria-controls="main-sidebar"
-            aria-label={collapsed ? 'Expand menu' : 'Collapse menu'}
-            className="text-muted hover:bg-blue-wash-hover flex w-full items-center justify-center rounded-lg py-2 text-sm font-semibold transition-colors"
-          >
-            {collapsed ? '»' : '« Collapse'}
-          </button>
         </div>
       </aside>
     </>

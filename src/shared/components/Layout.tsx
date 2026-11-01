@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { useCollapsedSidebar } from '@/shared/hooks/useCollapsedSidebar'
+import { HamburgerIcon } from './HamburgerIcon'
 import { Sidebar } from './Sidebar'
 
 export function Layout() {
@@ -34,9 +35,9 @@ export function Layout() {
           aria-label="Open menu"
           aria-expanded={drawerOpen}
           aria-controls="main-sidebar"
-          className="text-ink hover:bg-blue-wash-hover rounded-lg px-2 py-1 text-xl"
+          className="text-ink hover:bg-blue-wash-hover rounded-lg p-2"
         >
-          ☰
+          <HamburgerIcon />
         </button>
         <span className="text-ink font-extrabold tracking-tight">
           Quantum Lab

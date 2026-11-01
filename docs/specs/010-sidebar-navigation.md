@@ -90,16 +90,16 @@ Already implemented (first delivery):
 
 Pending (this revision):
 
-- [ ] The collapse control is a hamburger icon at the top of the sidebar (desktop) and top bar (mobile); no collapse button remains at the bottom.
-- [ ] Desktop: the hamburger toggles expanded and icon-only rail, and the state survives a reload.
-- [ ] Below `lg`: drawer closes on navigation, `Esc` and backdrop click; focus returns to the hamburger.
+- [x] The collapse control is a hamburger icon at the top of the sidebar (desktop) and top bar (mobile); no collapse button remains at the bottom.
+- [x] Desktop: the hamburger toggles expanded and icon-only rail, and the state survives a reload.
+- [x] Below `lg`: drawer closes on navigation, `Esc` and backdrop click; focus returns to the hamburger.
 - [ ] The active entry shows the single pastel sky accent (soft fill, indicator bar, strong icon and label); focus ring uses the strong shade; text contrast meets AA in both themes.
 - [ ] The theme and language switchers are in the sidebar footer, work in the rail and in the mobile drawer.
 - [ ] Every menu string is localized in EN and ES with no layout break (longest label, "Articles Explained Visually" / "Artículos explicados visualmente", still fits the expanded sidebar and wraps cleanly).
 - [ ] Fully usable by keyboard; `nav` has an accessible name.
 - [ ] No horizontal scroll at 360px width in any section.
 - [ ] Adding an entry to `navigation.ts` shows it in the menu with no sidebar code change.
-- [ ] Router and sidebar tests cover each route, active state, hamburger toggle, drawer behavior; lint, format, tests and build pass.
+- [x] Router and sidebar tests cover each route, active state, hamburger toggle, drawer behavior; lint, format, tests and build pass.
 
 ## Open questions
 
