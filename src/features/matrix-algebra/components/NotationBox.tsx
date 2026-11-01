@@ -42,7 +42,7 @@ export function NotationBox({
       <div className={`overflow-x-auto ${formulaClass}`}>
         <Formula display tex={tex} />
       </div>
-      <p className="mt-1 text-[11px] text-slate-500">{note}</p>
+      <p className="mt-1 text-[11px] text-muted">{note}</p>
     </div>
   )
 }

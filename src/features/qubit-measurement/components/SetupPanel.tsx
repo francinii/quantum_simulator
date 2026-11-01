@@ -29,7 +29,7 @@ export function SetupPanel({ setup, onChange }: SetupPanelProps) {
         title="Experiment Setup"
         titleClass="text-brand-sky"
         chip="1 qubit"
-        chipClass="bg-blue-50 text-brand-sky"
+        chipClass="bg-blue-wash text-brand-sky"
       />
 
       <div className="space-y-4 text-xs">
@@ -55,7 +55,7 @@ export function SetupPanel({ setup, onChange }: SetupPanelProps) {
           {setup.state === 'ry' && (
             <div className="mt-2">
               <div className="mb-1 flex justify-between">
-                <label htmlFor={thetaId} className="text-slate-500">
+                <label htmlFor={thetaId} className="text-muted">
                   Rotation Ry(θ)
                 </label>
                 <span className="text-brand-purple font-mono font-bold">
@@ -81,7 +81,7 @@ export function SetupPanel({ setup, onChange }: SetupPanelProps) {
         <div>
           <div id={firstGroup} className="text-ink mb-1.5 font-bold">
             2. First measurement basis{' '}
-            <span className="font-normal text-slate-400">→ c₀</span>
+            <span className="font-normal text-faint">→ c₀</span>
           </div>
           <div
             role="group"
@@ -103,7 +103,7 @@ export function SetupPanel({ setup, onChange }: SetupPanelProps) {
         <div>
           <div id={secondGroup} className="text-ink mb-1.5 font-bold">
             3. Second measurement basis{' '}
-            <span className="font-normal text-slate-400">→ c₁</span>
+            <span className="font-normal text-faint">→ c₁</span>
           </div>
           <div
             role="group"

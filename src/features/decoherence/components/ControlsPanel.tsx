@@ -8,10 +8,10 @@ import type { GifExportStatus } from '@/shared/hooks/useGifExport'
 import type { Mechanism } from '../lib/physics'
 
 const ACTIVE = {
-  dephasing: 'bg-brand-blue text-white shadow-xs',
-  relaxation: 'bg-brand-pink text-white shadow-xs',
+  dephasing: 'bg-brand-blue text-on-brand shadow-xs',
+  relaxation: 'bg-brand-pink text-on-brand shadow-xs',
 }
-const INACTIVE = 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+const INACTIVE = 'bg-neutral text-body hover:bg-neutral-strong'
 
 interface ControlsPanelProps {
   mechanism: Mechanism
@@ -41,16 +41,16 @@ export function ControlsPanel({
 
   return (
     <Card
-      borderClass="border-slate-200"
+      borderClass="border-edge"
       className="flex flex-1 flex-col justify-between p-4"
     >
       <div className="space-y-4">
-        <h3 className="text-xs font-bold tracking-wider text-slate-400 uppercase">
+        <h3 className="text-xs font-bold tracking-wider text-faint uppercase">
           Simulation Controls
         </h3>
 
         <div>
-          <div className="mb-1 block text-xs font-semibold text-slate-700">
+          <div className="mb-1 block text-xs font-semibold text-body">
             Noise Mechanism:
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -76,7 +76,7 @@ export function ControlsPanel({
         </div>
 
         <div>
-          <div className="mb-1 flex items-center justify-between text-xs font-semibold text-slate-700">
+          <div className="mb-1 flex items-center justify-between text-xs font-semibold text-body">
             <label htmlFor={rateId}>
               Decoherence Rate (<Formula tex={String.raw`\gamma`} />)
             </label>
@@ -95,7 +95,7 @@ export function ControlsPanel({
             step={0.1}
             value={rate}
             onChange={(event) => onRateChange(parseFloat(event.target.value))}
-            className="accent-brand-blue h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-slate-200"
+            className="accent-brand-blue h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-neutral-strong"
           />
         </div>
 
@@ -115,7 +115,7 @@ export function ControlsPanel({
         </div>
       </div>
 
-      <div className="mt-3 border-t border-slate-100 pt-4">
+      <div className="mt-3 border-t border-edge-soft pt-4">
         <ExportGifButton
           variant="gradient"
           label="Generate and Download GIF"
@@ -125,7 +125,7 @@ export function ControlsPanel({
         <ExportStatusText
           status={exportStatus}
           capturingMessage="Preparing decoherence frames..."
-          className="mt-1.5 text-center text-[11px] text-slate-400"
+          className="mt-1.5 text-center text-[11px] text-faint"
         />
       </div>
     </Card>

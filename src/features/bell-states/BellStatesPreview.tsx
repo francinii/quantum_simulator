@@ -23,7 +23,7 @@ export function BellStatesPreview() {
         cy={85}
         r={13}
         strokeWidth={2}
-        className="stroke-brand-blue fill-white"
+        className="stroke-brand-blue fill-surface"
       />
       <line
         x1={182}

@@ -29,8 +29,8 @@ export function SpheresPanel({ sceneRef, theme, progress }: SpheresPanelProps) {
           data-testid="entanglement-badge"
           className={`rounded-md border px-2 py-0.5 text-[10px] font-semibold ${
             entangled
-              ? 'text-brand-pink animate-pulse border-rose-200 bg-rose-50'
-              : 'border-slate-200 bg-slate-100 text-slate-600'
+              ? 'text-brand-pink animate-pulse border-rose-edge bg-rose-wash'
+              : 'border-edge bg-neutral text-muted'
           }`}
         >
           {entangled
@@ -38,21 +38,19 @@ export function SpheresPanel({ sceneRef, theme, progress }: SpheresPanelProps) {
             : 'Separable: Not Entangled'}
         </span>
       </div>
-      <p className="mb-2 text-[11px] text-slate-400">
+      <p className="mb-2 text-[11px] text-faint">
         Upon completing CNOT, the individual state shrinks to the center
         (maximal entanglement).
       </p>
 
       <BellScene sceneRef={sceneRef} theme={theme} />
 
-      <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-center text-xs">
-        <span className="font-medium text-slate-500">
-          Entanglement Entropy:{' '}
-        </span>
+      <div className="mt-3 rounded-xl border border-edge bg-neutral-soft p-2.5 text-center text-xs">
+        <span className="font-medium text-muted">Entanglement Entropy: </span>
         <span data-testid="entropy" className="text-brand-pink font-bold">
           {entropyLabel(progress)}
         </span>
-        <span className="ml-1 font-mono text-slate-400">(EPR Pair: 1.00)</span>
+        <span className="ml-1 font-mono text-faint">(EPR Pair: 1.00)</span>
       </div>
     </Card>
   )

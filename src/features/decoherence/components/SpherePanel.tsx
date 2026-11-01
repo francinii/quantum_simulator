@@ -10,9 +10,9 @@ import {
 import { BlochScene } from './BlochScene'
 
 const BADGE_CLASSES: Record<PurityTier, string> = {
-  pure: 'bg-emerald-50 text-emerald-600 border-emerald-200',
-  partial: 'bg-amber-50 text-amber-600 border-amber-200',
-  mixture: 'bg-rose-50 text-rose-600 border-rose-200',
+  pure: 'bg-emerald-wash text-emerald-deep border-emerald-edge',
+  partial: 'bg-amber-wash text-amber-ink border-amber-edge',
+  mixture: 'bg-rose-wash text-rose-ink border-rose-edge',
 }
 
 interface SpherePanelProps {
@@ -62,11 +62,9 @@ export function SpherePanel({ sceneRef, theme, state }: SpherePanelProps) {
         {READOUTS.map(({ id, label, className }) => (
           <div
             key={id}
-            className="border-line/40 rounded-xl border bg-white p-2"
+            className="border-line/40 rounded-xl border bg-surface p-2"
           >
-            <div className="text-[11px] font-medium text-slate-400">
-              {label}
-            </div>
+            <div className="text-[11px] font-medium text-faint">{label}</div>
             <div
               data-testid={`readout-${id}`}
               className={`text-sm font-bold ${className}`}

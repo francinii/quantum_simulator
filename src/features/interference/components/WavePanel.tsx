@@ -40,7 +40,7 @@ export function WavePanel({
 
         <div className="flex items-center gap-2">
           <PlayPauseButton playing={playing} onToggle={onTogglePlay} />
-          <div className="ml-2 hidden items-center gap-1.5 border-l border-slate-200 pl-2 text-xs text-slate-500 sm:flex">
+          <div className="ml-2 hidden items-center gap-1.5 border-l border-edge pl-2 text-xs text-muted sm:flex">
             <label htmlFor={speedId}>Speed:</label>
             <input
               id={speedId}
@@ -59,7 +59,7 @@ export function WavePanel({
         </div>
       </div>
 
-      <div className="bg-surface-preview relative w-full overflow-hidden rounded-2xl border border-slate-200">
+      <div className="bg-surface-preview relative w-full overflow-hidden rounded-2xl border border-edge">
         <canvas
           ref={canvasRef}
           width={900}

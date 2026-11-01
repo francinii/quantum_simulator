@@ -32,7 +32,7 @@ function ExplanationCard({
       <div className="py-1 text-center text-xs">
         <Formula display tex={tex} />
       </div>
-      <p className="mt-1 text-[11px] text-slate-500">{children}</p>
+      <p className="mt-1 text-[11px] text-muted">{children}</p>
     </Card>
   )
 }
@@ -41,9 +41,9 @@ export function ExplanationCards() {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       <ExplanationCard
-        borderClass="border-emerald-100"
-        dotClass="bg-emerald-500"
-        titleClass="text-emerald-600"
+        borderClass="border-emerald-line"
+        dotClass="bg-brand-emerald"
+        titleClass="text-emerald-deep"
         title="Constructive"
         tex="\Delta\varphi = 0^\circ, 360^\circ, \dots \;\Rightarrow\; R = A + B"
       >
@@ -52,7 +52,7 @@ export function ExplanationCards() {
         that of a single wave.
       </ExplanationCard>
       <ExplanationCard
-        borderClass="border-pink-100"
+        borderClass="border-pink-line"
         dotClass="bg-brand-pink"
         titleClass="text-brand-pink"
         title="Destructive"
@@ -62,7 +62,7 @@ export function ExplanationCards() {
         equal amplitudes they cancel completely and the result is a flat line.
       </ExplanationCard>
       <ExplanationCard
-        borderClass="border-purple-100"
+        borderClass="border-purple-line"
         dotClass="bg-brand-purple"
         titleClass="text-brand-purple"
         title="Quantum Connection"

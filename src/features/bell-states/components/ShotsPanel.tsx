@@ -28,7 +28,7 @@ export function ShotsPanel({
         <h2 className="text-brand-pink text-xs font-bold tracking-wider uppercase">
           Shots Simulator
         </h2>
-        <span className="font-mono text-[11px] text-slate-400">
+        <span className="font-mono text-[11px] text-faint">
           Collapse on Measurement
         </span>
       </div>
@@ -39,12 +39,10 @@ export function ShotsPanel({
           return (
             <div
               key={label}
-              className="rounded-xl border border-slate-200 bg-slate-50 p-2"
+              className="rounded-xl border border-edge bg-neutral-soft p-2"
             >
-              <div className="font-mono text-[10px] text-slate-400">
-                {label}
-              </div>
-              <div className="relative my-1 flex h-10 items-end justify-center overflow-hidden rounded-md bg-slate-100">
+              <div className="font-mono text-[10px] text-faint">{label}</div>
+              <div className="relative my-1 flex h-10 items-end justify-center overflow-hidden rounded-md bg-neutral">
                 <div
                   data-testid={`bar-${index}`}
                   className={`w-full ${BAR_COLORS[index]} ${
@@ -67,7 +65,7 @@ export function ShotsPanel({
       <button
         type="button"
         onClick={onMeasure}
-        className="from-brand-blue via-brand-purple to-brand-pink flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r px-4 py-2.5 text-xs font-bold text-white shadow-xs transition-opacity hover:opacity-95"
+        className="from-brand-blue via-brand-purple to-brand-pink flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r px-4 py-2.5 text-xs font-bold text-on-brand shadow-xs transition-opacity hover:opacity-95"
       >
         <svg
           className="h-4 w-4"

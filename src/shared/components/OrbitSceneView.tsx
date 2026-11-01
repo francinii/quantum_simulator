@@ -23,6 +23,8 @@ export interface OrbitSceneApi {
 
 interface OrbitSceneViewProps<T extends OrbitSceneApi> {
   sceneRef: RefObject<T | null>
+  // Changing it rebuilds the scene (a new theme needs new materials).
+  rebuildKey?: unknown
   // Builds the scene inside the container; may throw if WebGL fails.
   createScene: (container: HTMLElement) => T
   className: string
@@ -39,6 +41,7 @@ interface Drag {
 
 export function OrbitSceneView<T extends OrbitSceneApi>({
   sceneRef,
+  rebuildKey,
   createScene,
   className,
   ariaLabel,
@@ -76,7 +79,7 @@ export function OrbitSceneView<T extends OrbitSceneApi>({
       scene.dispose()
       sceneRef.current = null
     }
-  }, [webgl, sceneRef])
+  }, [webgl, sceneRef, rebuildKey])
 
   const turn = (dx: number, dy: number, sensitivity: number) => {
     sceneRef.current?.orbit(dx, dy, sensitivity)
@@ -120,7 +123,7 @@ export function OrbitSceneView<T extends OrbitSceneApi>({
     return (
       <div
         role="alert"
-        className={`${className} flex items-center justify-center p-4 text-center text-xs text-slate-500`}
+        className={`${className} flex items-center justify-center p-4 text-center text-xs text-muted`}
       >
         The 3D view needs WebGL, which is not available in this browser.
       </div>

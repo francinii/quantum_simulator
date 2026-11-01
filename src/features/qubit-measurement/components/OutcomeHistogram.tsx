@@ -21,7 +21,7 @@ export function OutcomeHistogram({ setup, counts }: OutcomeHistogramProps) {
 
   return (
     <Card className="flex flex-col p-5 lg:col-span-7">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-edge-soft pb-2">
         <div>
           <span className="text-brand-purple text-xs font-bold tracking-wider uppercase">
             Counts (plot_histogram)
@@ -30,7 +30,7 @@ export function OutcomeHistogram({ setup, counts }: OutcomeHistogramProps) {
             Measured outcomes vs. theory
           </h3>
         </div>
-        <span className="font-mono text-xs text-slate-500">
+        <span className="font-mono text-xs text-muted">
           Total shots: <span className="text-ink font-bold">{total}</span>
         </span>
       </div>
@@ -52,7 +52,7 @@ export function OutcomeHistogram({ setup, counts }: OutcomeHistogramProps) {
               <div className="text-ink mb-1 font-mono text-[11px] font-bold">
                 {total ? count : ''}
               </div>
-              <div className="bg-surface-preview relative flex w-full flex-1 items-end overflow-hidden rounded-xl border border-slate-200">
+              <div className="bg-surface-preview relative flex w-full flex-1 items-end overflow-hidden rounded-xl border border-edge">
                 <div
                   data-testid={`bar-${key}`}
                   className={`w-full transition-all duration-300 ${BAR_COLORS[index]}`}
@@ -69,7 +69,7 @@ export function OutcomeHistogram({ setup, counts }: OutcomeHistogramProps) {
               </div>
               <div
                 data-testid={`share-${key}`}
-                className="font-mono text-[10px] text-slate-400"
+                className="font-mono text-[10px] text-faint"
               >
                 {total ? `${(frequency * 100).toFixed(1)}%` : '—'} /{' '}
                 {(theory[key] * 100).toFixed(0)}%
@@ -79,7 +79,7 @@ export function OutcomeHistogram({ setup, counts }: OutcomeHistogramProps) {
         })}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3 text-[11px] text-slate-500">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-edge-soft pt-3 text-[11px] text-muted">
         <span>
           Dashed line = theoretical probability &bull; bars = measured frequency
         </span>

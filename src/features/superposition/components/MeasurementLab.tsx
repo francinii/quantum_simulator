@@ -43,7 +43,7 @@ export function MeasurementLab({
           <button
             type="button"
             onClick={onMeasureOnce}
-            className="bg-ink rounded-xl px-3.5 py-1.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-slate-800"
+            className="bg-inverse rounded-xl px-3.5 py-1.5 text-xs font-bold text-on-inverse shadow-xs transition-colors hover:bg-inverse-hover"
           >
             Measure once
           </button>
@@ -57,14 +57,14 @@ export function MeasurementLab({
           <button
             type="button"
             onClick={() => onMeasureMany(1000)}
-            className="text-brand-purple rounded-xl border border-purple-200 bg-purple-50 px-3 py-1.5 text-xs font-bold transition-colors hover:bg-purple-100"
+            className="text-brand-purple rounded-xl border border-purple-edge bg-purple-wash px-3 py-1.5 text-xs font-bold transition-colors hover:bg-purple-line"
           >
             × 1000 shots
           </button>
           <button
             type="button"
             onClick={onReset}
-            className="rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-500 transition-colors hover:bg-slate-200"
+            className="rounded-xl bg-neutral px-3 py-1.5 text-xs font-bold text-muted transition-colors hover:bg-neutral-strong"
           >
             Reset
           </button>

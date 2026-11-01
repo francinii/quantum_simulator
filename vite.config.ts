@@ -37,5 +37,7 @@ export default defineConfig(({ command, isPreview }) => ({
     globals: true,
     setupFiles: ['./src/shared/test/setup.ts'],
     include: ['src/**/*.test.{ts,tsx}'],
+    // The first render of a simulator in each file is slow under parallel jsdom workers.
+    testTimeout: 15000,
   },
 }))

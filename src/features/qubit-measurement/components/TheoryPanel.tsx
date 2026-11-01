@@ -5,8 +5,8 @@ import { stateLabel, type Setup } from '../lib/setup'
 import { firstResultIsCertain, theoryRows } from '../lib/theory'
 
 const ROW_CLASSES = {
-  first: 'bg-surface-preview border-blue-100',
-  second: 'bg-purple-50 border-purple-100',
+  first: 'bg-surface-preview border-line',
+  second: 'bg-purple-wash border-purple-line',
 }
 
 interface TheoryPanelProps {
@@ -23,7 +23,7 @@ export function TheoryPanel({ setup }: TheoryPanelProps) {
         title="Born's Rule for this Setup"
         titleClass="text-brand-sky"
         chip="P = |⟨b|ψ⟩|²"
-        chipClass="bg-blue-50 text-brand-sky"
+        chipClass="bg-blue-wash text-brand-sky"
       />
       <div className="py-1 text-center text-xs">
         <Formula
@@ -38,7 +38,7 @@ export function TheoryPanel({ setup }: TheoryPanelProps) {
             data-testid={`theory-row-${row.id}`}
             className={`rounded-xl border p-2 ${ROW_CLASSES[row.tone]}`}
           >
-            <span className="text-slate-500">{row.prefix}</span> P(
+            <span className="text-muted">{row.prefix}</span> P(
             {row.plusLabel}) ={' '}
             <b className="text-brand-blue">
               {(row.pPlus * 100).toFixed(row.decimals)}%
@@ -49,7 +49,7 @@ export function TheoryPanel({ setup }: TheoryPanelProps) {
             </b>
           </div>
         ))}
-        <div className="pt-1 font-sans text-[11px] text-slate-500">
+        <div className="pt-1 font-sans text-[11px] text-muted">
           {stateLabel(setup)} {certain ? 'lies on' : 'is not on'} the {setup.m1}{' '}
           axis, so the first result is <b>{certain ? 'certain' : 'random'}</b>.
         </div>

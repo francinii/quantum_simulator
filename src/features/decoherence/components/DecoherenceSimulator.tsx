@@ -5,7 +5,9 @@ import { useAnimationFrame } from '@/shared/hooks/useAnimationFrame'
 import { useGifExport } from '@/shared/hooks/useGifExport'
 import { prefersReducedMotion } from '@/shared/lib/prefers-reduced-motion'
 import { readCanvasTheme } from '@/shared/lib/theme/canvas-theme'
-import type { BlochSceneApi } from '../lib/bloch-scene'
+import { withExportScene } from '@/shared/lib/three/export-scene'
+import { useCanvasTheme } from '@/shared/hooks/useCanvasTheme'
+import { createBlochScene, type BlochSceneApi } from '../lib/bloch-scene'
 import { drawWavePlot, WAVE_SIZE } from '../lib/draw-wave'
 import {
   GIF_FRAME_SECONDS,
@@ -24,7 +26,7 @@ export function DecoherenceSimulator() {
   const [rate, setRate] = useState(DEFAULT_RATE)
   const [playing, setPlaying] = useState(() => !prefersReducedMotion())
   const [time, setTime] = useState(0)
-  const [theme] = useState(readCanvasTheme)
+  const theme = useCanvasTheme()
 
   const sceneRef = useRef<BlochSceneApi | null>(null)
   const waveCanvas = useRef<HTMLCanvasElement>(null)
@@ -63,15 +65,14 @@ export function DecoherenceSimulator() {
 
   const gifExport = useGifExport({
     renderFrames: () => {
-      const scene = sceneRef.current
-      if (!scene) throw new Error('The 3D view is not available.')
-      try {
-        return renderCycleFrames(theme, scene, mechanism, rate)
-      } finally {
-        // Frames pose the scene at other moments; put it back where the page is.
-        scene.update(state, time)
-        scene.render()
-      }
+      const live = sceneRef.current
+      if (!live) throw new Error('The 3D view is not available.')
+      const light = readCanvasTheme('light')
+      return withExportScene(
+        live.canvas,
+        (host) => createBlochScene(host, light),
+        (scene) => renderCycleFrames(light, scene, mechanism, rate),
+      )
     },
     width: GIF_SIZE,
     height: GIF_SIZE,

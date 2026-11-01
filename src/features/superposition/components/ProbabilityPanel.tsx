@@ -16,9 +16,9 @@ export function ProbabilityPanel({ theta, animating }: ProbabilityPanelProps) {
     <Card className="flex-1 p-5">
       <PanelHeader
         title="2. From Amplitudes to Probabilities"
-        titleClass="text-fuchsia-500"
+        titleClass="text-fuchsia"
         chip="Born's Rule: P = |amplitude|²"
-        chipClass="bg-pink-50 text-pink-600"
+        chipClass="bg-pink-wash text-pink-strong"
       />
       <div className="grid grid-cols-2 gap-3">
         <OutcomeCard
@@ -38,7 +38,7 @@ export function ProbabilityPanel({ theta, animating }: ProbabilityPanelProps) {
           smooth={!animating}
         />
       </div>
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3 text-[11px] text-slate-400">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-edge-soft pt-3 text-[11px] text-faint">
         <span>
           Normalization: <Formula tex="|\alpha|^2 + |\beta|^2 = 1" />
         </span>

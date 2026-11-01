@@ -46,7 +46,7 @@ export function PageHeader({
           {highlight}
         </span>
       </h1>
-      <p className={`mx-auto text-slate-500 ${classes.description}`}>
+      <p className={`mx-auto text-muted ${classes.description}`}>
         {description}
       </p>
     </header>

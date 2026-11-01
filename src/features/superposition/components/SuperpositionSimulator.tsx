@@ -9,6 +9,7 @@ import {
   type Outcome,
 } from '@/shared/lib/quantum/bloch'
 import { readCanvasTheme } from '@/shared/lib/theme/canvas-theme'
+import { useCanvasTheme } from '@/shared/hooks/useCanvasTheme'
 import { drawBloch } from '../lib/draw-bloch'
 import {
   GIF_FRAME_SECONDS,
@@ -34,7 +35,7 @@ export function SuperpositionSimulator() {
   const [animating, setAnimating] = useState(false)
   const [collapsedTo, setCollapsedTo] = useState<Outcome | null>(null)
   const [stats, setStats] = useState(EMPTY_STATS)
-  const [theme] = useState(readCanvasTheme)
+  const theme = useCanvasTheme()
 
   const canvas = useRef<HTMLCanvasElement>(null)
   const sweepDirection = useRef(1)
@@ -135,7 +136,7 @@ export function SuperpositionSimulator() {
   }
 
   const gifExport = useGifExport({
-    renderFrames: () => renderSweepFrames(theme, phi),
+    renderFrames: () => renderSweepFrames(readCanvasTheme('light'), phi),
     width: GIF_SIZE,
     height: GIF_SIZE,
     frameSeconds: GIF_FRAME_SECONDS,

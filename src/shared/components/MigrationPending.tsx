@@ -6,7 +6,7 @@ export function MigrationPending({ simulator }: SimulatorProps) {
       <h1 className="text-ink my-3 text-2xl font-extrabold">
         {simulator.title}
       </h1>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-muted">
         This simulation is still being migrated. The original lives in{' '}
         <code className="font-code">legacy/</code>.
       </p>

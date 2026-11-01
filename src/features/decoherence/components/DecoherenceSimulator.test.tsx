@@ -232,7 +232,7 @@ describe('DecoherenceSimulator', () => {
       expect(button(/Dephasing/)).toHaveAttribute('aria-pressed', 'false')
       expect(badge()).toBe('Pure State: 100%')
       expect(button(/Relaxation/).className).toContain('bg-brand-pink')
-      expect(button(/Dephasing/).className).toContain('bg-slate-100')
+      expect(button(/Dephasing/).className).toContain('bg-neutral')
     })
 
     it('relaxation raises the Z population while dephasing does not', () => {

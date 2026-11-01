@@ -9,13 +9,13 @@ interface OutcomeCardProps {
 
 const TONES = {
   blue: {
-    card: 'bg-surface-preview border-blue-100',
+    card: 'bg-surface-preview border-line',
     amplitudeBar: 'bg-brand-blue/50',
     probabilityBar: 'bg-brand-blue',
     text: 'text-brand-blue',
   },
   pink: {
-    card: 'bg-pink-wash border-pink-100',
+    card: 'bg-pink-wash border-pink-line',
     amplitudeBar: 'bg-brand-pink/50',
     probabilityBar: 'bg-brand-pink',
     text: 'text-brand-pink',
@@ -38,22 +38,22 @@ export function OutcomeCard({
     <div className={`rounded-2xl border p-3 ${classes.card}`}>
       <div className="flex items-center justify-between">
         <span className="text-ink font-mono text-sm font-extrabold">{ket}</span>
-        <span className="font-mono text-[11px] text-slate-400">
+        <span className="font-mono text-[11px] text-faint">
           {amplitudeName} = <span>{amplitude.toFixed(3)}</span>
         </span>
       </div>
-      <div className="mt-2 text-[10px] text-slate-500">Amplitude size</div>
-      <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+      <div className="mt-2 text-[10px] text-muted">Amplitude size</div>
+      <div className="h-2.5 overflow-hidden rounded-full bg-neutral">
         <div
           data-testid={`amplitude-bar-${ket}`}
           className={`h-full ${transition} ${classes.amplitudeBar}`}
           style={{ width: `${amplitude * 100}%` }}
         />
       </div>
-      <div className="mt-2 text-[10px] text-slate-500">
+      <div className="mt-2 text-[10px] text-muted">
         Probability = {amplitudeName}²
       </div>
-      <div className="h-5 overflow-hidden rounded-full bg-slate-100">
+      <div className="h-5 overflow-hidden rounded-full bg-neutral">
         <div
           data-testid={`probability-bar-${ket}`}
           className={`h-full ${transition} ${classes.probabilityBar}`}

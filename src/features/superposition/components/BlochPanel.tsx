@@ -38,7 +38,7 @@ export function BlochPanel({
         />
       </div>
 
-      <div className="bg-surface-preview relative w-full overflow-hidden rounded-2xl border border-slate-200">
+      <div className="bg-surface-preview relative w-full overflow-hidden rounded-2xl border border-edge">
         <canvas
           ref={canvasRef}
           width={420}
@@ -50,7 +50,7 @@ export function BlochPanel({
         {collapsedTo !== null && (
           <div
             role="status"
-            className={`animate-collapse-flash absolute top-3 right-3 rounded-xl px-3 py-1.5 font-mono text-sm font-extrabold text-white shadow-md motion-reduce:animate-none ${
+            className={`animate-collapse-flash absolute top-3 right-3 rounded-xl px-3 py-1.5 font-mono text-sm font-extrabold text-on-brand shadow-md motion-reduce:animate-none ${
               collapsedTo === 0 ? 'bg-brand-blue' : 'bg-brand-pink'
             }`}
           >

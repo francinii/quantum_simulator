@@ -26,14 +26,14 @@ class FailureBoundary extends Component<LoadBoundaryProps, LoadBoundaryState> {
 
     return (
       <main className={frameClass} role="alert">
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-muted">
           This simulation could not be loaded. Check your connection, or the
           site may have been updated.
         </p>
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="bg-ink mt-3 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-xs transition-colors hover:bg-slate-800"
+          className="bg-inverse mt-3 rounded-xl px-4 py-2 text-xs font-bold text-on-inverse shadow-xs transition-colors hover:bg-inverse-hover"
         >
           Reload page
         </button>
@@ -49,7 +49,7 @@ export function LoadBoundary({ children }: LoadBoundaryProps) {
       <Suspense
         fallback={
           <main className={frameClass} role="status">
-            <p className="text-sm text-slate-500">Loading simulation…</p>
+            <p className="text-sm text-muted">Loading simulation…</p>
           </main>
         }
       >

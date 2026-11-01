@@ -9,8 +9,8 @@ A runnable React app skeleton where simulators can be plugged in by registering 
 ## Behavior
 
 - `pnpm dev` serves the app; `pnpm build` produces a static bundle.
-- Routes: `/` (home), `/simulators/:id` (simulator), anything else shows a not-found page.
-- A shared layout wraps all pages (header with home link, content area).
+- Routes: `/` (redirects to `/lab` until Home exists), `/lab` (gallery), `/simulators/:id` (simulator), `/articles` and `/learn` (coming soon), anything else shows a not-found page. See `010-sidebar-navigation.md`.
+- A shared layout wraps all pages (sidebar navigation, content area).
 - Simulators are discovered automatically (`import.meta.glob`) from each feature's `simulator.config.ts`; the router and gallery read the same list.
 - Tailwind styles available globally; `@/` aliases `src/`.
 

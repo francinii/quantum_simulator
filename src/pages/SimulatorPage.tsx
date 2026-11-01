@@ -16,7 +16,7 @@ export function SimulatorPage({ simulators }: SimulatorPageProps) {
     <>
       <nav className="mx-auto mb-2 w-full max-w-6xl">
         <Link
-          to="/"
+          to="/lab"
           className="text-brand-blue hover:text-brand-purple inline-flex items-center gap-1 text-xs font-bold transition-colors"
         >
           ← All simulations

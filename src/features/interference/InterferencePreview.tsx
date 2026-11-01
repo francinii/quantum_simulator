@@ -90,7 +90,7 @@ export function InterferencePreview() {
         y={118}
         fontSize={9}
         fontWeight="bold"
-        className="fill-emerald-500 font-sans"
+        className="fill-brand-emerald font-sans"
       >
         Constructive
         <animate

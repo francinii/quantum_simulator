@@ -26,7 +26,7 @@ function Step({
         {kicker}
       </div>
       <h3 className="text-ink mt-0.5 text-sm font-extrabold">{title}</h3>
-      <p className="mt-2 text-[11px] text-slate-500">{children}</p>
+      <p className="mt-2 text-[11px] text-muted">{children}</p>
     </Card>
   )
 }
@@ -35,7 +35,7 @@ export function ExplanationSteps() {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       <Step
-        borderClass="border-blue-100"
+        borderClass="border-line"
         kicker="Before measuring"
         kickerClass="text-brand-blue"
         title="Both possibilities coexist"
@@ -45,7 +45,7 @@ export function ExplanationSteps() {
         of the sphere.
       </Step>
       <Step
-        borderClass="border-pink-100"
+        borderClass="border-pink-line"
         kicker="When measuring"
         kickerClass="text-brand-pink"
         title="The state collapses"
@@ -55,7 +55,7 @@ export function ExplanationSteps() {
         <Formula tex="|\alpha|^2" /> or <Formula tex="|\beta|^2" />.
       </Step>
       <Step
-        borderClass="border-purple-100"
+        borderClass="border-purple-line"
         kicker="The hidden ingredient"
         kickerClass="text-brand-purple"
         title="Phase is invisible… for now"

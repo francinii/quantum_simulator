@@ -27,7 +27,7 @@ export function QubitMeasurementPreview() {
         x2={280}
         y2={94}
         strokeWidth={1.5}
-        className="stroke-violet-300"
+        className="stroke-violet-line"
       />
       <line
         x1={40}
@@ -35,7 +35,7 @@ export function QubitMeasurementPreview() {
         x2={280}
         y2={98}
         strokeWidth={1.5}
-        className="stroke-violet-300"
+        className="stroke-violet-line"
       />
       <text
         x={22}
@@ -102,7 +102,7 @@ export function QubitMeasurementPreview() {
         textAnchor="middle"
         fontSize={13}
         fontWeight="bold"
-        className="font-code fill-white"
+        className="font-code fill-surface"
       >
         0
       </text>
@@ -120,7 +120,7 @@ export function QubitMeasurementPreview() {
         textAnchor="middle"
         fontSize={13}
         fontWeight="bold"
-        className="font-code fill-white"
+        className="font-code fill-surface"
       >
         1
       </text>

@@ -7,11 +7,11 @@ interface PlayPauseButtonProps {
 
 const VARIANTS = {
   compact:
-    'bg-ink flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-slate-800',
+    'bg-inverse flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold text-on-inverse shadow-xs transition-colors hover:bg-inverse-hover',
   roomy:
-    'bg-ink flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-xs transition-colors hover:bg-slate-800',
+    'bg-inverse flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold text-on-inverse shadow-xs transition-colors hover:bg-inverse-hover',
   block:
-    'flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white transition-colors hover:bg-slate-800',
+    'flex w-full items-center justify-center gap-2 rounded-xl bg-inverse px-4 py-2.5 text-xs font-bold text-on-inverse transition-colors hover:bg-inverse-hover',
 }
 
 export function PlayPauseButton({

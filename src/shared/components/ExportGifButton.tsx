@@ -7,11 +7,11 @@ interface ExportGifButtonProps {
 
 const VARIANTS = {
   solid:
-    'bg-ink flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold text-white shadow-xs transition-colors hover:bg-slate-800 disabled:opacity-50',
+    'bg-inverse flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold text-on-inverse shadow-xs transition-colors hover:bg-inverse-hover disabled:opacity-50',
   block:
-    'bg-ink flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-white shadow transition-colors hover:bg-slate-800 disabled:opacity-50',
+    'bg-inverse flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-on-inverse shadow transition-colors hover:bg-inverse-hover disabled:opacity-50',
   gradient:
-    'from-brand-pink-soft via-brand-purple to-brand-blue flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r px-4 py-2.5 text-xs font-bold text-white shadow-md transition-opacity hover:opacity-95 disabled:opacity-50',
+    'from-brand-pink-soft via-brand-purple to-brand-blue flex w-full items-center justify-center gap-2 rounded-xl bg-linear-to-r px-4 py-2.5 text-xs font-bold text-on-brand shadow-md transition-opacity hover:opacity-95 disabled:opacity-50',
 }
 
 export function ExportGifButton({

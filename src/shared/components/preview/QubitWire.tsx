@@ -22,7 +22,7 @@ export function QubitWire({ y, label }: QubitWireProps) {
         y2={y}
         strokeWidth={2}
         strokeLinecap="round"
-        className="stroke-slate-400"
+        className="stroke-faint"
       />
     </>
   )

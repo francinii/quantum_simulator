@@ -18,10 +18,10 @@ export function StateCards({ selected, onSelect }: StateCardsProps) {
             type="button"
             aria-pressed={active}
             onClick={() => onSelect(key)}
-            className={`rounded-2xl border-2 bg-white p-3 text-left transition-all duration-200 ${
+            className={`rounded-2xl border-2 bg-surface p-3 text-left transition-all duration-200 ${
               active
                 ? 'border-brand-blue ring-brand-blue/20 shadow-md ring-2'
-                : 'border-slate-200 hover:border-slate-300'
+                : 'border-edge hover:border-edge-strong'
             }`}
           >
             <div className="flex items-center justify-between">
@@ -39,7 +39,7 @@ export function StateCards({ selected, onSelect }: StateCardsProps) {
             <div className="text-ink font-code mt-1 text-lg font-extrabold">
               {formula.replace(/ ([+-]) /g, '$1')}
             </div>
-            <div className="mt-0.5 text-[11px] text-slate-400">
+            <div className="mt-0.5 text-[11px] text-faint">
               {card.description}
             </div>
           </button>

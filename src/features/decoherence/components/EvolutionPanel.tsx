@@ -24,7 +24,7 @@ export function EvolutionPanel({ canvasRef }: EvolutionPanelProps) {
           </h3>
         </div>
       </div>
-      <div className="border-pink-line/60 w-full rounded-xl border bg-white p-2">
+      <div className="border-pink-line/60 w-full rounded-xl border bg-surface p-2">
         <canvas
           ref={canvasRef}
           width={WAVE_SIZE.width}
@@ -34,7 +34,7 @@ export function EvolutionPanel({ canvasRef }: EvolutionPanelProps) {
           aria-label="Quantum wave and its decaying envelope"
         />
       </div>
-      <div className="mt-2 flex items-center justify-between px-1 text-[11px] text-slate-500">
+      <div className="mt-2 flex items-center justify-between px-1 text-[11px] text-muted">
         <span className="flex items-center gap-1">
           <span className="bg-brand-blue h-2 w-2 rounded-full" /> Quantum Wave
         </span>
@@ -43,7 +43,7 @@ export function EvolutionPanel({ canvasRef }: EvolutionPanelProps) {
           <Formula tex="e^{-t/T_2}" />
         </span>
         <span className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-full bg-slate-400" /> Classical
+          <span className="h-2 w-2 rounded-full bg-neutral-deep" /> Classical
         </span>
       </div>
     </Card>

@@ -5,8 +5,10 @@ import { useAnimationFrame } from '@/shared/hooks/useAnimationFrame'
 import { useGifExport } from '@/shared/hooks/useGifExport'
 import { prefersReducedMotion } from '@/shared/lib/prefers-reduced-motion'
 import { readCanvasTheme } from '@/shared/lib/theme/canvas-theme'
+import { withExportScene } from '@/shared/lib/three/export-scene'
+import { useCanvasTheme } from '@/shared/hooks/useCanvasTheme'
 import { BELL_STATES, type BellKey, type Outcome } from '../lib/bell-states'
-import type { BellSceneApi } from '../lib/bell-scene'
+import { createBellScene, type BellSceneApi } from '../lib/bell-scene'
 import { celebrateMeasurement } from '../lib/confetti'
 import {
   advance,
@@ -37,7 +39,7 @@ export function BellStatesSimulator() {
   const [playing, setPlaying] = useState(() => !prefersReducedMotion())
   const [speed, setSpeed] = useState(1)
   const [outcome, setOutcome] = useState<Outcome | null>(null)
-  const [theme] = useState(readCanvasTheme)
+  const theme = useCanvasTheme()
 
   const sceneRef = useRef<BellSceneApi | null>(null)
   const toastTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -55,7 +57,7 @@ export function BellStatesSimulator() {
     const scene = sceneRef.current
     scene?.update(blochArrows(state, progress), sphereRotation(progress))
     scene?.render()
-  }, [state, progress])
+  }, [state, progress, theme])
 
   useEffect(() => () => clearTimeout(toastTimer.current), [])
 
@@ -78,15 +80,14 @@ export function BellStatesSimulator() {
 
   const gifExport = useGifExport({
     renderFrames: () => {
-      const scene = sceneRef.current
-      if (!scene) throw new Error('The 3D view is not available.')
-      try {
-        return renderCycleFrames(theme, scene, state)
-      } finally {
-        // Frames pose the spheres at other moments; put them back where the page is.
-        scene.update(blochArrows(state, progress), sphereRotation(progress))
-        scene.render()
-      }
+      const live = sceneRef.current
+      if (!live) throw new Error('The 3D view is not available.')
+      const light = readCanvasTheme('light')
+      return withExportScene(
+        live.canvas,
+        (host) => createBellScene(host, light),
+        (scene) => renderCycleFrames(light, scene, state),
+      )
     },
     width: GIF_SIZE,
     height: GIF_SIZE,

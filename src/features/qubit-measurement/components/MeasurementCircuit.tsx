@@ -73,7 +73,7 @@ function Meter({ x, basis, bitIndex, bit, active, gradientId }: MeterProps) {
         textAnchor="middle"
         fontSize={12}
         fontWeight={800}
-        className="font-sans fill-white"
+        className="font-sans fill-surface"
       >
         {basis}
       </text>
@@ -206,7 +206,7 @@ export function MeasurementCircuit({ setup, view }: MeasurementCircuitProps) {
         y2={60}
         strokeWidth={2.5}
         strokeLinecap="round"
-        className="stroke-slate-400"
+        className="stroke-faint"
       />
       <text x={650} y={65} fontSize={12} className="font-code fill-faint">
         q₀
@@ -227,7 +227,7 @@ export function MeasurementCircuit({ setup, view }: MeasurementCircuitProps) {
         x2={640}
         y2={147}
         strokeWidth={1.5}
-        className="stroke-violet-300"
+        className="stroke-violet-line"
       />
       <line
         x1={62}
@@ -235,7 +235,7 @@ export function MeasurementCircuit({ setup, view }: MeasurementCircuitProps) {
         x2={640}
         y2={152}
         strokeWidth={1.5}
-        className="stroke-violet-300"
+        className="stroke-violet-line"
       />
       <text
         x={650}
@@ -288,7 +288,7 @@ export function MeasurementCircuit({ setup, view }: MeasurementCircuitProps) {
                 textAnchor="middle"
                 fontSize={gate.length > 1 ? 16 : 20}
                 fontWeight={800}
-                className={`font-sans ${isX ? 'fill-sky-700' : 'fill-pink-900'}`}
+                className={`font-sans ${isX ? 'fill-sky-deep' : 'fill-pink-text'}`}
               >
                 {gate}
               </text>

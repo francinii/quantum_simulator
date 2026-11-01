@@ -3,8 +3,8 @@ import { Formula } from '@/shared/components/Formula'
 import { PanelHeader } from '@/shared/components/PanelHeader'
 import { NotationBox } from './NotationBox'
 
-const TINTED = 'bg-surface-preview border-blue-100'
-const PLAIN = 'bg-white border-slate-200'
+const TINTED = 'bg-surface-preview border-line'
+const PLAIN = 'bg-surface border-edge'
 const RING = 'ring-brand-blue/40'
 
 interface MatrixPanelProps {
@@ -20,7 +20,7 @@ export function MatrixPanel({ visibleBoxes }: MatrixPanelProps) {
           title="1. Approach: Matrix Notation"
           titleClass="text-brand-sky"
           chip="ℂ⁴ Space"
-          chipClass="bg-blue-50 text-brand-sky"
+          chipClass="bg-blue-wash text-brand-sky"
         />
         <div className="space-y-4">
           <NotationBox
@@ -30,7 +30,7 @@ export function MatrixPanel({ visibleBoxes }: MatrixPanelProps) {
             active={visibleBoxes >= 1}
             header="Basis Vectors & Tensor Product (Kronecker)"
             chip="v₀ ⊗ v₁"
-            chipClass="text-blue-500"
+            chipClass="text-brand-blue"
             formulaClass="py-2 text-center text-xs sm:text-sm"
             tex={String.raw`\begin{bmatrix} 1 \\ 0 \end{bmatrix} \otimes \begin{bmatrix} 1 \\ 0 \end{bmatrix} = \begin{bmatrix} 1 \cdot \begin{bmatrix} 1 \\ 0 \end{bmatrix} \\ 0 \cdot \begin{bmatrix} 1 \\ 0 \end{bmatrix} \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \\ 0 \\ 0 \end{bmatrix}`}
             note={
@@ -53,7 +53,7 @@ export function MatrixPanel({ visibleBoxes }: MatrixPanelProps) {
               </>
             }
             chip="4x4 Matrix"
-            chipClass="text-pink-600"
+            chipClass="text-pink-strong"
             formulaClass="py-1 text-center text-xs"
             tex={String.raw`(H \otimes H) = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix} \otimes \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix} = \frac{1}{2} \begin{bmatrix} 1 & 1 & 1 & 1 \\ 1 & -1 & 1 & -1 \\ 1 & 1 & -1 & -1 \\ 1 & -1 & -1 & 1 \end{bmatrix}`}
             note={
@@ -81,7 +81,7 @@ export function MatrixPanel({ visibleBoxes }: MatrixPanelProps) {
               </>
             }
             chip="Column 1"
-            chipClass="text-emerald-600"
+            chipClass="text-emerald-deep"
             formulaClass="py-1 text-center text-xs"
             tex={String.raw`\frac{1}{2} \begin{bmatrix} 1 & 1 & 1 & 1 \\ 1 & -1 & 1 & -1 \\ 1 & 1 & -1 & -1 \\ 1 & -1 & -1 & 1 \end{bmatrix} \begin{bmatrix} 1 \\ 0 \\ 0 \\ 0 \end{bmatrix} = \frac{1}{2} \begin{bmatrix} 1 \\ 1 \\ 1 \\ 1 \end{bmatrix}`}
             note={
@@ -96,7 +96,7 @@ export function MatrixPanel({ visibleBoxes }: MatrixPanelProps) {
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-[11px] text-slate-400">
+      <div className="mt-3 flex items-center justify-between border-t border-edge-soft pt-3 text-[11px] text-faint">
         <span>
           Hilbert Dimension: <Formula tex="2^n = 2^2 = 4" />
         </span>

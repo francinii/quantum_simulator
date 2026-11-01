@@ -18,7 +18,7 @@ export function PanelHeader({
   return (
     <div
       className={`flex items-center justify-between ${
-        bordered ? 'mb-3 border-b border-slate-100 pb-2' : 'mb-2'
+        bordered ? 'mb-3 border-b border-edge-soft pb-2' : 'mb-2'
       }`}
     >
       <div className="flex items-center gap-2">

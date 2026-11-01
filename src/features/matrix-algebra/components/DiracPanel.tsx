@@ -3,8 +3,8 @@ import { Formula } from '@/shared/components/Formula'
 import { PanelHeader } from '@/shared/components/PanelHeader'
 import { NotationBox } from './NotationBox'
 
-const TINTED = 'bg-pink-wash border-pink-100'
-const PLAIN = 'bg-white border-slate-200'
+const TINTED = 'bg-pink-wash border-pink-line'
+const PLAIN = 'bg-surface border-edge'
 const RING = 'ring-brand-pink-soft/50'
 
 interface DiracPanelProps {
@@ -18,9 +18,9 @@ export function DiracPanel({ visibleBoxes }: DiracPanelProps) {
         <PanelHeader
           dotClass="bg-brand-pink"
           title="2. Approach: Dirac Notation (Bra-Ket)"
-          titleClass="text-fuchsia-500"
+          titleClass="text-fuchsia"
           chip="Ket-Space"
-          chipClass="bg-pink-50 text-pink-600"
+          chipClass="bg-pink-wash text-pink-strong"
         />
         <div className="space-y-4">
           <NotationBox
@@ -30,7 +30,7 @@ export function DiracPanel({ visibleBoxes }: DiracPanelProps) {
             active={visibleBoxes >= 1}
             header="Joint Initial State"
             chip="|ψ₀⟩"
-            chipClass="text-pink-600"
+            chipClass="text-pink-strong"
             formulaClass="py-2 text-center text-xs sm:text-sm"
             tex={String.raw`|\psi_0\rangle = |0\rangle \otimes |0\rangle = |00\rangle`}
             note={
@@ -48,7 +48,7 @@ export function DiracPanel({ visibleBoxes }: DiracPanelProps) {
             active={visibleBoxes >= 2}
             header="Action of Hadamard Gate on Basis States"
             chip="H|0⟩ = |+⟩"
-            chipClass="text-purple-600"
+            chipClass="text-purple-mid"
             formulaClass="py-1 text-center text-xs"
             tex={String.raw`H|0\rangle = \frac{|0\rangle + |1\rangle}{\sqrt{2}} = |+\rangle`}
             note={
@@ -67,7 +67,7 @@ export function DiracPanel({ visibleBoxes }: DiracPanelProps) {
             active={visibleBoxes >= 3}
             header="Distributive Property of Tensor Product"
             chip="FOIL / Expansion"
-            chipClass="text-emerald-600"
+            chipClass="text-emerald-deep"
             formulaClass="py-1 text-left text-xs leading-relaxed"
             tex={String.raw`\begin{aligned}
 |\psi_1\rangle &= (H|0\rangle) \otimes (H|0\rangle) \\
@@ -80,7 +80,7 @@ export function DiracPanel({ visibleBoxes }: DiracPanelProps) {
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 text-[11px] text-slate-400">
+      <div className="mt-3 flex items-center justify-between border-t border-edge-soft pt-3 text-[11px] text-faint">
         <span>Linearity in Hilbert space</span>
         <span className="text-brand-pink font-bold">
           Pure Algebraic Representation

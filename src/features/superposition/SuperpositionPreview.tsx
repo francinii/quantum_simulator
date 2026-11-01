@@ -69,7 +69,7 @@ export function SuperpositionPreview() {
         width={110}
         height={14}
         rx={7}
-        className="fill-slate-200"
+        className="fill-neutral-strong"
       />
       <rect
         x={170}
@@ -93,7 +93,7 @@ export function SuperpositionPreview() {
         width={110}
         height={14}
         rx={7}
-        className="fill-slate-200"
+        className="fill-neutral-strong"
       />
       <rect
         x={170}

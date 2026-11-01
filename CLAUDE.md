@@ -19,7 +19,6 @@ Interactive quantum computing simulators for teaching. Currently **frontend only
 13. Responsive design for different devices
 14. **Keep the repo clean**: never commit dependencies, build output, caches, logs, secrets, or editor/OS files. `.gitignore` covers them; update it when a new tool adds generated files. `pnpm-lock.yaml` is the exception and is always committed.
 
-
 ## Stack
 
 | Concern         | Choice                                          |
@@ -28,6 +27,7 @@ Interactive quantum computing simulators for teaching. Currently **frontend only
 | Build tool      | Vite (SPA)                                      |
 | Styling         | Tailwind CSS (already used by the legacy pages) |
 | Routing         | React Router                                    |
+| i18n            | i18next + react-i18next (English, Spanish)      |
 | Testing         | Vitest + Testing Library                        |
 | Lint / format   | ESLint + Prettier                               |
 | Package manager | pnpm                                            |

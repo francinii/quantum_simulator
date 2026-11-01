@@ -25,7 +25,7 @@ export function ControlsPanel({
         title="Controls"
         titleClass="text-brand-sky"
         chip="y = A·sin(kx − ωt + φ)"
-        chipClass="bg-blue-50 text-brand-sky"
+        chipClass="bg-blue-wash text-brand-sky"
       />
 
       <div className="space-y-3 text-xs">

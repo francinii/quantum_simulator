@@ -35,7 +35,7 @@ function Gate({
         textAnchor="middle"
         fontSize={22}
         fontWeight={800}
-        className="font-sans fill-pink-900"
+        className="font-sans fill-pink-text"
       >
         H
       </text>

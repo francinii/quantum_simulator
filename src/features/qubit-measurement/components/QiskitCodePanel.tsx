@@ -14,7 +14,7 @@ function highlight(code: string): ReactNode {
   if (keyword) {
     return (
       <>
-        <span className="text-brand-pink-soft">{keyword[1]}</span>
+        <span className="text-code-keyword">{keyword[1]}</span>
         {code.slice(keyword[1].length)}
       </>
     )
@@ -23,7 +23,7 @@ function highlight(code: string): ReactNode {
   if (method) {
     return (
       <>
-        {method[1]}.<span className="text-sky-300">{method[2]}</span>
+        {method[1]}.<span className="text-code-method">{method[2]}</span>
         {method[3]}
       </>
     )
@@ -33,14 +33,14 @@ function highlight(code: string): ReactNode {
 
 function renderLine({ code, comment }: QiskitLine): ReactNode {
   if (!code)
-    return comment ? <span className="text-slate-400">{comment}</span> : ''
+    return comment ? <span className="text-code-comment">{comment}</span> : ''
   return (
     <>
       {highlight(code)}
       {comment && (
         <>
           {'  '}
-          <span className="text-slate-400"># {comment}</span>
+          <span className="text-code-comment"># {comment}</span>
         </>
       )}
     </>
@@ -70,25 +70,25 @@ export function QiskitCodePanel({ setup }: QiskitCodePanelProps) {
   }
 
   return (
-    <div className="bg-ink border-ink rounded-3xl border p-5 shadow-xs lg:col-span-6">
-      <div className="mb-3 flex items-center justify-between border-b border-white/10 pb-2">
+    <div className="bg-code border-code-edge rounded-3xl border p-5 shadow-xs lg:col-span-6">
+      <div className="mb-3 flex items-center justify-between border-b border-code-text/10 pb-2">
         <div className="flex items-center gap-2">
           <span className="bg-brand-pink h-3 w-3 rounded-full" />
-          <h2 className="text-brand-pink-soft text-sm font-extrabold tracking-wider uppercase">
+          <h2 className="text-code-keyword text-sm font-extrabold tracking-wider uppercase">
             Equivalent Qiskit Code
           </h2>
         </div>
         <button
           type="button"
           onClick={copy}
-          className="rounded-sm bg-white/10 px-2 py-0.5 text-[11px] font-bold text-white transition-colors hover:bg-white/20"
+          className="rounded-sm bg-code-text/10 px-2 py-0.5 text-[11px] font-bold text-on-brand transition-colors hover:bg-code-text/20"
         >
           {copied ? 'Copied!' : 'Copy'}
         </button>
       </div>
       <pre
         data-testid="qiskit-code"
-        className="font-code overflow-x-auto text-[11px] leading-relaxed text-slate-100 md:text-xs md:leading-4"
+        className="font-code overflow-x-auto text-[11px] leading-relaxed text-code-text md:text-xs md:leading-4"
       >
         {lines.map((line, index) => (
           <span key={index}>

@@ -7,23 +7,23 @@ interface TypeStyle {
 
 export const TYPE_STYLES: Record<InterferenceKind, TypeStyle> = {
   none: {
-    text: 'text-slate-500',
-    badge: 'bg-slate-50 text-slate-600 border-slate-200',
+    text: 'text-muted',
+    badge: 'bg-neutral-soft text-muted border-edge',
   },
   'fully-constructive': {
-    text: 'text-emerald-600',
-    badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    text: 'text-emerald-deep',
+    badge: 'bg-emerald-wash text-emerald-ink border-emerald-edge',
   },
   'fully-destructive': {
     text: 'text-brand-pink',
-    badge: 'bg-pink-50 text-pink-700 border-pink-200',
+    badge: 'bg-pink-wash text-pink-deep border-pink-pastel',
   },
   'mostly-constructive': {
     text: 'text-brand-blue',
-    badge: 'bg-blue-50 text-brand-blue border-blue-200',
+    badge: 'bg-blue-wash text-brand-blue border-line-strong',
   },
   'mostly-destructive': {
     text: 'text-brand-purple',
-    badge: 'bg-purple-50 text-purple-700 border-purple-200',
+    badge: 'bg-purple-wash text-purple-deep border-purple-edge',
   },
 }

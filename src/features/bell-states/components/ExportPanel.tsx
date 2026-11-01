@@ -23,11 +23,11 @@ export function ExportPanel({ state, status, onExport }: ExportPanelProps) {
         <h2 className="text-brand-pink text-xs font-bold tracking-wider uppercase">
           Export for Presentation
         </h2>
-        <span className="rounded-sm bg-pink-100 px-2 py-0.5 text-[10px] font-bold text-pink-700">
+        <span className="rounded-sm bg-pink-chip px-2 py-0.5 text-[10px] font-bold text-pink-deep">
           540x540 Loop
         </span>
       </div>
-      <p className="mb-3 text-[11px] text-slate-500">
+      <p className="mb-3 text-[11px] text-muted">
         Generate a GIF file of the circuit animation and selected Bell state for
         your presentation slides.
       </p>

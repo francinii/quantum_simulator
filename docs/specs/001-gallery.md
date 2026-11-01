@@ -5,7 +5,7 @@ Legacy: legacy/index.html
 
 ## Goal
 
-The home page where a visitor discovers every simulator and opens one with a single click. It must look pixel-equivalent to the legacy page, built from shared, reusable pieces.
+The Lab page (`/lab`, formerly the home page) where a visitor discovers every simulator and opens one with a single click. It must look pixel-equivalent to the legacy page, built from shared, reusable pieces.
 
 ## Behavior
 

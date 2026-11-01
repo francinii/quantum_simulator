@@ -1,3 +1,5 @@
+import type { ResolvedTheme } from './theme-mode'
+
 export interface CanvasTheme {
   blue: string
   purple: string
@@ -85,12 +87,25 @@ const TOKENS: Record<keyof CanvasTheme, string> = {
 }
 
 // Canvas cannot use Tailwind classes, so it reads the same design tokens from CSS.
-export function readCanvasTheme(): CanvasTheme {
-  const style = getComputedStyle(document.documentElement)
-  const entries = Object.entries(TOKENS).map(
-    ([key, token]) => [key, style.getPropertyValue(token).trim()] as const,
-  )
-  return Object.fromEntries(entries) as unknown as CanvasTheme
+// Passing a theme reads that theme's values even when the page shows the other one (GIF export
+// is always light): the attribute is flipped and restored synchronously, so nothing is painted.
+export function readCanvasTheme(theme?: ResolvedTheme): CanvasTheme {
+  const root = document.documentElement
+  const shown = root.dataset.theme
+  const swap = theme !== undefined && theme !== shown
+  if (swap) root.dataset.theme = theme
+  try {
+    const style = getComputedStyle(root)
+    const entries = Object.entries(TOKENS).map(
+      ([key, token]) => [key, style.getPropertyValue(token).trim()] as const,
+    )
+    return Object.fromEntries(entries) as unknown as CanvasTheme
+  } finally {
+    if (swap) {
+      if (shown === undefined) delete root.dataset.theme
+      else root.dataset.theme = shown
+    }
+  }
 }
 
 export function withAlpha(color: string, alpha: number): string {

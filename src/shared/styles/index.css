@@ -1,55 +1,10 @@
 @import 'tailwindcss';
+@import './palette.css';
+@import './tokens.css';
 
 @theme static {
   --font-sans: 'Inter', sans-serif;
   --font-code: 'Fira Code', monospace;
-
-  --color-page: #fafcff;
-  --color-ink: #1e1244;
-  --color-brand-blue: #2f80ed;
-  --color-brand-purple: #8b5cf6;
-  --color-brand-pink: #ff6097;
-  --color-brand-pink-soft: #ff85b3;
-  --color-brand-pink-pale: #ffd5e5;
-  --color-brand-sky: #0284c7;
-  --color-pink-wash: #fdf2f7;
-  --color-surface-preview: #f8fbff;
-  --color-line: #cfe2f7;
-  --color-line-strong: #a5c8f0;
-  --color-sphere: #eef5fd;
-  --color-measure-start: #f5f3ff;
-  --color-measure-end: #ddd6fe;
-  --color-axis: #cbd5e1;
-  --color-track: #e2e8f0;
-  --color-muted: #64748b;
-  --color-faint: #94a3b8;
-  --color-surface: #ffffff;
-  --color-sphere-edge: #e6f0fc;
-  --color-blue-wash: #f4f8fe;
-  --color-blue-wash-hover: #e6f0fc;
-  --color-brand-emerald: #10b981;
-  --color-track-soft: #eef2f7;
-  --color-gate-x-start: #bae6fd;
-  --color-gate-x-end: #38bdf8;
-  --color-pink-line: #fbd4e2;
-  --color-pink-strong: #db2777;
-  --color-body: #334155;
-  --color-pink-text: #831843;
-  --color-grid: #f1f5f9;
-  --color-sphere-body: #93c5fd;
-  --color-axis-cool: #cfd8dc;
-  --color-ink-deep: #231555;
-  --color-pink-vivid: #ff4081;
-  --color-pink-tint: #fdf9fb;
-  --color-violet-wash: #fbfbff;
-  --color-sphere-sky: #bae6fd;
-  --color-pink-pastel: #fbcfe8;
-  --color-sky-light: #7dd3fc;
-  --color-pink-gate: #f472b6;
-  --color-night: #0f172a;
-  --color-sky-deep: #0369a1;
-  --color-pink-deep: #be185d;
-  --color-emerald-deep: #059669;
 
   --animate-travel: travel 3s infinite ease-in-out alternate;
   --animate-shrink: shrink 4s infinite ease-in-out;
@@ -105,6 +60,6 @@
 
 @layer base {
   body {
-    @apply bg-page font-sans text-slate-800;
+    @apply bg-page font-sans text-body;
   }
 }

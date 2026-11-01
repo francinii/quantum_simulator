@@ -22,7 +22,6 @@ export function MatrixAlgebraSimulator() {
   const [step, setStep] = useState(0)
   const [playing, setPlaying] = useState(() => !prefersReducedMotion())
   const [speed, setSpeed] = useState(1)
-  const [theme] = useState(readCanvasTheme)
 
   // One timer per step: moving by hand restarts the wait, so the new step is never cut short.
   useEffect(() => {
@@ -35,7 +34,7 @@ export function MatrixAlgebraSimulator() {
   }, [playing, step, speed])
 
   const gifExport = useGifExport({
-    renderFrames: () => renderStepFrames(theme),
+    renderFrames: () => renderStepFrames(readCanvasTheme('light')),
     width: GIF_SIZE,
     height: GIF_SIZE,
     frameSeconds: GIF_FRAME_SECONDS,

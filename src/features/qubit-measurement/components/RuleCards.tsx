@@ -25,7 +25,7 @@ function Rule({
         {kicker}
       </div>
       <h3 className="text-ink mt-0.5 text-sm font-extrabold">{title}</h3>
-      <p className="mt-2 text-[11px] text-slate-500">{children}</p>
+      <p className="mt-2 text-[11px] text-muted">{children}</p>
     </Card>
   )
 }
@@ -34,7 +34,7 @@ export function RuleCards() {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Rule
-        borderClass="border-blue-100"
+        borderClass="border-line"
         kicker="Rule 1"
         kickerClass="text-brand-blue"
         title="Outcomes are probabilistic"
@@ -44,7 +44,7 @@ export function RuleCards() {
         on the measurement axis give a certain answer.
       </Rule>
       <Rule
-        borderClass="border-pink-100"
+        borderClass="border-pink-line"
         kicker="Rule 2"
         kickerClass="text-brand-pink"
         title="The state collapses"
@@ -54,7 +54,7 @@ export function RuleCards() {
         (Experiment 4).
       </Rule>
       <Rule
-        borderClass="border-purple-100"
+        borderClass="border-purple-line"
         kicker="Rule 3"
         kickerClass="text-brand-purple"
         title="The basis is a choice"
@@ -65,9 +65,9 @@ export function RuleCards() {
         erases the other (Experiment 5).
       </Rule>
       <Rule
-        borderClass="border-emerald-100"
+        borderClass="border-emerald-line"
         kicker="Rule 4"
-        kickerClass="text-emerald-600"
+        kickerClass="text-emerald-deep"
         title="One shot is not enough"
       >
         A single shot returns one bit and destroys the superposition. To learn{' '}

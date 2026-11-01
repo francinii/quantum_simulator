@@ -39,7 +39,7 @@ export function GateBox({ x, y, label }: GateBoxProps) {
         textAnchor="middle"
         fontSize={17}
         fontWeight={800}
-        className="fill-pink-900"
+        className="fill-pink-text"
       >
         {label}
       </text>

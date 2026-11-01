@@ -21,10 +21,10 @@ export function ChoiceChip({ label, active, tone, onSelect }: ChoiceChipProps) {
       type="button"
       aria-pressed={active}
       onClick={onSelect}
-      className={`rounded-xl border-2 bg-white px-2 py-1.5 font-mono font-bold transition-all ${
+      className={`rounded-xl border-2 bg-surface px-2 py-1.5 font-mono font-bold transition-all ${
         active
           ? `shadow-xs ring-2 ${ACTIVE_CLASSES[tone]}`
-          : 'border-slate-200 text-slate-500 hover:border-slate-300'
+          : 'border-edge text-muted hover:border-edge-strong'
       }`}
     >
       {label}

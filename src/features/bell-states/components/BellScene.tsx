@@ -12,11 +12,12 @@ export function BellScene({ sceneRef, theme }: BellSceneProps) {
   return (
     <OrbitSceneView
       sceneRef={sceneRef}
+      rebuildKey={theme}
       createScene={(container) => createBellScene(container, theme)}
-      className="bg-surface-preview relative h-56 w-full overflow-hidden rounded-2xl border border-slate-200"
+      className="bg-surface-preview relative h-56 w-full overflow-hidden rounded-2xl border border-edge"
       ariaLabel="3D Bloch spheres for qubit 0 and qubit 1. Drag, or use the arrow keys, to rotate the view."
       hint="Drag to rotate 3D view"
-      hintClassName="bottom-2 left-2 rounded-sm border border-slate-200 bg-white/90 px-2 py-0.5 text-[10px] text-slate-500 backdrop-blur-sm"
+      hintClassName="bottom-2 left-2 rounded-sm border border-edge bg-surface/90 px-2 py-0.5 text-[10px] text-muted backdrop-blur-sm"
     />
   )
 }

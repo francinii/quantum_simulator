@@ -15,10 +15,10 @@ export function Histogram({ stats, probabilities, animating }: HistogramProps) {
   const measured = frequencies(stats)
 
   return (
-    <div className="bg-surface-preview rounded-2xl border border-blue-100 p-4 md:col-span-7">
+    <div className="bg-surface-preview rounded-2xl border border-line p-4 md:col-span-7">
       <div className="mb-2 flex items-center justify-between text-xs">
         <span className="text-ink font-bold">Measured Frequencies</span>
-        <span className="font-mono text-slate-500">
+        <span className="font-mono text-muted">
           Total shots:{' '}
           <span className="text-ink font-bold">{totalShots(stats)}</span>
         </span>
@@ -29,7 +29,7 @@ export function Histogram({ stats, probabilities, animating }: HistogramProps) {
             key={bar.ket}
             className="flex h-full flex-col items-center justify-end"
           >
-            <div className="relative flex h-full w-full items-end overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <div className="relative flex h-full w-full items-end overflow-hidden rounded-xl border border-edge bg-surface">
               <div
                 data-testid={`bar-${outcome}`}
                 className={`w-full transition-all duration-300 ${bar.color}`}
@@ -44,7 +44,7 @@ export function Histogram({ stats, probabilities, animating }: HistogramProps) {
             <div className="text-ink mt-1 font-mono text-xs font-bold">
               {bar.ket}: <span>{stats.counts[outcome]}</span>
             </div>
-            <div className="font-mono text-[11px] text-slate-500">
+            <div className="font-mono text-[11px] text-muted">
               <span>
                 {measured ? `${(measured[outcome] * 100).toFixed(1)}%` : '—'}
               </span>{' '}
@@ -53,7 +53,7 @@ export function Histogram({ stats, probabilities, animating }: HistogramProps) {
           </div>
         ))}
       </div>
-      <p className="mt-3 text-center text-[11px] text-slate-500">
+      <p className="mt-3 text-center text-[11px] text-muted">
         Dashed line = theoretical probability. The more shots you take, the
         closer the bars get to the line.
       </p>

@@ -4,6 +4,7 @@ import { useAnimationFrame } from '@/shared/hooks/useAnimationFrame'
 import { useGifExport } from '@/shared/hooks/useGifExport'
 import { prefersReducedMotion } from '@/shared/lib/prefers-reduced-motion'
 import { readCanvasTheme } from '@/shared/lib/theme/canvas-theme'
+import { useCanvasTheme } from '@/shared/hooks/useCanvasTheme'
 import { drawPhasors } from '../lib/draw-phasors'
 import { drawWaves } from '../lib/draw-waves'
 import {
@@ -34,7 +35,7 @@ export function InterferenceSimulator() {
   const [ampB, setAmpB] = useState(1)
   const [playing, setPlaying] = useState(() => !prefersReducedMotion())
   const [speed, setSpeed] = useState(1)
-  const [theme] = useState(readCanvasTheme)
+  const theme = useCanvasTheme()
 
   const waveCanvas = useRef<HTMLCanvasElement>(null)
   const phasorCanvas = useRef<HTMLCanvasElement>(null)
@@ -93,7 +94,7 @@ export function InterferenceSimulator() {
   }
 
   const gifExport = useGifExport({
-    renderFrames: () => renderSweepFrames(theme, ampA, ampB),
+    renderFrames: () => renderSweepFrames(readCanvasTheme('light'), ampA, ampB),
     width: GIF_SIZE,
     height: GIF_SIZE,
     frameSeconds: GIF_FRAME_SECONDS,

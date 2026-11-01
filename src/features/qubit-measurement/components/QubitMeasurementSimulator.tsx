@@ -7,6 +7,7 @@ import { useGifExport } from '@/shared/hooks/useGifExport'
 import { prefersReducedMotion } from '@/shared/lib/prefers-reduced-motion'
 import { sampleShot } from '@/shared/lib/quantum/measurement'
 import { readCanvasTheme } from '@/shared/lib/theme/canvas-theme'
+import { useCanvasTheme } from '@/shared/hooks/useCanvasTheme'
 import { drawMeasurementBloch } from '../lib/draw-bloch'
 import {
   GIF_FRAME_SECONDS,
@@ -65,7 +66,7 @@ export function QubitMeasurementSimulator() {
   const [simulation, setSimulation] = useState<Simulation>(IDLE)
   const [counts, setCounts] = useState(() => emptyCounts(initialSetup()))
   const [lastShot, setLastShot] = useState(IDLE_MESSAGE)
-  const [theme] = useState(readCanvasTheme)
+  const theme = useCanvasTheme()
   const canvas = useRef<HTMLCanvasElement>(null)
 
   const view = describeShot(simulation.shot, setup, autoRunning)
@@ -156,7 +157,8 @@ export function QubitMeasurementSimulator() {
   }
 
   const gifExport = useGifExport({
-    renderFrames: () => renderMeasurementFrames(theme, setup),
+    renderFrames: () =>
+      renderMeasurementFrames(readCanvasTheme('light'), setup),
     width: GIF_SIZE,
     height: GIF_SIZE,
     frameSeconds: GIF_FRAME_SECONDS,

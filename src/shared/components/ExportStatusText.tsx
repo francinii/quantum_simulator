@@ -9,7 +9,7 @@ interface ExportStatusTextProps {
 export function ExportStatusText({
   status,
   capturingMessage,
-  className = 'mt-2 text-center text-[11px] font-medium text-slate-500',
+  className = 'mt-2 text-center text-[11px] font-medium text-muted',
 }: ExportStatusTextProps) {
   if (status === 'idle') return null
 

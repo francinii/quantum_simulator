@@ -11,7 +11,7 @@ interface CardProps {
 export function Card({
   className = '',
   borderClass = 'border-line',
-  backgroundClass = 'bg-white',
+  backgroundClass = 'bg-surface',
   children,
 }: CardProps) {
   return (

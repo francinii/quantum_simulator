@@ -3,11 +3,11 @@ import { PageFooter } from '@/shared/components/PageFooter'
 import { PageHeader } from '@/shared/components/PageHeader'
 import type { SimulatorConfig } from '@/shared/types/simulator'
 
-interface HomePageProps {
+interface LabPageProps {
   simulators: SimulatorConfig[]
 }
 
-export function HomePage({ simulators }: HomePageProps) {
+export function LabPage({ simulators }: LabPageProps) {
   return (
     <>
       <PageHeader

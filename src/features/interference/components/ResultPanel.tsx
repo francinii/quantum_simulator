@@ -34,30 +34,30 @@ export function ResultPanel({
             <Formula tex="R = \sqrt{A^2 + B^2 + 2AB\cos\Delta\varphi}" />
           </h3>
         </div>
-        <div className="font-mono text-xs text-slate-500">
+        <div className="font-mono text-xs text-muted">
           Intensity is proportional to the squared amplitude:{' '}
           <Formula tex="I \propto R^2" />
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-3 text-center sm:grid-cols-3">
-        <div className="bg-surface-preview rounded-2xl border border-blue-100 p-3">
-          <div className="text-xs font-bold text-slate-700">
+        <div className="bg-surface-preview rounded-2xl border border-line p-3">
+          <div className="text-xs font-bold text-body">
             Resultant Amplitude R
           </div>
           <div className="text-ink mt-1 font-mono text-2xl font-extrabold">
             {amplitude.toFixed(2)}
           </div>
-          <div className="font-mono text-[11px] text-slate-400">
+          <div className="font-mono text-[11px] text-faint">
             max possible: <span>{maxAmplitude.toFixed(2)}</span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-purple-100 bg-purple-50 p-3">
-          <div className="text-xs font-bold text-slate-700">
+        <div className="rounded-2xl border border-purple-line bg-purple-wash p-3">
+          <div className="text-xs font-bold text-body">
             Relative Intensity R² / (A+B)²
           </div>
-          <div className="my-3 h-4 overflow-hidden rounded-full bg-slate-100">
+          <div className="my-3 h-4 overflow-hidden rounded-full bg-neutral">
             <div
               className="from-brand-blue via-brand-purple to-brand-pink h-full bg-linear-to-r transition-all duration-200"
               style={{ width: `${intensity}%` }}
@@ -68,16 +68,14 @@ export function ResultPanel({
           </div>
         </div>
 
-        <div className="bg-pink-wash rounded-2xl border border-pink-100 p-3">
-          <div className="text-xs font-bold text-slate-700">
-            Interference Type
-          </div>
+        <div className="bg-pink-wash rounded-2xl border border-pink-line p-3">
+          <div className="text-xs font-bold text-body">Interference Type</div>
           <div
             className={`mt-1 text-lg font-extrabold ${TYPE_STYLES[info.kind].text}`}
           >
             {info.text}
           </div>
-          <div className="mt-1 text-[11px] text-slate-500">{info.hint}</div>
+          <div className="mt-1 text-[11px] text-muted">{info.hint}</div>
         </div>
       </div>
 

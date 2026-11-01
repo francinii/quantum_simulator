@@ -41,7 +41,7 @@ export function Slider({
         <label htmlFor={id} className={`font-bold ${labelClass}`}>
           {label}
           {labelHint && (
-            <span className="font-normal text-slate-400"> {labelHint}</span>
+            <span className="font-normal text-faint"> {labelHint}</span>
           )}
         </label>
         <span className={`font-mono font-bold ${TONES[tone].value}`}>
