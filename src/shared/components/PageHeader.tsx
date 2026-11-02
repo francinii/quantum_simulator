@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface PageHeaderProps {
   title: string
@@ -29,6 +30,7 @@ export function PageHeader({
   size = 'home',
 }: PageHeaderProps) {
   const classes = SIZES[size]
+  const { t } = useTranslation()
 
   return (
     <header
@@ -38,7 +40,7 @@ export function PageHeader({
         className={`border-brand-pink-soft/40 bg-pink-wash text-brand-pink inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold tracking-wider uppercase ${classes.badge}`}
       >
         <span className="bg-brand-pink h-2 w-2 animate-ping rounded-full motion-reduce:animate-none" />
-        Quantum Pedagogy
+        {t('header.badge')}
       </div>
       <h1 className={`text-ink font-extrabold tracking-tight ${classes.title}`}>
         {title}{' '}

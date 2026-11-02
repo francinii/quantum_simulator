@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { SimulatorGallery } from '@/features/gallery'
 import { PageFooter } from '@/shared/components/PageFooter'
 import { PageHeader } from '@/shared/components/PageHeader'
@@ -8,19 +9,20 @@ interface LabPageProps {
 }
 
 export function LabPage({ simulators }: LabPageProps) {
+  const { t } = useTranslation()
+
   return (
     <>
       <PageHeader
-        title="Quantum Lab:"
-        highlight="Interactive Simulations"
-        description="A collection of animated, step-by-step visualizations to explore the core ideas of quantum computing. Each simulation can export a looping GIF for your class slides."
+        title={t('lab.title')}
+        highlight={t('lab.highlight')}
+        description={t('lab.description')}
       />
       <main className="mx-auto w-full max-w-6xl flex-1">
         <SimulatorGallery simulators={simulators} />
       </main>
       <PageFooter icon="⊗">
-        <strong>Tip:</strong> Every simulation includes playback controls and a
-        GIF exporter ready for presentations.
+        <strong>{t('lab.tipLabel')}</strong> {t('lab.tip')}
       </PageFooter>
     </>
   )

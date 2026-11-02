@@ -1,4 +1,5 @@
 import { Component, Suspense, type ErrorInfo, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface LoadBoundaryProps {
   children: ReactNode
@@ -9,6 +10,33 @@ interface LoadBoundaryState {
 }
 
 const frameClass = 'mx-auto w-full max-w-6xl flex-1'
+
+function FailureView() {
+  const { t } = useTranslation()
+
+  return (
+    <main className={frameClass} role="alert">
+      <p className="text-sm text-muted">{t('load.failed')}</p>
+      <button
+        type="button"
+        onClick={() => window.location.reload()}
+        className="bg-inverse mt-3 rounded-xl px-4 py-2 text-xs font-bold text-on-inverse shadow-xs transition-colors hover:bg-inverse-hover"
+      >
+        {t('load.reload')}
+      </button>
+    </main>
+  )
+}
+
+function LoadingView() {
+  const { t } = useTranslation()
+
+  return (
+    <main className={frameClass} role="status">
+      <p className="text-sm text-muted">{t('load.loading')}</p>
+    </main>
+  )
+}
 
 class FailureBoundary extends Component<LoadBoundaryProps, LoadBoundaryState> {
   state: LoadBoundaryState = { failed: false }
@@ -22,23 +50,7 @@ class FailureBoundary extends Component<LoadBoundaryProps, LoadBoundaryState> {
   }
 
   render() {
-    if (!this.state.failed) return this.props.children
-
-    return (
-      <main className={frameClass} role="alert">
-        <p className="text-sm text-muted">
-          This simulation could not be loaded. Check your connection, or the
-          site may have been updated.
-        </p>
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
-          className="bg-inverse mt-3 rounded-xl px-4 py-2 text-xs font-bold text-on-inverse shadow-xs transition-colors hover:bg-inverse-hover"
-        >
-          Reload page
-        </button>
-      </main>
-    )
+    return this.state.failed ? <FailureView /> : this.props.children
   }
 }
 
@@ -46,15 +58,7 @@ class FailureBoundary extends Component<LoadBoundaryProps, LoadBoundaryState> {
 export function LoadBoundary({ children }: LoadBoundaryProps) {
   return (
     <FailureBoundary>
-      <Suspense
-        fallback={
-          <main className={frameClass} role="status">
-            <p className="text-sm text-muted">Loading simulation…</p>
-          </main>
-        }
-      >
-        {children}
-      </Suspense>
+      <Suspense fallback={<LoadingView />}>{children}</Suspense>
     </FailureBoundary>
   )
 }

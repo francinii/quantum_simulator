@@ -1,31 +1,30 @@
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { PageHeader } from '@/shared/components/PageHeader'
 
 interface ComingSoonPageProps {
-  title: string
-  highlight: string
-  description: string
+  section: 'articles' | 'learn'
 }
 
-export function ComingSoonPage({
-  title,
-  highlight,
-  description,
-}: ComingSoonPageProps) {
+export function ComingSoonPage({ section }: ComingSoonPageProps) {
+  const { t } = useTranslation()
+
   return (
     <>
       <PageHeader
-        title={title}
-        highlight={highlight}
-        description={description}
+        title={t(`${section}.title`)}
+        highlight={t(`${section}.highlight`)}
+        description={t(`${section}.description`)}
       />
       <main className="mx-auto w-full max-w-6xl flex-1 text-center">
-        <h2 className="text-ink mb-2 text-xl font-extrabold">Coming soon</h2>
+        <h2 className="text-ink mb-2 text-xl font-extrabold">
+          {t('comingSoon.title')}
+        </h2>
         <Link
           to="/lab"
           className="text-brand-blue hover:text-brand-purple text-xs font-bold transition-colors"
         >
-          Explore the lab in the meantime →
+          {t('comingSoon.explore')}
         </Link>
       </main>
     </>

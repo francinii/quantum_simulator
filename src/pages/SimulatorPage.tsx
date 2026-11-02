@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router-dom'
 import { LoadBoundary } from '@/shared/components/LoadBoundary'
 import type { SimulatorConfig } from '@/shared/types/simulator'
@@ -8,6 +9,7 @@ interface SimulatorPageProps {
 }
 
 export function SimulatorPage({ simulators }: SimulatorPageProps) {
+  const { t } = useTranslation()
   const { id } = useParams()
   const simulator = simulators.find((s) => s.id === id)
   if (!simulator) return <NotFoundPage />
@@ -19,7 +21,7 @@ export function SimulatorPage({ simulators }: SimulatorPageProps) {
           to="/lab"
           className="text-brand-blue hover:text-brand-purple inline-flex items-center gap-1 text-xs font-bold transition-colors"
         >
-          ← All simulations
+          {t('backToLab')}
         </Link>
       </nav>
       <LoadBoundary>

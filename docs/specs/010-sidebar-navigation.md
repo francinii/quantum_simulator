@@ -94,7 +94,7 @@ Pending (this revision):
 - [x] Desktop: the hamburger toggles expanded and icon-only rail, and the state survives a reload.
 - [x] Below `lg`: drawer closes on navigation, `Esc` and backdrop click; focus returns to the hamburger.
 - [ ] The active entry shows the single pastel sky accent (soft fill, indicator bar, strong icon and label); focus ring uses the strong shade; text contrast meets AA in both themes.
-- [ ] The theme and language switchers are in the sidebar footer, work in the rail and in the mobile drawer.
+- [ ] The theme and language switchers are in the sidebar footer, work in the rail and in the mobile drawer. (Both are in place; the browser check is pending.)
 - [ ] Every menu string is localized in EN and ES with no layout break (longest label, "Articles Explained Visually" / "Artículos explicados visualmente", still fits the expanded sidebar and wraps cleanly).
 - [ ] Fully usable by keyboard; `nav` has an accessible name.
 - [ ] No horizontal scroll at 360px width in any section.

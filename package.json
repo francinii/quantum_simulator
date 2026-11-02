@@ -17,9 +17,12 @@
   "dependencies": {
     "canvas-confetti": "^1.9.4",
     "gifshot": "^0.4.5",
+    "i18next": "^26.6.0",
+    "i18next-browser-languagedetector": "^8.2.4",
     "katex": "^0.19.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
+    "react-i18next": "^17.1.9",
     "react-router-dom": "^7.18.4",
     "three": "^0.186.1"
   },

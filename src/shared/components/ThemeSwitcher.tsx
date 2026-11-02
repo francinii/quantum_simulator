@@ -1,11 +1,6 @@
+import { useTranslation } from 'react-i18next'
 import { useTheme } from '@/shared/hooks/useTheme'
 import { THEME_MODES, type ThemeMode } from '@/shared/lib/theme/theme-mode'
-
-const LABELS: Record<ThemeMode, string> = {
-  light: 'Light',
-  dark: 'Dark',
-  system: 'System',
-}
 
 const ICONS: Record<ThemeMode, string> = {
   light:
@@ -37,14 +32,16 @@ interface ThemeSwitcherProps {
 }
 
 export function ThemeSwitcher({ collapsed }: ThemeSwitcherProps) {
+  const { t } = useTranslation()
   const { mode, setMode } = useTheme()
+  const label = (option: ThemeMode) => t(`theme.${option}`)
   const next = THEME_MODES[(THEME_MODES.indexOf(mode) + 1) % THEME_MODES.length]
 
   return (
     <>
       <div
         role="radiogroup"
-        aria-label="Theme"
+        aria-label={t('theme.label')}
         className={`bg-neutral flex rounded-lg p-0.5 ${collapsed ? 'lg:hidden' : ''}`}
       >
         {THEME_MODES.map((option) => {
@@ -63,7 +60,7 @@ export function ThemeSwitcher({ collapsed }: ThemeSwitcherProps) {
               }`}
             >
               <ModeIcon mode={option} />
-              {LABELS[option]}
+              {label(option)}
             </button>
           )
         })}
@@ -71,8 +68,11 @@ export function ThemeSwitcher({ collapsed }: ThemeSwitcherProps) {
       <button
         type="button"
         onClick={() => setMode(next)}
-        aria-label={`Theme: ${LABELS[mode]}. Switch to ${LABELS[next]}`}
-        title={`Theme: ${LABELS[mode]}`}
+        aria-label={t('theme.switch', {
+          current: label(mode),
+          next: label(next),
+        })}
+        title={t('theme.current', { current: label(mode) })}
         className={`text-muted hover:bg-blue-wash-hover hidden w-full items-center justify-center rounded-lg py-2 transition-colors ${
           collapsed ? 'lg:flex' : ''
         }`}

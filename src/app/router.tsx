@@ -21,23 +21,11 @@ function buildRoutes(simulators: SimulatorConfig[]): RouteObject[] {
         { path: '/lab', element: <LabPage simulators={simulators} /> },
         {
           path: '/articles',
-          element: (
-            <ComingSoonPage
-              title="Articles"
-              highlight="Explained Visually"
-              description="Research articles explained with visuals, searchable by topic, so you can understand them without reading the full paper."
-            />
-          ),
+          element: <ComingSoonPage section="articles" />,
         },
         {
           path: '/learn',
-          element: (
-            <ComingSoonPage
-              title="Learn"
-              highlight="Quantum Computing"
-              description="Structured, topic-based lessons from the fundamentals: qubits, measurement and more."
-            />
-          ),
+          element: <ComingSoonPage section="learn" />,
         },
         {
           path: '/simulators/:id',

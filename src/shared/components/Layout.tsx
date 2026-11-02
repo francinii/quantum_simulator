@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Outlet } from 'react-router-dom'
 import { useCollapsedSidebar } from '@/shared/hooks/useCollapsedSidebar'
 import { HamburgerIcon } from './HamburgerIcon'
 import { Sidebar } from './Sidebar'
 
 export function Layout() {
+  const { t } = useTranslation()
   const { collapsed, toggle } = useCollapsedSidebar()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const menuButton = useRef<HTMLButtonElement>(null)
@@ -13,6 +15,10 @@ export function Layout() {
     setDrawerOpen(false)
     menuButton.current?.focus()
   }
+
+  useEffect(() => {
+    document.title = t('documentTitle')
+  }, [t])
 
   useEffect(() => {
     if (!drawerOpen) return
@@ -32,7 +38,7 @@ export function Layout() {
           ref={menuButton}
           type="button"
           onClick={() => setDrawerOpen(true)}
-          aria-label="Open menu"
+          aria-label={t('menu.open')}
           aria-expanded={drawerOpen}
           aria-controls="main-sidebar"
           className="text-ink hover:bg-blue-wash-hover rounded-lg p-2"

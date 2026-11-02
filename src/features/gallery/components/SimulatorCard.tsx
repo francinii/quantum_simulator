@@ -1,7 +1,9 @@
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Card } from '@/shared/components/Card'
 import { Chip } from '@/shared/components/Chip'
 import { ACCENTS } from '@/shared/config/accents'
+import { useSimulatorText } from '@/shared/hooks/useSimulatorText'
 import type { SimulatorConfig } from '@/shared/types/simulator'
 
 interface SimulatorCardProps {
@@ -11,6 +13,8 @@ interface SimulatorCardProps {
 
 export function SimulatorCard({ simulator, position }: SimulatorCardProps) {
   const accent = ACCENTS[simulator.accent]
+  const { t } = useTranslation('gallery')
+  const text = useSimulatorText(simulator.id)
 
   return (
     <Link
@@ -25,22 +29,20 @@ export function SimulatorCard({ simulator, position }: SimulatorCardProps) {
           <span
             className={`text-[10px] font-bold tracking-wider uppercase ${accent.label}`}
           >
-            Simulation {String(position).padStart(2, '0')}
+            {t('simulation', { number: String(position).padStart(2, '0') })}
           </span>
           <Chip accent={simulator.accent}>{simulator.chip}</Chip>
         </div>
         <h2 className="text-ink text-lg leading-snug font-extrabold">
-          {simulator.title}
+          {text.title}
         </h2>
-        <p className="mt-2 flex-1 text-xs text-muted">
-          {simulator.description}
-        </p>
+        <p className="mt-2 flex-1 text-xs text-muted">{text.description}</p>
         <div className="mt-4 flex items-center justify-between border-t border-edge-soft pt-3 text-xs">
-          <span className="font-code text-faint">{simulator.category}</span>
+          <span className="font-code text-faint">{text.category}</span>
           <span
             className={`font-bold transition-transform group-hover:translate-x-1 ${accent.cta}`}
           >
-            Open simulation →
+            {t('open')}
           </span>
         </div>
       </Card>

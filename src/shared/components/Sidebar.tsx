@@ -1,6 +1,8 @@
+import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 import { isNavItemActive, NAV_ITEMS } from '@/shared/config/navigation'
 import { HamburgerIcon } from './HamburgerIcon'
+import { LanguageSwitcher } from './LanguageSwitcher'
 import { NavIcon } from './NavIcon'
 import { ThemeSwitcher } from './ThemeSwitcher'
 
@@ -18,6 +20,7 @@ export function Sidebar({
   open,
   onClose,
 }: SidebarProps) {
+  const { t } = useTranslation()
   const { pathname } = useLocation()
   const labelClass = collapsed ? 'lg:sr-only' : ''
 
@@ -46,7 +49,7 @@ export function Sidebar({
             onClick={onToggleCollapsed}
             aria-expanded={!collapsed}
             aria-controls="main-sidebar"
-            aria-label={collapsed ? 'Expand menu' : 'Collapse menu'}
+            aria-label={collapsed ? t('menu.expand') : t('menu.collapse')}
             className="text-body hover:bg-blue-wash-hover focus-visible:outline-accent-strong hidden rounded-lg p-2 transition-colors focus-visible:outline-2 lg:block"
           >
             <HamburgerIcon />
@@ -61,13 +64,13 @@ export function Sidebar({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close menu"
+            aria-label={t('menu.close')}
             className="text-muted hover:text-ink ml-auto rounded p-1 lg:hidden"
           >
             ✕
           </button>
         </div>
-        <nav aria-label="Main" className="flex-1 px-2">
+        <nav aria-label={t('nav.label')} className="flex-1 px-2">
           <ul className="flex flex-col gap-1">
             {NAV_ITEMS.map((item) => {
               const active = isNavItemActive(item, pathname)
@@ -77,7 +80,7 @@ export function Sidebar({
                     to={item.to}
                     onClick={onClose}
                     aria-current={active ? 'page' : undefined}
-                    title={collapsed ? item.label : undefined}
+                    title={collapsed ? t(item.labelKey) : undefined}
                     className={`focus-visible:outline-accent-strong relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 ${
                       active
                         ? 'bg-accent-soft text-accent-strong before:bg-accent-strong before:absolute before:inset-y-1.5 before:left-0 before:w-1 before:rounded-full'
@@ -85,7 +88,7 @@ export function Sidebar({
                     } ${collapsed ? 'lg:justify-center' : ''}`}
                   >
                     <NavIcon name={item.icon} />
-                    <span className={labelClass}>{item.label}</span>
+                    <span className={labelClass}>{t(item.labelKey)}</span>
                   </Link>
                 </li>
               )
@@ -93,7 +96,10 @@ export function Sidebar({
           </ul>
         </nav>
         <div className="border-line border-t p-2">
-          <ThemeSwitcher collapsed={collapsed} />
+          <div className="flex flex-col gap-2">
+            <LanguageSwitcher collapsed={collapsed} />
+            <ThemeSwitcher collapsed={collapsed} />
+          </div>
         </div>
       </aside>
     </>

@@ -13,10 +13,8 @@ export type SimulatorComponent =
 export interface SimulatorConfig {
   id: string
   order: number
-  title: string
-  description: string
+  // Title, description and category live in the feature's i18n namespace (named after the id).
   chip: string
-  category: string
   accent: Accent
   Preview: ComponentType
   Component: SimulatorComponent
